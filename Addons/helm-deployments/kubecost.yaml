@@ -20,7 +20,7 @@ spec:
     global:
       thanos:
         enabled: false
-    kubecostToken: {{KUBECOST_TOKEN}}
+    kubecostToken: ZWxhbWFyYXNAYW1hem9uLmNvbQ==xm343yadf98
     networkCosts:
       enabled: true
 
