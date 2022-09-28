@@ -16,30 +16,29 @@ spec:
       version: 0.12.4
   interval: 1m0s
   targetNamespace: botkube
-  values:
-    communications:
-      slack:
+  communications:
+    slack:
+      enabled: true
+      channel: 
+        configMapKeyRef:
+          name: eksa-config
+          namespace: default
+          key: slack-channel-name
+      token:
+        secretKeyRef:
+          name: botkube-secret
+          namespace: default
+          key: botkube-token
+  config:
+    settings:
+      clustername: 
+        configMapKeyRef:
+          name: eksa-config
+          namespace: default
+          key: cluster-name
+      kubectl:
         enabled: true
-        channel: 
-          configMapKeyRef:
-            name: eksa-config
-            namespace: default
-            key: slack-channel-name
-        token:
-          secretKeyRef:
-            name: botkube-secret
-            namespace: default
-            key: botkube-token
-    config:
-      settings:
-        clustername: 
-          configMapKeyRef:
-            name: eksa-config
-            namespace: default
-            key: cluster-name
-        kubectl:
-          enabled: true
-    image:
-      repository: infracloudio/botkube
-      tag: v0.12.4
+  image:
+    repository: infracloudio/botkube
+    tag: v0.12.4
 
