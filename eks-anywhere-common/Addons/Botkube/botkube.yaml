@@ -20,23 +20,23 @@ spec:
     communications:
       slack:
         enabled: true
-        channel: "monitoringoneks"
-          # configMapKeyRef:
-          #   name: eksa-config
-          #   namespace: default
-          #   key: slack-channel-name
-        token: "xoxb-2812039462449-4139721662182-5HYn3u2sdVYo492xAPofj1di"
-          # secretKeyRef:
-          #   name: botkube-secret
-          #   namespace: default
-          #   key: botkube-token
+        channel:
+          configMapKeyRef:
+            name: eksa-config
+            namespace: default
+            key: slack-channel-name
+        token:
+          secretKeyRef:
+            name: botkube-secret
+            namespace: default
+            key: botkube-token
     config:
       settings:
-        clustername: "elas-mgmt02"
-          # configMapKeyRef:
-          #   name: eksa-config
-          #   namespace: default
-          #   key: cluster-name
+        clustername:
+          configMapKeyRef:
+            name: eksa-config
+            namespace: default
+            key: cluster-name
         kubectl:
           enabled: true
     image:
