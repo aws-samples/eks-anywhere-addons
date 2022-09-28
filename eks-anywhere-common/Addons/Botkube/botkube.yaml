@@ -20,26 +20,26 @@ spec:
     communications:
       slack:
         enabled: true
-        channel: "monitoringoneks"
+        channel: 
+          configMapKeyRef:
+            name: eksa-config
+            namespace: default
+            key: slack-channel-name
         token:
           secretKeyRef:
             name: botkube-secret
             namespace: default
             key: botkube-token
-      config:
-        settings:
-          clustername: elas-mgmt02
-          kubectl:
-            enabled: true
-      image:
-        repository: infracloudio/botkube
-        tag: v0.12.4
-    kubecostToken: 
-      valueFrom:
-        secretKeyRef:
-          name: kubecost-secret
-          namespace: default
-          key: kubecost-token
-    networkCosts:
-      enabled: true
+    config:
+      settings:
+        clustername: 
+          configMapKeyRef:
+            name: eksa-config
+            namespace: default
+            key: cluster-name
+        kubectl:
+          enabled: true
+    image:
+      repository: infracloudio/botkube
+      tag: v0.12.4
 
