@@ -13,31 +13,31 @@ spec:
         kind: HelmRepository
         name: botkube
         namespace: flux-system
-      version: 0.12.4
+      version: 0.13.0
   interval: 1m0s
   targetNamespace: botkube
   values: 
     communications:
-      slack:
-        enabled: true
-    config:
-      settings:
-        kubectl:
+      default-group:
+        slack:
           enabled: true
+    executors:
+      kubectl-read-only:
+        kubectl: enabled
     image:
       repository: infracloudio/botkube
-      tag: v0.12.4
+      tag: v0.13.0
   valuesFrom:
   - kind: ConfigMap
     name: botkube-external-configmap
     valuesKey: slack-channel-name
-    targetPath: communications.slack.channel
+    targetPath: communications.default-group.slack.channels.default.name
   - kind: Secret
     name: botkube-secret
     valuesKey: botkube-token
-    targetPath: communications.slack.token
+    targetPath: communications.default-group.slack.token
   - kind: ConfigMap
     name: botkube-external-configmap
     valuesKey: cluster-name
-    targetPath: config.settings.clustername
+    targetPath: settings.clusterName
 
