@@ -20,12 +20,8 @@ spec:
     global:
       thanos:
         enabled: false
-    kubecostToken: 
-      valueFrom:
-        secretKeyRef:
-          name: kubecost-secret
-          namespace: default
-          key: kubecost-token
-    networkCosts:
-      enabled: true
-
+  valuesFrom:
+  - kind: Secret
+    name: kubecost-token
+    valuesKey: kubecost-token
+   
