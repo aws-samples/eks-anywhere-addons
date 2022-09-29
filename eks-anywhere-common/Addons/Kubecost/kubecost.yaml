@@ -22,6 +22,6 @@ spec:
         enabled: false
   valuesFrom:
   - kind: Secret
-    name: kubecost-token
+    name: kubecost-secret
     valuesKey: kubecost-token
    
