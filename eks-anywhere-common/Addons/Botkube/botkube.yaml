@@ -27,7 +27,7 @@ spec:
           enabled: true
   valuesFrom:
   - kind: ConfigMap
-    name: botkube-external-configmap
+    name: botkube-general-secrets
     valuesKey: slack-channel-name
     targetPath: communications.default-group.slack.channels.default.name
   - kind: Secret
@@ -35,7 +35,7 @@ spec:
     valuesKey: botkube-token
     targetPath: communications.default-group.slack.token
   - kind: ConfigMap
-    name: botkube-external-configmap
+    name: botkube-general-secrets
     valuesKey: cluster-name
     targetPath: settings.clusterName
 
