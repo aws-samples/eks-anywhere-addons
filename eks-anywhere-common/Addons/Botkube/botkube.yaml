@@ -22,7 +22,7 @@ spec:
         enabled: true
   valuesFrom:
   - kind: ConfigMap
-    name: botkube-configmap
+    name: botkube-external-configmap
     valuesKey: slack-channel-name
     targetPath: communication.slack.channel
   - kind: Secret
@@ -30,7 +30,7 @@ spec:
     valuesKey: botkube-token
     targetPath: communication.slack.token
   - kind: ConfigMap
-    name: botkube-configmap
+    name: botkube-external-configmap
     valuesKey: cluster-name
     targetPath: config.settings.clustername
 

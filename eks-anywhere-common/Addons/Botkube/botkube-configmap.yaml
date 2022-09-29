@@ -1,7 +1,7 @@
 apiVersion: external-secrets.io/v1beta1
 kind: ConfigMap
 metadata:
-  name: botkube-configmap
+  name: botkube-external-configmap
   namespace: botkube
 data:
   cluster-name: elas-mgmt02
