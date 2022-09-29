@@ -23,7 +23,6 @@ spec:
   valuesFrom:
   - kind: ConfigMap
     name: eksa-config
-    namespace: default
     valuesKey: slack-channel-name
     targetPath: communication.slack.channel
   - kind: Secret
@@ -32,7 +31,6 @@ spec:
     targetPath: communication.slack.token
   - kind: ConfigMap
     name: eksa-config
-    namespace: default
     valuesKey: cluster-name
     targetPath: config.settings.clustername
 
