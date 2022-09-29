@@ -26,7 +26,7 @@ spec:
         kubectl: 
           enabled: true
   valuesFrom:
-  - kind: ConfigMap
+  - kind: Secret
     name: botkube-general-secrets
     valuesKey: slack-channel-name
     targetPath: communications.default-group.slack.channels.default.name
@@ -34,7 +34,7 @@ spec:
     name: botkube-secret
     valuesKey: botkube-token
     targetPath: communications.default-group.slack.token
-  - kind: ConfigMap
+  - kind: Secret
     name: botkube-general-secrets
     valuesKey: cluster-name
     targetPath: settings.clusterName
