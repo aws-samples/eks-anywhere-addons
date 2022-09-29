@@ -25,7 +25,7 @@ spec:
       kubectl-read-only:
         kubectl: enabled
     image:
-      repository: infracloudio/botkube
+      repository: botkube/botkube
       tag: v0.13.0
   valuesFrom:
   - kind: ConfigMap
