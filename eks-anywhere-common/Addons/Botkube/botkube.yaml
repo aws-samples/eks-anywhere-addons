@@ -23,7 +23,8 @@ spec:
           enabled: true
     executors:
       kubectl-read-only:
-        kubectl: enabled
+        kubectl: 
+          enabled: true
   valuesFrom:
   - kind: ConfigMap
     name: botkube-external-configmap
