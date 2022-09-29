@@ -1,0 +1,8 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ConfigMap
+metadata:
+  name: botkube-configmap
+  namespace: botkube
+data:
+  cluster-name: elas-mgmt02
+  slack-channel-name: monitoringoneks
