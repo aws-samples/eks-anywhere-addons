@@ -24,4 +24,5 @@ spec:
   - kind: Secret
     name: kubecost-secret
     valuesKey: kubecost-token
+    targetPath: kubecost-token
    
