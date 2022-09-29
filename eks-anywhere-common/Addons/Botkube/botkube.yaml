@@ -20,15 +20,22 @@ spec:
     communications:
       slack:
         enabled: true
+    config:
+      settings:
+        kubectl:
+          enabled: true
+    image:
+      repository: infracloudio/botkube
+      tag: v0.12.4
   valuesFrom:
   - kind: ConfigMap
     name: botkube-external-configmap
     valuesKey: slack-channel-name
-    targetPath: communication.slack.channel
+    targetPath: communications.slack.channel
   - kind: Secret
     name: botkube-secret
     valuesKey: botkube-token
-    targetPath: communication.slack.token
+    targetPath: communications.slack.token
   - kind: ConfigMap
     name: botkube-external-configmap
     valuesKey: cluster-name
