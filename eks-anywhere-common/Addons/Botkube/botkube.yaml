@@ -20,21 +20,19 @@ spec:
     communications:
       slack:
         enabled: true
-        channel:
-          configMapKeyRef:
-            name: eksa-config
-            namespace: default
-            key: slack-channel-name
-        token:
-          secretKeyRef:
-            name: botkube-secret
-            namespace: default
-            key: botkube-token
-    config:
-      settings:
-        clustername:
-          configMapKeyRef:
-            name: eksa-config
-            namespace: default
-            key: cluster-name
+  valuesFrom:
+  - kind: ConfigMap
+    name: eksa-config
+    namespace: default
+    valuesKey: slack-channel-name
+    targetPath: communication.slack.channel
+  - kind: Secret
+    name: botkube-secret
+    valuesKey: botkube-token
+    targetPath: communication.slack.token
+  - kind: ConfigMap
+    name: eksa-config
+    namespace: default
+    valuesKey: cluster-name
+    targetPath: config.settings.clustername
 
