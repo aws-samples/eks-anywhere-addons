@@ -28,7 +28,7 @@ spec:
   valuesFrom:
   - kind: Secret
     name: botkube-general-secrets
-    valuesKey: default-slack-channel-name
+    valuesKey: rover-slack-channel-name
     targetPath: communications.default-group.slack.channels.default.name
   - kind: Secret
     name: botkube-secret
@@ -36,6 +36,6 @@ spec:
     targetPath: communications.default-group.slack.token
   - kind: Secret
     name: botkube-general-secrets
-    valuesKey: default-cluster-name
+    valuesKey: rover-cluster-name
     targetPath: settings.clusterName
 
