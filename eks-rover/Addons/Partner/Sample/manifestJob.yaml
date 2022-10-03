@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: sample-snow
+  name: sample-rover-manifestjob
   namespace: default
 spec:
   backoffLimit: 1
