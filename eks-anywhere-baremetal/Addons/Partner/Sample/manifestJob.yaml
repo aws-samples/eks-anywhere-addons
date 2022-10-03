@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: sample
+  name: sample-baremetal-manifestjob
   namespace: default
 spec:
   backoffLimit: 1
