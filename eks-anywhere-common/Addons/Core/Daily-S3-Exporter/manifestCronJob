@@ -1,0 +1,44 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: daily-exporter-cronjob
+spec:
+#Cron Time is set according to server time, ensure server time zone and set accordingly.
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  schedule: "0 22 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccount: cronjob-exporter-service-account
+          containers:
+          - name: kubectl
+            image: guitarrapc/docker-awscli-kubectl
+            command: ["/bin/bash"]
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                    name: aws-secret # References the secret we created
+                    key: access-key 
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                    name: aws-secret
+                    key: secret
+            - name: AWS_DEFAULT_REGION
+              value: us-west-2
+            args:
+            - -c
+            - >-
+                kubectl version &&
+                kubectl get all -A > exporter.txt &&
+                cat exporter.txt &&
+                echo "Successful retrieval of all Kubernetes resources" &&
+                aws --version &&
+                aws s3 ls &&
+                aws s3 cp exporter.txt s3://eks-conformance-cronjob-log/daily-cron-job/Exporter_Run_$(date +"%Y_%m_%d_%I_%M_%p").txt
+            imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
+      backoffLimit: 3
