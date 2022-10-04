@@ -2,6 +2,7 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: daily-exporter-cronjob
+  namespace: default
 spec:
 #Cron Time is set according to server time, ensure server time zone and set accordingly.
   successfulJobsHistoryLimit: 2
