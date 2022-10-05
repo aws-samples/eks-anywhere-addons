@@ -19,20 +19,8 @@ spec:
   values: 
     controller:
       region: snow
-      env:
-      - name: AWS_EC2_ENDPOINT
     node:
       env:
-      - name: AWS_EC2_ENDPOINT
       - name: AWS_REGION
         value: snow
-  valuesFrom:
-  - kind: Secret
-    name: aws-ebs-csi-driver-secret
-    valuesKey: device-ip
-    targetPath: controller.env[0].value
-  - kind: Secret
-    name: aws-ebs-csi-driver-secret
-    valuesKey: device-ip
-    targetPath: node.env[0].value
-
+  
