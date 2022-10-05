@@ -11,7 +11,7 @@ spec:
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
-        name: botkube
+        name: aws-ebs-csi-driver
         namespace: flux-system
       version: 2.11.1
   interval: 60s
