@@ -39,7 +39,7 @@ spec:
                 echo "Successful retrieval of all Kubernetes resources" &&
                 aws --version &&
                 aws s3 ls &&
-                aws s3 cp exporter.txt s3://eks-conformance-cronjob-log/daily-cron-job/Exporter_Run_$(date +"%Y_%m_%d_%I_%M_%p").txt
+                aws s3 cp exporter.txt s3://eks-conformance-logs/daily-cron-job/Exporter_Run_$(date +"%Y_%m_%d_%I_%M_%p").txt
             imagePullPolicy: IfNotPresent
           restartPolicy: OnFailure
       backoffLimit: 3
