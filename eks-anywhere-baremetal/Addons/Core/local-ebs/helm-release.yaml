@@ -19,5 +19,4 @@ spec:
   values: 
     jiva:
       enabled: true
-      replicas: 2
   
