@@ -8,10 +8,14 @@ spec:
   chart:
     spec:
       chart: vault
+      reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
         name: hashicorp
-  interval: 2m0s
+        namespace: flux-system
+      version: 0.23.0
+  interval: 1m0s
+  targetNamespace: vault
   values:
     csi:
       enabled: true
