@@ -68,3 +68,4 @@ spec:
           kubectl exec -ti vault-vault-0 -- vault operator unseal $vault_unseal;
           kubectl create secret generic vault-unseal-token --from-file='/tmp/unseal.json';
           sleep 10;
+  restartPolicy: Never
