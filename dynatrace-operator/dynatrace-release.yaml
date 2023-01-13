@@ -14,3 +14,4 @@ spec:
         namespace: flux-system
       version: 0.10.1
   interval: 1m0s
+  targetNamespace: dynatrace
