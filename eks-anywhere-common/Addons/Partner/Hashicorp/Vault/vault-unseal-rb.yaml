@@ -1,0 +1,13 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vault-unseal-rb
+  namespace: vault
+subjects:
+  - kind: ServiceAccount
+    name: vault-unseal-sa
+roleRef:
+  kind: Role
+  name: vault-unseal-role
+  apiGroup: rbac.authorization.k8s.io
