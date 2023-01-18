@@ -29,6 +29,48 @@ Deployment of a third-party solution requires a PR for a FluxCD deployment submi
 3.	Test them locally using FluxCD.
 4.	Submit a PR to the main branch of this repository.
 
+## Local Testing (Linux/MacOS)
+
+- Install Flux CLI:
+```bash
+    echo "----------------------------------------------------"
+    echo "Downloading 'Flux' ..."
+    curl -O "https://toolkit.Fluxcd.io/install.sh" --silent --location
+    echo "Installing 'Flux' ..."
+    chmod +x ./install.sh
+    ./install.sh
+    rm -rf ./install.sh
+```
+
+- Install Flux Controller (assuming you have kubectl access to the target cluster):
+```bash
+flux install \
+    --namespace=flux-system \
+    --network-policy=false \
+    --components=source-controller,helm-controller,kustomize-controller,notification-controller
+```
+
+- Add `GitRepository` for your fork:
+```bash
+flux create source git addons \
+    --url=<forked repo from https://github.com/aws-samples/eks-anywhere-addons>\
+    --branch=main
+```
+
+- Add Kustomization for your add-on:
+```bash
+# Example for Snowball Edge (replace --path with the target env as required)
+flux create kustomization addons-snow-partner \
+    --source=addons \
+    --path="./eks-anywhere-snow/Addons/Partner" \
+    --prune=true \
+    --interval=5m 
+```
+
+- Validate by navigating to the target namespace and checking that all pods are running
+
+- Troubleshooting: [FluxCD Troubleshooting](https://fluxcd.io/flux/cheatsheets/troubleshooting/)
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
