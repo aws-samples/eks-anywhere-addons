@@ -15,7 +15,6 @@ spec:
         namespace: flux-system
       version: 1.5.46
   interval: 30s
-  url: https://charts.sysdig.com
   values:
     global:
       sysdig:
