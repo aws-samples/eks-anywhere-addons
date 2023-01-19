@@ -39,12 +39,16 @@ This solution requires Flux CLI locally and Flux Controller on your Kubernetes c
 ```bash
     echo "----------------------------------------------------"
     echo "Downloading 'Flux' ..."
-    curl -O "https://toolkit.Fluxcd.io/install.sh" --silent --location
+    curl -O "https://fluxcd.io/install.sh" --silent --location
     echo "Installing 'Flux' ..."
     chmod +x ./install.sh
     ./install.sh
     rm -rf ./install.sh
 ```
+
+The above command was tested on Ubuntu and Mac OS, however for MacOS and alternate path is to use brew:
+
+`brew install fluxcd/tap/flux`
 
 🚀 Install Flux Controller (assuming you have kubectl access to the target cluster):
 ```bash
