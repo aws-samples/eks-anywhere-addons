@@ -35,23 +35,11 @@ Deployment of a third-party solution requires a PR for a FluxCD deployment submi
 
 This solution requires Flux CLI locally and Flux Controller on your Kubernetes cluster. Please follow the below steps for installing these pre-requisites :
 
-🚀 Install Flux CLI:
 ```bash
-    echo "----------------------------------------------------"
-    echo "Downloading 'Flux' ..."
-    curl -O "https://toolkit.Fluxcd.io/install.sh" --silent --location
-    echo "Installing 'Flux' ..."
-    chmod +x ./install.sh
-    ./install.sh
-    rm -rf ./install.sh
-```
-
-🚀 Install Flux Controller (assuming you have kubectl access to the target cluster):
-```bash
-flux install \
-    --namespace=flux-system \
-    --network-policy=false \
-    --components=source-controller,helm-controller,kustomize-controller,notification-controller
+git clone https://github.com/aws-samples/eks-anywhere-addons.git
+cd eks-anywhere-addons
+chmod +x installFlux.sh
+./installFlux.sh
 ```
 
 ## Local Testing (Linux/MacOS)
