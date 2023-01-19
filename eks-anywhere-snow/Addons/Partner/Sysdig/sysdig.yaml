@@ -18,7 +18,6 @@ spec:
   values:
     global:
       sysdig:
-        accessKey: ${sysdigAccessKey}
         region: us2   # us1 | us2 | us3 | us4 | eu1 | au1
       kspm:
         deploy: true
@@ -37,6 +36,6 @@ spec:
           newEngineOnly: true
   valuesFrom:
   - kind: Secret
-    name: sysdig-secret
-    valuesKey: sysdig-accesskey
-    targetPath: sysdigAccesskey
+    name: sysdig-access-key
+    valuesKey: secret-sysdig-key
+    targetPath: global.sysdig.accessKey
