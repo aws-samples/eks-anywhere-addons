@@ -10,7 +10,7 @@
 
 🎯 [GitOps](https://www.weave.works/technologies/gitops/) is leveraged as a decoupling mechanism between physical test environments and ISV solutions, enabling Partners to test their solutions without direct access to the respective labs and avoid potentially costly maintenance of the test environments. 
 
-## Process Overview
+## 🏃‍♀️Getting Started
 
 Deployment of a third-party solution requires a PR for a FluxCD deployment submitted to this repository. 
 
@@ -22,7 +22,7 @@ Deployment of a third-party solution requires a PR for a FluxCD deployment submi
 
 🚀	Secrets management such as license key or credentials is implemented using the External Secrets add-on. You will need to share secrets with the AWS Partner team. The AWS Partner team will create those secrets in an AWS account and use External Secrets to bring them down to the target deployment cluster. After that, such secrets can be configured in your GitOps deployment folder and passed to the deployment using configuration values or if your helm deployment can use pre-created secrets, that option is also supported.  The sample folder also contains an example of leveraging a [secret](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/external-secret.yaml) with the deployment as well as an example of wiring that secret in your deployment [here](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost.yaml#L24) (line numbers may change in the link).
 
-🚀	While validation that your solution deploys on the target deployment option is helpful, it does not provide the required level of quality assurance for functional verification, which is generally achieved with a test framework and automation normally included in the CI/CD cycle of the Partner product. We recommend that Partners wrap their functional test as a container and submit as a Kubernetes job along with their deployments to enable broader test coverage and better customer experience. The functional test job should be submitted under `eks-anywhere-common/testers` (runs on all platforms) or under your respective environment folder such as `eks-anywhere-snow/testers` (e.g. `eks-anywhere-snow/testers/<orgname>/<productname>`). Example [here](https://github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-snow/Testers/Sample). 
+🚀	Though validation of your solution deploys on the target deployment option is helpful, it does not provide the required level of quality assurance for functional verification, which is generally achieved with a test framework and automation normally included in the CI/CD cycle of the Partner product. We recommend that Partners wrap their functional test as a container and submit as a Kubernetes job along with their deployments to enable broader test coverage and better customer experience. The functional test job should be submitted under `eks-anywhere-common/testers` (runs on all platforms) or under your respective environment folder such as `eks-anywhere-snow/testers` (e.g. `eks-anywhere-snow/testers/<orgname>/<productname>`). Example [here](https://github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-snow/Testers/Sample). 
 
 ## Contribution Flow
 
