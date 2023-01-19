@@ -71,9 +71,9 @@ flux create kustomization addons-snow-partner \
     --interval=5m 
 ```
 
-- Validate by navigating to the target namespace and checking that all pods are running
+## Validation
 
-Please see the kubernetes resources in botkube namespace below:
+- Validate by navigating to the target namespace and checking that all pods are running. Please see the kubernetes resources in botkube namespace below:
 
 ```
 ❯ kga -n botkube
