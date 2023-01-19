@@ -2,7 +2,7 @@
 
 This repository is part of the Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework, designed to address general validation and quality assurance of Partner and third-party solutions (add-ons) running on EKS-A on supported operating systems, hardware and virtualization platforms.
 
-The EKS Anywhere conformance and validation framework provides an expandable and extensible approach to run conformance testing on different EKS deployment models such as EKS-A on VMware (VMC), EKS-A on Bare Metal, EKS-A on Snow and EKS on Rover (Outposts). It allows running Kubernetes conformance testing, Partner and OSS add-on deployment and validation on EKS-A environments and helps Partners validate their hardware and software solutions deployed on variety of EKS environments.
+The EKS Anywhere conformance and validation framework provides an expandable and extensible approach to run conformance testing on different EKS deployment models such as EKS-A on VMware (VMC), EKS-A on Bare Metal, EKS-A on Snow and EKS on Rover (Outposts). It allows running Kubernetes conformance testing, Partner and OSS add-on deployment and validation on EKS-A environments and helps Partners validate their hardware (IHV) and software (ISV) solutions deployed on variety of EKS environments.
 
 This repository is a GitOps repository powered by FluxCD and contains Partner and third-party solutions and functional tests for deployment in the supported deployment environments. Each deployment option is represented by the respective folder in this repository, where Partners and external contributors can submit a pull request. 
 
@@ -29,7 +29,9 @@ Deployment of a third-party solution requires a PR for a FluxCD deployment submi
 3.	Test them locally using FluxCD.
 4.	Submit a PR to the main branch of this repository.
 
-## Local Testing (Linux/MacOS)
+## Pre-requisite (Linux/MacOS)
+
+This solution requires Flux CLI locally and Flux Controller on your Kubernetes cluster. Please follow the below steps for installing these pre-requisites :
 
 - Install Flux CLI:
 ```bash
@@ -50,11 +52,13 @@ flux install \
     --components=source-controller,helm-controller,kustomize-controller,notification-controller
 ```
 
+## Local Testing (Linux/MacOS)
+
 - Add `GitRepository` for your fork:
 ```bash
 flux create source git addons \
     --url=<forked repo from https://github.com/aws-samples/eks-anywhere-addons>\
-    --branch=main
+    --branch=main # This should be replaced with your branch for testing your changes
 ```
 
 - Add Kustomization for your add-on:
@@ -68,6 +72,20 @@ flux create kustomization addons-snow-partner \
 ```
 
 - Validate by navigating to the target namespace and checking that all pods are running
+
+Please see the kubernetes resources in botkube namespace below:
+
+```
+❯ kga -n botkube
+NAME                                   READY   STATUS    RESTARTS   AGE
+pod/botkube-botkube-58c4579b44-87mbq   1/1     Running   0          7h55m
+
+NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/botkube-botkube   1/1     1            1           7h55m
+
+NAME                                         DESIRED   CURRENT   READY   AGE
+replicaset.apps/botkube-botkube-58c4579b44   1         1         1       7h55m
+```
 
 - Troubleshooting: [FluxCD Troubleshooting](https://fluxcd.io/flux/cheatsheets/troubleshooting/)
 
