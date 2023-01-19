@@ -8,7 +8,7 @@
 
 🎯 This repository is a GitOps repository powered by FluxCD and contains Partner and third-party solutions and functional tests for deployment in the supported deployment environments. Each deployment option is represented by the respective folder in this repository, where Partners and external contributors can submit a pull request. 
 
-🎯 GitOps is leveraged as a decoupling mechanism between physical test environments and ISV solutions, enabling Partners to test their solutions without direct access to the respective labs and avoid potentially costly maintenance of the test environments. 
+🎯 [GitOps](https://www.weave.works/technologies/gitops/) is leveraged as a decoupling mechanism between physical test environments and ISV solutions, enabling Partners to test their solutions without direct access to the respective labs and avoid potentially costly maintenance of the test environments. 
 
 ## Process Overview
 
@@ -89,14 +89,14 @@ NAME                                         DESIRED   CURRENT   READY   AGE
 replicaset.apps/botkube-botkube-58c4579b44   1         1         1       7h55m
 ```
 
-- Troubleshooting: [FluxCD Troubleshooting](https://fluxcd.io/flux/cheatsheets/troubleshooting/)
+🚀 Troubleshooting: [FluxCD Troubleshooting](https://fluxcd.io/flux/cheatsheets/troubleshooting/)
+
+## 🤝 Support & Feedback
+Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework is maintained by AWS Solution Architects and is not an AWS service. Support is provided on a best effort basis. If you have feedback, feature ideas, or wish to report bugs, please use the [Issues](https://github.com/aws-samples/eks-anywhere-addons/issues) section of this GitHub.
 
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
-
-## 🤝 Support & Feedback
-Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework is maintained by AWS Solution Architects and is not an AWS service. Support is provided on a best effort basis. If you have feedback, feature ideas, or wish to report bugs, please use the [Issues](https://github.com/aws-samples/eks-anywhere-addons/issues) section of this GitHub.
 
 ## License
 
