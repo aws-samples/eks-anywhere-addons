@@ -1,4 +1,4 @@
-## Amazon EKS Anywhere Partner Add-ons
+# Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework
 
 💥 Welcome to Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework 💥
 
