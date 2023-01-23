@@ -12,6 +12,6 @@ spec:
         kind: HelmRepository
         name: dynatrace-operator
         namespace: flux-system
-      version: 0.10.1
+      version: 0.4.1
   interval: 1m0s
   targetNamespace: dynatrace
