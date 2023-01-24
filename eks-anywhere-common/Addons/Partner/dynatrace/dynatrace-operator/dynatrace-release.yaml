@@ -15,7 +15,7 @@ spec:
       version: 0.10.1
   interval: 1m0s
   targetNamespace: dynatrace
-  ---
+---
   apiVersion: v1
 data:
   apiToken: ZHQwYzAxLlVUSzRaVFNKUlI0VVBRWUJKVEY2R1A1RC5QNzNHTUZRN01RWkdaNllRUTdCTktGRkZTWkhHU0Y1WEpPT1hXTDdEVENITVZZR0ZJNVpQNE9DVlZNTUFGTUdR
