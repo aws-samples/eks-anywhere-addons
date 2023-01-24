@@ -1,0 +1,19 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: k10
+  namespace: kasten-io
+spec:
+  chart:
+    spec:
+      chart: vault
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: kasten
+        namespace: kasten-io
+      version: 5.5.3
+  interval: 1m0s
+  targetNamespace: kasten-io
+  values:
