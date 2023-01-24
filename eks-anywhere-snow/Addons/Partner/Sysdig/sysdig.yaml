@@ -24,6 +24,7 @@ spec:
       clusterConfig:
         name: mycluster
     agent:
+      tolerations: []
       sysdig:
         settings:
           collector_port: 6443
