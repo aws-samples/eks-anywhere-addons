@@ -20,11 +20,19 @@ spec:
       sysdig:
         region: us2   # us1 | us2 | us3 | us4 | eu1 | au1
       kspm:
-        deploy: true
+        deploy: false # Disabled by default. Take care of the resources if you want to activate this option.
       clusterConfig:
         name: mycluster
     agent:
       tolerations: []
+      # resourceProfile: custom
+      # resources:
+      #  requests:
+      #    cpu:600m
+      #    memory: 1G
+      #  limits:
+      #    cpu: 1500m
+      #    memory: 1G
       sysdig:
         settings:
           collector_port: 6443
