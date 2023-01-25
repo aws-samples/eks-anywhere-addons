@@ -21,3 +21,41 @@ spec:
   upgrade:
     crds: CreateReplace
   targetNamespace: dynatrace
+---
+apiVersion: dynatrace.com/v1beta1
+kind: DynaKube
+metadata:
+  name: dynatoken
+  namespace: dynatrace
+  annotations:
+    feature.dynatrace.com/automatic-kubernetes-api-monitoring: "true"
+spec:
+  apiUrl: https://syh360.dynatrace-managed.com/e/84a351a8-0936-4193-b79d-9ee17bcd8c09/api
+  tokens: "dynatoken"
+  skipCertCheck: false
+  oneAgent:
+    classicFullStack:
+      image:
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+      env:
+        - name: ONEAGENT_ENABLE_VOLUME_STORAGE
+          value: "false"
+  activeGate:
+    capabilities:
+      - routing
+      - kubernetes-monitoring
+      - dynatrace-api
+    image: ""
+    resources:
+      requests:
+        cpu: 500m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1.5Gi   
