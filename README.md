@@ -18,6 +18,18 @@ Deployment of a third-party solution requires a PR for a FluxCD deployment submi
 
 🚀	If your product and/or configuration must be distinct for each of the deployment options then create a new solution under the respective target. For example, if it is for EKS-A on Snow then the path is `eks-anywhere-snow/Addons/Partner`. 
 
+🚀 For kubernetes namespace resource for your product, please add labels as shown below for reporting purposes:
+
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: kubecost
+    labels:
+        aws.conformance.vendor: kubecost
+        aws.conformance.vendor-solution: cost-analyzer
+```
+
 🚀	You can deploy Helm via FluxCD HelmRelease custom resource. Here is a [Helm example](https:/github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-common/Addons/Partner/Kubecost). In particular the example covers specification of [Helm repository](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost-source.yaml) and [Helm release](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost.yaml). 
 
 🚀	Secrets management such as license key or credentials is implemented using the External Secrets add-on. You will need to share secrets with the AWS Partner team. The AWS Partner team will create those secrets in an AWS account and use External Secrets to bring them down to the target deployment cluster. After that, such secrets can be configured in your GitOps deployment folder and passed to the deployment using configuration values or if your helm deployment can use pre-created secrets, that option is also supported.  The sample folder also contains an example of leveraging a [secret](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/external-secret.yaml) with the deployment as well as an example of wiring that secret in your deployment [here](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost.yaml#L24) (line numbers may change in the link).
