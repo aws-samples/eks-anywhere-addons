@@ -40,7 +40,6 @@ spec:
                 cat namespaces.txt &&
                 echo "Successful retrieval of all Kubernetes resources" &&
                 aws --version &&
-                aws s3 ls &&
                 aws s3 cp exporter.txt s3://eks-anywhere-conformance-logs/daily-cron-job/Exporter_Run_$(date +"%Y_%m_%d_%I_%M_%p").txt &&
                 aws s3 cp namespaces.txt s3://eks-anywhere-conformance-logs/daily-partner-list/Namespaces_${EKS_DEPLOYMENT_MODEL}_$(date +"%Y_%m_%d_%I_%M_%p").txt
             imagePullPolicy: IfNotPresent
