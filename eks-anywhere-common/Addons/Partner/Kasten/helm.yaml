@@ -7,7 +7,7 @@ metadata:
 spec:
   chart:
     spec:
-      chart: vault
+      chart: k10
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
