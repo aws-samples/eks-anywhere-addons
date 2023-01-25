@@ -36,7 +36,7 @@ spec:
                 kubectl version &&
                 kubectl get all -A > exporter.txt && 
                 EKS_DEPLOYMENT_MODEL=$(kubectl get cluster -o json | jq -r '.items[].spec.controlPlaneConfiguration.machineGroupRef.kind') &&
-                kubectl get ns | grep -v 'default\|capas-system\|capi-kubeadm-bootstrap-system\|capi-kubeadm-control-plane-system\|capi-system\|cert-manager\|eksa-packages\|eksa-packages-elas-cluster\|eksa-system\|etcdadm-bootstrap-provider-system\|etcdadm-controller-system\|external-secrets\|flux-system\|kube-node-lease\|kube-public\|kube-system\|var-expansion\|sonobuoy\|NAME' | awk '{print $1;}' > namespaces.txt &&
+                kubectl get ns | grep -v 'default\|capas-system\|capi-kubeadm-bootstrap-system\|capi-kubeadm-control-plane-system\|capi-system\|cert-manager\|eksa-packages\|eksa-packages-elas-cluster\|eksa-system\|etcdadm-bootstrap-provider-system\|etcdadm-controller-system\|external-secrets\|flux-system\|kube-node-lease\|kube-public\|kube-system\|var-expansion\|sonobuoy\|NAME\|botkube' | awk '{print $1;}' > namespaces.txt &&
                 cat namespaces.txt &&
                 echo "Successful retrieval of all Kubernetes resources" &&
                 aws --version &&
