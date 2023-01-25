@@ -18,7 +18,7 @@ Deployment of a third-party solution requires a PR for a FluxCD deployment submi
 
 🚀	If your product and/or configuration must be distinct for each of the deployment options then create a new solution under the respective target. For example, if it is for EKS-A on Snow then the path is `eks-anywhere-snow/Addons/Partner`. 
 
-🚀 For kubernetes namespace resource for your product, Please add labels as shown below to help us with reporting list of participating partners:
+🚀 For kubernetes namespace resource for your product, please add labels as shown below for reporting purposes:
 
 ```
 apiVersion: v1
