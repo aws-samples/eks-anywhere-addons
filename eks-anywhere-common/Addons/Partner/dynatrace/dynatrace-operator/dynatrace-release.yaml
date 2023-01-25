@@ -14,4 +14,10 @@ spec:
         namespace: flux-system
       version: 0.10.1
   interval: 1m0s
+  values:
+    installCRD: true
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
   targetNamespace: dynatrace
