@@ -5,4 +5,4 @@ metadata:
   name: sysdig
   labels:
       aws.conformance.vendor: sysdig
-      aws.conformance.vendor-solution: sysdig
+      aws.conformance.vendor-solution: sysdig-agent
