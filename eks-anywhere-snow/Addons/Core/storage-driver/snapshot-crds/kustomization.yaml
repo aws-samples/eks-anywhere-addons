@@ -1,12 +1,6 @@
-apiVersion:  kustomize.toolkit.fluxcd.io/v1beta2
+apiVersion:  kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-metadata:
-  name: snapshot-crds
-  namespace: flux-system
 resources:
   - snapshot.storage.k8s.io_volumesnapshotclasses.yaml
   - snapshot.storage.k8s.io_volumesnapshotcontents.yaml
   - snapshot.storage.k8s.io_volumesnapshots.yaml
-spec:
-  dependsOn:
-    - name: aws-ebs-csi-driver
