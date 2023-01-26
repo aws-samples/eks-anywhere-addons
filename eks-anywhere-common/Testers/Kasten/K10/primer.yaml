@@ -2,11 +2,12 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: k10-primer-job
-  namespace: default
+  namespace: kasten-io
 spec:
   backoffLimit: 1
   template:
     spec:
+      serviceAccountName: k10-k10
       containers:
         - name: k10-primer
           image: 'alpine:latest'
