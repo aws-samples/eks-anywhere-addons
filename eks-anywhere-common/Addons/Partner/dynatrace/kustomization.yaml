@@ -3,4 +3,3 @@ kind: Kustomization
 resources:
   - dynatrace-variables.yaml
   - dynakube-operator.yaml
-  - external-secret.yaml
