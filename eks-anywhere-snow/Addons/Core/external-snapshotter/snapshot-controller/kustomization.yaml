@@ -2,6 +2,7 @@ apiVersion:  kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
   name: snapshot-controller
+  namespace: flux-system
 resources:
   - rbac-snapshot-controller.yaml
   - setup-snapshot-controller.yaml
