@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynatrace-variables
+  namespace: flux-system
+data:
+  # api url for dynatrace environment 
+  apiurl: "https://sometenant.live.dynatrace.com/api"
+  # name of secret containing tokens
+  dynatracesecretname: "dt-secret"
+  # name of cluster to be listed in Dynatrace
+  dynakubename: "someclustername"
+  # ONEAGENT_ENABLE_VOLUME_STORAGE should be false for EKS, the escaped are due to flux being weird
+  # and the value here isn't actually a boolean
+  oneagentvolumestorage: "\"false\""
