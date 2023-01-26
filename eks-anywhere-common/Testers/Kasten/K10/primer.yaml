@@ -10,11 +10,13 @@ spec:
       containers:
         - name: k10-primer
           image: 'alpine:latest'
-          args:
+          command:
             - /bin/sh
+          args:
             - -c
-            - apk add --no-cache helm curl
-            - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-            - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-            - kubectl version && ( curl -s https://docs.kasten.io/tools/k10_primer.sh  | bash /dev/stdin -s ebs-sc)
+            - >-
+              apk add --no-cache helm curl;
+              curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl";
+              install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl;
+              kubectl version && ( curl -s https://docs.kasten.io/tools/k10_primer.sh  | bash /dev/stdin -s ebs-sc);
       restartPolicy: Never
