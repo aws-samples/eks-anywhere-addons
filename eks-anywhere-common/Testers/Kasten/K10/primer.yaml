@@ -22,5 +22,7 @@ spec:
               curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl";
               install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl;
               helm repo add kasten https://charts.kasten.io/;
-              kubectl version && ( kubectl annotate storageclass ${SC_NAME} k10.kasten.io/volume-snapshot-class=${VSC_NAME}; curl -s https://docs.kasten.io/tools/k10_primer.sh  | bash /dev/stdin -s ${SC_NAME});
+              kubectl annotate volumesnapshotclass ${VSC_NAME} k10.kasten.io/is-snapshot-class=true;
+              curl -s https://docs.kasten.io/tools/k10_primer.sh  | bash /dev/stdin -s ${SC_NAME};
+              kubectl annotate volumesnapshotclass ${VSC_NAME} k10.kasten.io/is-snapshot-class-;
       restartPolicy: Never

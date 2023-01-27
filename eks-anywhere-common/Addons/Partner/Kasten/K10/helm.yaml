@@ -15,4 +15,10 @@ spec:
         namespace: kasten-io
       version: 5.5.3
   interval: 1m0s
+  values:
+    prometheus:
+      server:
+        enabled: false
+    grafana:
+      enabled: false
   targetNamespace: kasten-io
