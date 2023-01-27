@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dynatrace
+  labels:
+    aws.conformance.vendor: dynatrace
+    aws.conformance.vendor-solution: dynatrace
