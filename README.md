@@ -105,4 +105,6 @@ This library is licensed under the MIT-0 License. See the LICENSE file.
 ## 🙌 Community
 We welcome all individuals who are enthusiastic about Kubernetes to become a part of this open source conformance framework. Your contributions and participation are invaluable to the success of this project.
 
+Please join us on slack :slack: at [AWS Developers](awsdevelopers.slack.com)
+
 Built with  ❤️ at AWS.
