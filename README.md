@@ -45,13 +45,38 @@ metadata:
 
 ## Pre-requisite (Linux/MacOS)
 
-This solution requires Flux CLI locally and Flux Controller on your Kubernetes cluster. Please follow the below steps for installing these pre-requisites :
+This solution requires Flux CLI locally and Flux Controller on your Kubernetes cluster. Flux requires access to a source repository via api and access to the kubernetes cluster you want to use for testing. Please follow the below steps for installing these pre-requisites.
+
+If you do not already have access to a running kubernetes cluster you can consider setting up a local [k3s](https://k3s.io/) cluster or you may choose a hosted service such as [AWS EKS](https://aws.amazon.com/eks/).
+
+Flux integrates into your running cluster and needs the kubeconfig file of the cluster for testing. Flux will look in the default location, i.e. *~/.kube/config*. 
+
+Before setting up Flux make sure your configuration file points to yur cluster. You can use the following command for example to verify that a suitable kubeconfig file can be found and the cluster can be accessed. If no configuration is found you will get an error message indicating that *"http://localhost:8080/version"* cannot be accessed. Do not be confused by the port number. The port number for accessing the kubernetes cluster is part of the configuration file and the reported port in the error message is a default port.
+
+```bash
+helm ls --all-namespaces
+```
+
+You can use the following to ensure the flux installation finds the cluster you want to use for testing.
+
+```bash
+export KUBECONFIG=$PATH_TO_kubeconfig.yaml
+```
+
+Once you have a kubernetes cluster running and the configuration file is properly setup you are ready to install flux.
 
 ```bash
 git clone https://github.com/aws-samples/eks-anywhere-addons.git
 cd eks-anywhere-addons
 chmod +x installFlux.sh
 ./installFlux.sh
+```
+**Note:** In order to commit back to the project you need to create a fork in GitHub of the *eks-anywhere-addons* repository into your own project. After the fork is created clone the source code from your fork. To keep the projects connected, you can add the AWS project as an upstream by adding he below to your .git/config file.
+
+```
+[remote "upstream"]
+    url = git@github.com:aws-samples/eks-anywhere-addons.git
+    fetch = +refs/heads/*:refs/remotes/upstream/*
 ```
 
 ## Local Testing (Linux/MacOS)
@@ -63,6 +88,12 @@ flux create source git addons \
     --branch=main # This should be replaced with your branch for testing your changes
 ```
 
+This creates a flux GitRepository resource. The flux GitRepository resource will periodically check the configured repo and branch for changes and sync any new commits. Since this project uses git, we are creating a `GitRepository` resource.
+
+**Note:** If you need/want to work in a disconnected fashion you need to run a git server on your system and push the *eks-anywhere-addons* repository to your git server.
+
+The name in the above command, *addons*, is arbitrary but must match the name used as the value of the *--source* argument in the following command.
+
 🚀 Add Kustomization for your add-on:
 ```bash
 # Example for Snowball Edge (replace --path with the target env as required)
@@ -72,6 +103,10 @@ flux create kustomization addons-snow-partner \
     --prune=true \
     --interval=5m 
 ```
+
+The given example will attempt to deploy all solutions it can find in the *./eks-anywhere-snow/Addons/Partner* directory tree. You can limit your testing to only your application by providing a more specific path, *./eks-anywhere-common/Addons/Partner/foobar* for example will deploy anything found in the *foobar* subdirectory. The *--path* setting must match the location where your deployment is setup, not the location for the testJob. 
+
+The name, in this example *addons-snow-partner*, is arbitrary. As mentioned the value for the *--source* argument must match the name given when the source reference was created.
 
 ## Validation
 
@@ -89,7 +124,37 @@ NAME                                         DESIRED   CURRENT   READY   AGE
 replicaset.apps/botkube-botkube-58c4579b44   1         1         1       7h55m
 ```
 
-🚀 Troubleshooting: [FluxCD Troubleshooting](https://fluxcd.io/flux/cheatsheets/troubleshooting/)
+For functional testing you need to create a **testJob**. See *eks-anywhere-addons/eks-anywhere-common/Testers* for examples. The descriptions about [Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/) from upstream kubernetes provides helpful information and additional details.
+
+Presumably your application will provide a service that can be accessed to verify the application deployed as expected. In the test job performs a basic functional verification of your deployed product. The generic access pattern to access a service in the cluster is `servicename.namespace.svc.cluster.local:port` where `servicename` is the name of your service, `namespace` is the namespace you assigned in your deployment yaml description and `port` is the port number your service is running on. 
+
+If you are uncertain about the service name you can use the following where *$NAMESAPCE* is the namespace you assigned in your deployment yaml description. 
+
+```bash
+kubectl get services -n $NAMESPACE
+```
+
+🚀 Add Kustomization for testing your test job :
+
+```bash
+flux create kustomization addons-snow-partner \
+    --source=addons \
+    --path="./eks-anywhere-snow/testers/Partner" \
+    --prune=true \
+    --interval=5m 
+```
+
+Use the below command to delete the existing job :
+
+```bash
+kubectl delete job $NAME_OF_TESTJOB -n $NAMESPACE
+```
+
+To debug the test job use the `kubectl logs` command.
+
+## Troubleshooting
+
+The[FluxCD Troubleshooting](https://fluxcd.io/flux/cheatsheets/troubleshooting/) guide provides information on most commands to troubleshoot the deployment and helps you understand any issues you may encounter.
 
 ## 🤝 Support & Feedback
 Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework is maintained by AWS Solution Architects and is not an AWS service. Support is provided on a best effort basis. If you have feedback, feature ideas, or wish to report bugs, please use the [Issues](https://github.com/aws-samples/eks-anywhere-addons/issues) section of this GitHub.
@@ -103,8 +168,11 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 This library is licensed under the MIT-0 License. See the LICENSE file.
 
 ## 🙌 Community
+
 We welcome all individuals who are enthusiastic about Kubernetes to become a part of this open source conformance framework. Your contributions and participation are invaluable to the success of this project.
 
-Please join us on slack at [AWS Developers](awsdevelopers.slack.com)
+## 🙌 Collaboration
 
-Built with  ❤️ at AWS.
+Please join us on slack at [AWS Developers](awsdevelopers.slack.com). Get onboarded to slack by sharing your emails with us.
+
+Built with ❤️ at AWS.
