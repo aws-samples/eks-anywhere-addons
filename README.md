@@ -47,28 +47,23 @@ metadata:
 
 This solution requires Flux CLI locally and Flux Controller on your Kubernetes cluster. Flux requires access to a source repository via api and access to the kubernetes cluster you want to use for testing. Please follow the below steps for installing these pre-requisites.
 
-If you do not alreday have access to a running kubernetes cluster you can consider a local easy to deploy setup such as [k3s](https://k3s.io/) or you may choose a hosted service such as [AWS EKS](https://aws.amazon.com/eks/)
+If you do not already have access to a running kubernetes cluster you can consider setting up an [EKS Anywhere local cluster](https://anywhere.eks.amazonaws.com/docs/getting-started/local-environment/) on docker provider or a local [k3s](https://k3s.io/) cluster or you may choose a hosted service such as [AWS EKS](https://aws.amazon.com/eks/).
 
-Flux integrates into your running cluster and needs to find the configuration file for the cluster you want to use for testing. Flux will look in the default location, i.e. *~/.kube/config*. 
+Flux integrates into your running cluster and needs the kubeconfig file of the cluster for testing. Flux will look in the default location, i.e. *~/.kube/config*. 
 
-Before setting up Flux make sure your configuration file points to the cluster you want to used for testing. You can use
+Before setting up Flux make sure your configuration file points to your cluster. You can use the following command for example to verify that a suitable kubeconfig file can be found and the cluster can be accessed. If no configuration is found you will get an error message indicating that *"http://localhost:8080/version"* cannot be accessed. Do not be confused by the port number. The port number for accessing the kubernetes cluster is part of the configuration file and the reported port in the error message is a default port.
 
 ```bash
-helm ls --all-namespaces
+kubectl get ns
 ```
 
-for example to verify that a suitable kubeconfig file can be found and the cluster can be accessed. If no configuration is found you will get an error message indicating that *"http://localhost:8080/version"* cannot be accessed. Do not be confused by the port number. The port number for accessing the kubernetes cluster is part of the configuration file and the reported port in the error message is a default port.
-
-You can use
+You can use the following to ensure the flux installation finds the cluster you want to use for testing.
 
 ```bash
 export KUBECONFIG=$PATH_TO_kubeconfig.yaml
 ```
 
-to ensure the flux installation finds the cluster you want to use for testing.
-
 Once you have a kubernetes cluster running and the configuration file is properly setup you are ready to install flux.
-
 
 ```bash
 git clone https://github.com/aws-samples/eks-anywhere-addons.git
@@ -93,12 +88,11 @@ flux create source git addons \
     --branch=main # This should be replaced with your branch for testing your changes
 ```
 
-This creates a flux GitRepository resource. The flux GitRepository resource will periodically check the configured repo and branch for changes and sync any new commits. Since this project uses git, we are creating a GitRepository resource.
+This creates a flux GitRepository resource. The flux GitRepository resource will periodically check the configured repo and branch for changes and sync any new commits. Since this project uses git, we are creating a `GitRepository` resource.
 
 **Note:** If you need/want to work in a disconnected fashion you need to run a git server on your system and push the *eks-anywhere-addons* repository to your git server.
 
 The name in the above command, *addons*, is arbitrary but must match the name used as the value of the *--source* argument in the following command.
-
 
 🚀 Add Kustomization for your add-on:
 ```bash
@@ -132,13 +126,15 @@ replicaset.apps/botkube-botkube-58c4579b44   1         1         1       7h55m
 
 For functional testing you need to create a **testJob**. See *eks-anywhere-addons/eks-anywhere-common/Testers* for examples. The descriptions about [Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/) from upstream kubernetes provides helpful information and additional details.
 
-Presumably your application will provide a service that can be accessed to verify the application deployed as expected. In the test job access the service as basic functional verification. The generic access pattern to access a service in the cluster is `servicename.namespace.svc.cluster.local:port` where `servicename` is the name of your service, `namespace` is the namespace you assigned in your deployment yaml description and `port` is the port number your service is running on. If you are uncertain about the service name you can use
+Presumably your application will provide a service that can be accessed to verify the application deployed as expected. In the test job performs a basic functional verification of your deployed product. The generic access pattern to access a service in the cluster is `servicename.namespace.svc.cluster.local:port` where `servicename` is the name of your service, `namespace` is the namespace you assigned in your deployment yaml description and `port` is the port number your service is running on. 
+
+If you are uncertain about the service name you can use the following where *$NAMESPACE* is the namespace you assigned in your deployment yaml description. 
 
 ```bash
 kubectl get services -n $NAMESPACE
 ```
 
-where *$NAMESAPCE* is the namespace you assigned in your deployment yaml description. Jobs in kubernetes are immutable and as such whenever you modify the test job and before you run another
+🚀 Add Kustomization for testing your test job :
 
 ```bash
 flux create kustomization addons-snow-partner \
@@ -148,14 +144,13 @@ flux create kustomization addons-snow-partner \
     --interval=5m 
 ```
 
-command you need to delete the existing job with
+Use the below command to delete the existing job :
 
 ```bash
 kubectl delete job $NAME_OF_TESTJOB -n $NAMESPACE
 ```
 
 To debug the test job use the `kubectl logs` command.
-
 
 ## Troubleshooting
 
@@ -173,6 +168,11 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 This library is licensed under the MIT-0 License. See the LICENSE file.
 
 ## 🙌 Community
+
 We welcome all individuals who are enthusiastic about Kubernetes to become a part of this open source conformance framework. Your contributions and participation are invaluable to the success of this project.
 
-Built with  ❤️ at AWS.
+## 🙌 Collaboration
+
+Please join us on slack at [AWS Developers](awsdevelopers.slack.com). Get onboarded to slack by sharing your emails with us.
+
+Built with ❤️ at AWS.
