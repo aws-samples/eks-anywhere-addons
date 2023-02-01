@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: neuvector
+  labels:
+    aws.conformance.vendor: suse
+    aws.conformance.vendor-solution: neuvector
