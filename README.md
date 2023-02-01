@@ -128,7 +128,7 @@ For functional testing you need to create a **testJob**. See *eks-anywhere-addon
 
 Presumably your application will provide a service that can be accessed to verify the application deployed as expected. In the test job performs a basic functional verification of your deployed product. The generic access pattern to access a service in the cluster is `servicename.namespace.svc.cluster.local:port` where `servicename` is the name of your service, `namespace` is the namespace you assigned in your deployment yaml description and `port` is the port number your service is running on. 
 
-If you are uncertain about the service name you can use the following where *$NAMESAPCE* is the namespace you assigned in your deployment yaml description. 
+If you are uncertain about the service name you can use the following where *$NAMESPACE* is the namespace you assigned in your deployment yaml description. 
 
 ```bash
 kubectl get services -n $NAMESPACE
