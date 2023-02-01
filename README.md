@@ -47,14 +47,14 @@ metadata:
 
 This solution requires Flux CLI locally and Flux Controller on your Kubernetes cluster. Flux requires access to a source repository via api and access to the kubernetes cluster you want to use for testing. Please follow the below steps for installing these pre-requisites.
 
-If you do not already have access to a running kubernetes cluster you can consider setting up a local [k3s](https://k3s.io/) cluster or you may choose a hosted service such as [AWS EKS](https://aws.amazon.com/eks/).
+If you do not already have access to a running kubernetes cluster you can consider setting up an [EKS Anywhere local cluster](https://anywhere.eks.amazonaws.com/docs/getting-started/local-environment/) on docker provider or a local [k3s](https://k3s.io/) cluster or you may choose a hosted service such as [AWS EKS](https://aws.amazon.com/eks/).
 
 Flux integrates into your running cluster and needs the kubeconfig file of the cluster for testing. Flux will look in the default location, i.e. *~/.kube/config*. 
 
-Before setting up Flux make sure your configuration file points to yur cluster. You can use the following command for example to verify that a suitable kubeconfig file can be found and the cluster can be accessed. If no configuration is found you will get an error message indicating that *"http://localhost:8080/version"* cannot be accessed. Do not be confused by the port number. The port number for accessing the kubernetes cluster is part of the configuration file and the reported port in the error message is a default port.
+Before setting up Flux make sure your configuration file points to your cluster. You can use the following command for example to verify that a suitable kubeconfig file can be found and the cluster can be accessed. If no configuration is found you will get an error message indicating that *"http://localhost:8080/version"* cannot be accessed. Do not be confused by the port number. The port number for accessing the kubernetes cluster is part of the configuration file and the reported port in the error message is a default port.
 
 ```bash
-helm ls --all-namespaces
+kubectl get ns
 ```
 
 You can use the following to ensure the flux installation finds the cluster you want to use for testing.
