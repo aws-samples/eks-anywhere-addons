@@ -2,7 +2,9 @@ apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
 metadata:
   name: vsphere-volume-snapshot
+  namespace: kube-system
 spec:
   volumeSnapshotClassName: csi-vsphere-vsc
   source:
     persistentVolumeClaimName: vsphere-claim
+    namespace: kube-system
