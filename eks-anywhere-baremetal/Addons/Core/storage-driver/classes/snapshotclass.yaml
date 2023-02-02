@@ -2,5 +2,5 @@ apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshotClass
 metadata:
   name: csi-openebs-vsc
-driver: jiva.csi.openebs.io
+driver: openebs.io/local
 deletionPolicy: Delete
