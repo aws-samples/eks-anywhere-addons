@@ -44,6 +44,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: csi-snapshotter
+  namespace: default
   labels:
     app: csi-snapshotter
 spec:
@@ -58,6 +59,7 @@ kind: StatefulSet
 apiVersion: apps/v1
 metadata:
   name: csi-snapshotter
+  namespace: default
 spec:
   serviceName: "csi-snapshotter"
   replicas: 1
