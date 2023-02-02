@@ -7,4 +7,3 @@ spec:
   volumeSnapshotClassName: csi-vsphere-vsc
   source:
     persistentVolumeClaimName: vsphere-claim
-    namespace: kube-system
