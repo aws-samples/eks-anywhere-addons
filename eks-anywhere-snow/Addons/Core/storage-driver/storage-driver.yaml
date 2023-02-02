@@ -1,17 +1,3 @@
-# apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
-# kind: Kustomization
-# metadata:
-#   name: csi-snapshotter
-#   namespace: flux-system
-# spec:
-#   path: "./eks-anywhere-snow/Addons/Core/storage-driver/csi-snapshotter"
-#   sourceRef:
-#     kind: GitRepository
-#     name: addons
-#     namespace: flux-system
-#   interval: 5m0s
-#   prune: true
-# ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
