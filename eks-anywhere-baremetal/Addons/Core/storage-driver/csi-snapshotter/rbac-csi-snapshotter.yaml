@@ -12,6 +12,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: csi-snapshotter
+  namespace: default
 
 ---
 kind: ClusterRole
