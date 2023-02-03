@@ -67,7 +67,7 @@ metadata:
   namespace: flux-system
 spec:
   dependsOn:
-    - name: local-ebs
+    - name: openebs
   path: "./eks-anywhere-baremetal/Addons/Core/storage-driver/classes"
   sourceRef:
     kind: GitRepository
