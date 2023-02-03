@@ -3,7 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
   name: openebs
-  namespace: openebs
+  namespace: kube-system
 spec:
   interval: 30s
   url:  https://openebs.github.io/charts

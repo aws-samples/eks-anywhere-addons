@@ -14,7 +14,7 @@ kind: ServiceAccount
 metadata:
   name: csi-provisioner
   # replace with non-default namespace name
-  namespace: default
+  namespace: kube-system
 
 ---
 kind: ClusterRole
@@ -75,7 +75,7 @@ subjects:
   - kind: ServiceAccount
     name: csi-provisioner
     # replace with non-default namespace name
-    namespace: default
+    namespace: kube-system
 roleRef:
   kind: ClusterRole
   name: external-provisioner-runner
@@ -88,7 +88,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   # replace with non-default namespace name
-  namespace: default
+  namespace: kube-system
   name: external-provisioner-cfg
 rules:
 # Only one of the following rules for endpoints or leases is required based on
@@ -118,12 +118,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: csi-provisioner-role-cfg
   # replace with non-default namespace name
-  namespace: default
+  namespace: kube-system
 subjects:
   - kind: ServiceAccount
     name: csi-provisioner
     # replace with non-default namespace name
-    namespace: default
+    namespace: kube-system
 roleRef:
   kind: Role
   name: external-provisioner-cfg
