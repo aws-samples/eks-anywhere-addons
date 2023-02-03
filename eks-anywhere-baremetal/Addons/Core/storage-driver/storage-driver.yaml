@@ -52,7 +52,7 @@ metadata:
 spec:
   dependsOn:
     - name: csi-snapshotter
-  path: "./eks-anywhere-baremetal/Addons/Core/storage-driver/local-ebs"
+  path: "./eks-anywhere-baremetal/Addons/Core/storage-driver/openebs"
   sourceRef:
     kind: GitRepository
     name: addons
