@@ -1,11 +1,12 @@
-apiVersion: storage.k8s.io/v1
 kind: StorageClass
+apiVersion: storage.k8s.io/v1
 metadata:
-  name: openebs-csi
+  name: openebs-csi-cstor-sparse
   annotations:
-    storageclass.kubernetes.io/is-default-class: "false"
-provisioner: jiva.csi.openebs.io
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: cstor.csi.openebs.io
 allowVolumeExpansion: true
 parameters:
-  cas-type: jiva
-  policy: openebs-jiva-default-policy
+  cas-type: cstor
+  replicaCount: "1"
+  cstorPoolCluster: cstor-disk-pool

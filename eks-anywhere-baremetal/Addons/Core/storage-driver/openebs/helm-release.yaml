@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: openebs
-  namespace: kube-system
+  namespace: openebs
 spec:
   chart:
     spec:
@@ -12,11 +12,11 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: openebs
-        namespace: kube-system
+        namespace: openebs
       version: "3.3.0"
   interval: 60s
-  targetNamespace: kube-system
+  targetNamespace: openebs
   values: 
-    jiva:
+    cstor:
       enabled: true
   
