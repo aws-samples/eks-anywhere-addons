@@ -19,21 +19,17 @@ spec:
            - blockDeviceName: "blockdevice-1a33a8c1c0dba5b15b4db49a74fdc0e3"
      poolConfig:
        dataRaidGroupType: "stripe"
-       compression: lz4 # <- lz4 ./ lz 
-  #  - nodeSelector:
-  #      kubernetes.io/hostname: "10.2.32.20"
-  #    dataRaidGroups:
-  #      - blockDevices:
-  #          - blockDeviceName: "blockdevice-1a40758fa9aaece3263f973ab103c279"
-  #    poolConfig:
-  #      dataRaidGroupType: "stripe"
-  #      compression: lz4 # <- lz4 ./ lz 
-
-  #  - nodeSelector:
-  #      kubernetes.io/hostname: "10.2.32.20"
-  #    dataRaidGroups:
-  #      - blockDevices:
-  #          - blockDeviceName: "blockdevice-7a89d1d51cdc7ce0e34f2d91d2c09090"
-  #    poolConfig:
-  #      dataRaidGroupType: "stripe"
-  #      compression: lz4 # <- lz4 ./ lz 
+   - nodeSelector:
+       kubernetes.io/hostname: "10.2.32.20"
+     dataRaidGroups:
+       - blockDevices:
+           - blockDeviceName: "blockdevice-1a40758fa9aaece3263f973ab103c279"
+     poolConfig:
+       dataRaidGroupType: "stripe"
+   - nodeSelector:
+       kubernetes.io/hostname: "10.2.32.20"
+     dataRaidGroups:
+       - blockDevices:
+           - blockDeviceName: "blockdevice-7a89d1d51cdc7ce0e34f2d91d2c09090"
+     poolConfig:
+       dataRaidGroupType: "stripe"
