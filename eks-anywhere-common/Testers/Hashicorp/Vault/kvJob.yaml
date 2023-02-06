@@ -9,7 +9,8 @@ spec:
       serviceAccountName: vault-unseal-sa
       containers:
         - name: test-vault-kv
-          image: 'baghelg/vault-k8ctl:latest'
+          image: 'baghelg/vault-k8ctl:alpine'
+          imagePullPolicy: Always
           command:
             - /bin/bash
           args:
@@ -19,7 +20,8 @@ spec:
               while [ "$vault_running" != "Running" ]; 
               do vault_running=`kubectl get pods -n vault vault-vault-0 -o jsonpath="{.status.phase}"` && echo waiting;
               export VAULT_ADDR="http://vault-vault:8200";
-              export VAULT_TOKEN=`kubectl get secrets vault-unseal-token -o json -n vault | jq -r '.data."unseal.json"' | base64 --decode | jq -r '."root_token"'`;
+              export VAULT_TOKEN=`kubectl get secrets vault-unseal-token -o json -n vault | jq -r '.data."unseal.json"' | base64 -d | jq -r '."root_token"'`;
+              vault secrets enable -version=2 kv;
               vault kv put -mount=kv my-secret foo=a bar=b;
               sleep 10;
               export op=`vault kv get -mount=kv -field=foo my-secret` ; [[ "${op}" == "a" ]] && echo "Vault KV engine works!";
