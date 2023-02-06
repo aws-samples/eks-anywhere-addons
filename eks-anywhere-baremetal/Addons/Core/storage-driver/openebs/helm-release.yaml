@@ -17,6 +17,6 @@ spec:
   interval: 60s
   targetNamespace: openebs
   values: 
-    jiva:
+    cstor:
       enabled: true
   
