@@ -1,25 +1,9 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: aws-ebs-csi-driver
-  namespace: flux-system
-spec:
-  path: "./eks-anywhere-snow/Addons/Core/storage-driver/aws-ebs-csi-driver"
-  sourceRef:
-    kind: GitRepository
-    name: addons
-    namespace: flux-system
-  interval: 5m0s
-  prune: true
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
-kind: Kustomization
-metadata:
   name: snapshot-crds
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: aws-ebs-csi-driver
   path: "./eks-anywhere-snow/Addons/Core/storage-driver/snapshot-crds"
   sourceRef:
     kind: GitRepository
@@ -47,11 +31,27 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: classes
+  name: aws-ebs-csi-driver
   namespace: flux-system
 spec:
   dependsOn:
     - name: snapshot-controller
+  path: "./eks-anywhere-snow/Addons/Core/storage-driver/aws-ebs-csi-driver"
+  sourceRef:
+    kind: GitRepository
+    name: addons
+    namespace: flux-system
+  interval: 5m0s
+  prune: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: classes
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: aws-ebs-csi-driver
   path: "./eks-anywhere-snow/Addons/Core/storage-driver/classes"
   sourceRef:
     kind: GitRepository
