@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: vsphere-claim
-  namespace: kube-system
+  name: openebs-claim
+  namespace: default
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: standard
+  storageClassName: openebs-csi-cstor-sparse
   resources:
     requests:
       storage: 4Gi
