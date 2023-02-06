@@ -5,17 +5,19 @@ metadata:
   name: app
   namespace: default
 spec:
-  backoffLimit: 2
+  backoffLimit: 3 
   template:
     spec:
       containers:
       - name: app
         image: centos
+        imagePullPolicy: IfNotPresent
         command: ["/bin/sh"]
         args: ["-c", "while true; do echo $(date -u) >> /data/out.txt; sleep 5; done"]
         volumeMounts:
         - name: persistent-storage
           mountPath: /data
+      restartPolicy: OnFailure
       volumes:
       - name: persistent-storage
         persistentVolumeClaim:
