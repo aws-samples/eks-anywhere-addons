@@ -13,25 +13,25 @@ metadata:
 spec:
  pools:
    - nodeSelector:
-       kubernetes.io/hostname: "eksa-sa02"
+       kubernetes.io/hostname: "elas-cluster-md-0-1-xrjdr"
      dataRaidGroups:
        - blockDevices:
-           - blockDeviceName: "blockdevice-9e896ca287cb024292e959467c58f3f9"
+           - blockDeviceName: "blockdevice-204b601620d74f261bf3a5c3ed76d8ac"
      poolConfig:
        dataRaidGroupType: "stripe"
 
    - nodeSelector:
-       kubernetes.io/hostname: "eksa-sa04"
+       kubernetes.io/hostname: "elas-cluster-md-0-1-7g5k5"
      dataRaidGroups:
        - blockDevices:
-           - blockDeviceName: "blockdevice-f74ab1a7c662d258435fdb8e0395f91c"
+           - blockDeviceName: "blockdevice-635799508deadd89247cdf8a54a5c009"
      poolConfig:
        dataRaidGroupType: "stripe"
 
    - nodeSelector:
-       kubernetes.io/hostname: "eksa-sa03"
+       kubernetes.io/hostname: "elas-cluster-md-0-1-b2m2h"
      dataRaidGroups:
        - blockDevices:
-           - blockDeviceName: "blockdevice-f97121796c7e94f578751b0e4798de2f"
+           - blockDeviceName: "blockdevice-b553b2da15a5375bc82ce27b166e1ed6"
      poolConfig:
        dataRaidGroupType: "stripe"
