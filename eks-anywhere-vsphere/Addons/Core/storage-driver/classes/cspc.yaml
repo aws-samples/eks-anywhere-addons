@@ -16,20 +16,20 @@ spec:
        kubernetes.io/hostname: "10.2.32.20"
      dataRaidGroups:
        - blockDevices:
-           - blockDeviceName: "blockdevice-1a33a8c1c0dba5b15b4db49a74fdc0e3"
+           - blockDeviceName: "blockdevice-44c859527347d14f149e48a1c2d5e93c"
      poolConfig:
        dataRaidGroupType: "stripe"
    - nodeSelector:
-       kubernetes.io/hostname: "10.2.32.20"
+       kubernetes.io/hostname: "10.2.64.31"
      dataRaidGroups:
        - blockDevices:
-           - blockDeviceName: "blockdevice-1a40758fa9aaece3263f973ab103c279"
+           - blockDeviceName: "blockdevice-066e6f1bd4ca6898e4523e7629c76e07"
      poolConfig:
        dataRaidGroupType: "stripe"
    - nodeSelector:
-       kubernetes.io/hostname: "10.2.32.20"
+       kubernetes.io/hostname: "10.2.64.31"
      dataRaidGroups:
        - blockDevices:
-           - blockDeviceName: "blockdevice-7a89d1d51cdc7ce0e34f2d91d2c09090"
+           - blockDeviceName: "blockdevice-ea7a93090117e65eadd87e4244980996"
      poolConfig:
        dataRaidGroupType: "stripe"
