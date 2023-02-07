@@ -19,4 +19,6 @@ spec:
   values: 
     cstor:
       enabled: true
+    zfs-localpv:
+      enabled: true
   
