@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: daily-exporter-cronjob1
+  name: daily-exporter-cronjob
   namespace: default
 spec:
 #Cron Time is set according to server time, ensure server time zone and set accordingly.
