@@ -47,7 +47,7 @@ spec:
                 [[ "${EKS_DEPLOYMENT_MODEL}" == "TinkerbellMachineConfig" ]] && echo "Baremetal" && export EKS_DEPLOYMENT_MODEL_SHORT="BareMetal_Partners";
                 [[ "${EKS_DEPLOYMENT_MODEL}" == "VSphereMachineConfig" ]] && echo "vSphere" && export EKS_DEPLOYMENT_MODEL_SHORT="vSphere_Partners";
                 [[ "${EKS_DEPLOYMENT_MODEL_SHORT}" == "" ]] && echo "Rover" && export EKS_DEPLOYMENT_MODEL_SHORT="Rover_Partners";
-                kubectl get ns -l aws.conformance.vendor -o=custom-columns=NAME:.metadata.name --no-headers > ${EKS_DEPLOYMENT_MODEL_SHORT}.txt;
+                kubectl get ns -l aws.conformance.vendor -o go-template --template '{{range .items}} {{index .metadata.labels "aws.conformance.vendor" -}} {{"\n"}}{{end}}' > ${EKS_DEPLOYMENT_MODEL_SHORT}.txt;
                 cat ${EKS_DEPLOYMENT_MODEL_SHORT}.txt;
                 echo "Successful retrieval of all Kubernetes resources";
                 aws --version;
