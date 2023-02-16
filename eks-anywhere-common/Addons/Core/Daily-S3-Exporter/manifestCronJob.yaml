@@ -1,7 +1,7 @@
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: daily-exporter-cronjob
+  name: daily-exporter-cronjob1
   namespace: default
 spec:
 #Cron Time is set according to server time, ensure server time zone and set accordingly.
@@ -15,8 +15,10 @@ spec:
           serviceAccount: cronjob-exporter-service-account
           containers:
           - name: kubectl
-            image: guitarrapc/docker-awscli-kubectl
-            command: ["/bin/bash"]
+            image: 'elamaran11/conformance-build-utlis:alpine'
+            imagePullPolicy: Always
+            command:
+              - /bin/bash
             env:
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
@@ -30,18 +32,47 @@ spec:
                     key: secret
             - name: AWS_DEFAULT_REGION
               value: us-west-2
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                    name: github-token
+                    key: github-token
             args:
-            - -c
+            - '-c'
             - >-
-                kubectl version &&
-                kubectl get all -A > exporter.txt && 
-                EKS_DEPLOYMENT_MODEL=$(kubectl get cluster -o json | jq -r '.items[].spec.controlPlaneConfiguration.machineGroupRef.kind') &&
-                kubectl get ns -l aws.conformance.vendor > namespaces.txt &&
-                cat namespaces.txt &&
-                echo "Successful retrieval of all Kubernetes resources" &&
-                aws --version &&
-                aws s3 cp exporter.txt s3://eks-anywhere-conformance-logs/daily-cron-job/Exporter_Run_$(date +"%Y_%m_%d_%I_%M_%p").txt &&
-                aws s3 cp namespaces.txt s3://eks-anywhere-conformance-logs/daily-partner-list/Namespaces_${EKS_DEPLOYMENT_MODEL}_$(date +"%Y_%m_%d_%I_%M_%p").txt
-            imagePullPolicy: IfNotPresent
-          restartPolicy: OnFailure
-      backoffLimit: 3
+                kubectl version;
+                kubectl get all -A > exporter.txt; 
+                EKS_DEPLOYMENT_MODEL=$(kubectl get cluster -o json | jq -r '.items[].spec.controlPlaneConfiguration.machineGroupRef.kind');
+                [[ "${EKS_DEPLOYMENT_MODEL}" == "SnowMachineConfig" ]] && echo "Snow" && export EKS_DEPLOYMENT_MODEL_SHORT="Snow_Partners";
+                [[ "${EKS_DEPLOYMENT_MODEL}" == "TinkerbellMachineConfig" ]] && echo "Baremetal" && export EKS_DEPLOYMENT_MODEL_SHORT="BareMetal_Partners";
+                [[ "${EKS_DEPLOYMENT_MODEL}" == "VSphereMachineConfig" ]] && echo "vSphere" && export EKS_DEPLOYMENT_MODEL_SHORT="vSphere_Partners";
+                [[ "${EKS_DEPLOYMENT_MODEL_SHORT}" == "" ]] && echo "Rover" && export EKS_DEPLOYMENT_MODEL_SHORT="Rover_Partners";
+                kubectl get ns -l aws.conformance.vendor -o=custom-columns=NAME:.metadata.name --no-headers > ${EKS_DEPLOYMENT_MODEL_SHORT}.txt;
+                cat ${EKS_DEPLOYMENT_MODEL_SHORT}.txt;
+                echo "Successful retrieval of all Kubernetes resources";
+                aws --version;
+                aws s3 cp exporter.txt s3://eks-anywhere-conformance-logs/daily-cron-job/Exporter_Run_$(date +"%Y_%m_%d_%I_%M_%p").txt;
+                aws s3 cp ${EKS_DEPLOYMENT_MODEL_SHORT}.txt s3://eks-anywhere-conformance-logs/daily-partner-list/Namespaces_${EKS_DEPLOYMENT_MODEL_SHORT}_$(date +"%Y_%m_%d_%I_%M_%p").txt;
+                git version;
+                git config --global user.email "elamaran.shan@gmail.com";
+                git config --global user.name "Elamaran Shanmugam";
+                git clone https://${GITHUB_TOKEN}@github.com/aws-samples/eks-anywhere-addons.git;
+                cd eks-anywhere-addons;
+                git remote remove origin;
+                git remote add origin https://${GITHUB_TOKEN}@github.com/aws-samples/eks-anywhere-addons.git;
+                git fetch origin;
+                git checkout main;
+                git reset --hard origin/main;
+                git branch -D validatedPartners || true;
+                git checkout -b validatedPartners;
+                cp -rf ../${EKS_DEPLOYMENT_MODEL_SHORT}.txt ./Validated_Partners/;
+                git add . ;
+                git commit -a -m "Adding Validated Partners";
+                git push --set-upstream origin validatedPartners;
+                gh auth login --with-token $GITHUB_TOKEN;
+                gh pr create -t "Adding Validated Partners" -b "Automation";
+                gh pr merge --admin -m;
+                cd ..;
+                rm -rf ./eks-anywhere-addons;
+          restartPolicy: Never
+      backoffLimit: 1
