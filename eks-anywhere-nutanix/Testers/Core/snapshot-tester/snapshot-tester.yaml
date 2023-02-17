@@ -4,7 +4,7 @@ metadata:
   name: test-app
   namespace: flux-system
 spec:
-  path: "./eks-anywhere-vsphere/Testers/Core/snapshot-tester/test-app"
+  path: "./eks-anywhere-nutanix/Testers/Core/snapshot-tester/test-app"
   sourceRef:
     kind: GitRepository
     name: addons
@@ -20,7 +20,7 @@ metadata:
 spec:
   dependsOn:
     - name: test-app
-  path: "./eks-anywhere-vsphere/Testers/Core/snapshot-tester/snapshot"
+  path: "./eks-anywhere-nutanix/Testers/Core/snapshot-tester/snapshot"
   sourceRef:
     kind: GitRepository
     name: addons
@@ -36,7 +36,7 @@ metadata:
 spec:
   dependsOn:
     - name: snapshot
-  path: "./eks-anywhere-vsphere/Testers/Core/snapshot-tester/snapshot-restore"
+  path: "./eks-anywhere-nutanix/Testers/Core/snapshot-tester/snapshot-restore"
   sourceRef:
     kind: GitRepository
     name: addons
