@@ -1,0 +1,27 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: nutanix-storage
+  namespace: ntnx-system
+spec:
+  chart:
+    spec:
+      chart: nutanix-csi-storage-2.6.1
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: nutanix
+        namespace: ntnx-system
+      version: "2.6.1"
+  interval: 60s
+  targetNamespace: ntnx-system
+  values: 
+    volumeClass: true
+    prismEndPoint: 
+    username: 
+    password: 
+    storageContainer: 
+    fsType: xfs
+
+  
