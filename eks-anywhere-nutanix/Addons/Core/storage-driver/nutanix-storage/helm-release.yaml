@@ -14,7 +14,7 @@ spec:
         name: nutanix
         namespace: flux-system
       version: "2.6.1"
-  interval: 60s
+  interval: 30s
   targetNamespace: ntnx-system
   values: 
     volumeClass: true
