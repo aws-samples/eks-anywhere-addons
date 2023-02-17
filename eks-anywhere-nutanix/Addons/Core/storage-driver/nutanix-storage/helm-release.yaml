@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: nutanix-storage
-  namespace: nutanix
+  namespace: ntnx-system
 spec:
   chart:
     spec:
@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: nutanix
-        namespace: nutanix
+        namespace: flux-system
       version: "2.6.1"
   interval: 60s
   targetNamespace: ntnx-system
