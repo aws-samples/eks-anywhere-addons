@@ -7,7 +7,7 @@ metadata:
 spec:
   chart:
     spec:
-      chart: nutanix-csi-snapshot-6.0.1
+      chart: nutanix-csi-snapshot
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
@@ -16,4 +16,3 @@ spec:
       version: "6.0.1"
   interval: 60s
   targetNamespace: ntnx-system
-  
