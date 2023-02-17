@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: openebs-claim
+  name: nutanix-claim
   namespace: default
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: openebs-csi-cstor-sparse
+  storageClassName: nutanix-volume
   resources:
     requests:
       storage: 4Gi

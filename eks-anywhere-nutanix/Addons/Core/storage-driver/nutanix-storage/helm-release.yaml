@@ -18,10 +18,20 @@ spec:
   targetNamespace: ntnx-system
   values: 
     volumeClass: true
-    prismEndPoint: 
-    username: 
-    password: 
-    storageContainer: 
     fsType: xfs
+    storageContainer: Default
+  valuesFrom:
+  - kind: Secret
+    name: nutanix-secret
+    valuesKey: nutanix-endpoint
+    targetPath: prismEndPoint
+  - kind: Secret
+    name: nutanix-secret
+    valuesKey: nutanix-username
+    targetPath: username
+  - kind: Secret
+    name: nutanix-secret
+    valuesKey: nutanix-password
+    targetPath: password
 
   

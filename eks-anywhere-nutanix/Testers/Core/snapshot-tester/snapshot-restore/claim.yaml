@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: openebs-snapshot-restored-claim
+  name: nutanix-snapshot-restored-claim
   namespace: default
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: openebs-csi-cstor-sparse
+  storageClassName: nutanix-volume
   resources:
     requests:
       storage: 4Gi
   dataSource:
-    name: openebs-volume-snapshot
+    name: nutanix-volume-snapshot
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io

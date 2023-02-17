@@ -21,4 +21,4 @@ spec:
       volumes:
       - name: persistent-storage
         persistentVolumeClaim:
-          claimName: openebs-snapshot-restored-claim
+          claimName: nutanix-snapshot-restored-claim
