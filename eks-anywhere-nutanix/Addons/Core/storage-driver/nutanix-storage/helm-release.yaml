@@ -20,6 +20,7 @@ spec:
     volumeClass: true
     fsType: xfs
     storageContainer: Default
+    defaultStorageClass: volume
   valuesFrom:
   - kind: Secret
     name: nutanix-secret
