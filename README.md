@@ -4,7 +4,7 @@
 
 🎯 This repository is part of the Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework, designed to address general validation and quality assurance of Partner and third-party solutions (add-ons) running on EKS-A on supported operating systems, hardware and virtualization platforms.
 
-🎯 The EKS Anywhere conformance and validation framework provides an expandable and extensible approach to run conformance testing on different EKS deployment models such as EKS-A on VMware (VMC), EKS-A on Bare Metal, EKS-A on Snow and EKS on Rover (Outposts). It allows running Kubernetes conformance testing, Partner and OSS add-on deployment and validation on EKS-A environments and helps Partners validate their hardware (IHV) and software (ISV) solutions deployed on variety of EKS environments.
+🎯 The EKS Anywhere conformance and validation framework provides an expandable and extensible approach to run conformance testing on different EKS deployment models such as EKS-A on VMware (VMC), EKS-A on Bare Metal, EKS-A on Snow and Local clusters for Amazon EKS on AWS Outposts. It allows running Kubernetes conformance testing, Partner and OSS add-on deployment and validation on EKS-A environments and helps Partners validate their hardware (IHV) and software (ISV) solutions deployed on variety of EKS environments.
 
 🎯 This repository is a GitOps repository powered by FluxCD and contains Partner and third-party solutions and functional tests for deployment in the supported deployment environments. Each deployment option is represented by the respective folder in this repository, where Partners and external contributors can submit a pull request. 
 
