@@ -27,7 +27,7 @@ spec:
   valuesFrom:
   - kind: Secret
     name: botkube-general-secrets
-    valuesKey: vsphere-slack-channel-name
+    valuesKey: nutanix-slack-channel-name
     targetPath: communications.default-group.slack.channels.default.name
   - kind: Secret
     name: botkube-secret
@@ -35,6 +35,6 @@ spec:
     targetPath: communications.default-group.slack.token
   - kind: Secret
     name: botkube-general-secrets
-    valuesKey: vsphere-cluster-name
+    valuesKey: nutanix-cluster-name
     targetPath: settings.clusterName
 
