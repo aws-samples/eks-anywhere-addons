@@ -1,0 +1,21 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: ondat
+  namespace: storageos
+spec:
+  chart:
+    spec:
+      chart: ondat
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: ondat-charts
+        namespace: flux-system
+      version: 0.2.7
+  interval: 1m0s
+  targetNamespace: storageos
+  values:
+    containerd:
+      enabled: true
