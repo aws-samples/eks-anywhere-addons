@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: storageos
+  labels:
+    aws.conformance.vendor: ondat
+    aws.conformance.vendor-solution: ondat
