@@ -1,0 +1,38 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: nutanix-storage
+  namespace: ntnx-system
+spec:
+  chart:
+    spec:
+      chart: nutanix-csi-storage
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: nutanix
+        namespace: flux-system
+      version: "2.6.1"
+  interval: 30s
+  targetNamespace: ntnx-system
+  values: 
+    volumeClass: true
+    fsType: xfs
+    storageContainer: Default
+    defaultStorageClass: volume
+  valuesFrom:
+  - kind: Secret
+    name: nutanix-secret
+    valuesKey: nutanix-endpoint
+    targetPath: prismEndPoint
+  - kind: Secret
+    name: nutanix-secret
+    valuesKey: nutanix-username
+    targetPath: username
+  - kind: Secret
+    name: nutanix-secret
+    valuesKey: nutanix-password
+    targetPath: password
+
+  

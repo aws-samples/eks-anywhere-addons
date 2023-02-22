@@ -1,0 +1,30 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: storage-controller
+  namespace: flux-system
+spec:
+  path: "./eks-anywhere-nutanix/Addons/Core/storage-driver/snapshot-controller"
+  sourceRef:
+    kind: GitRepository
+    name: addons
+    namespace: flux-system
+  interval: 5m0s
+  prune: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: nutanix-storage
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: storage-controller
+  path: "./eks-anywhere-nutanix/Addons/Core/storage-driver/nutanix-storage"
+  sourceRef:
+    kind: GitRepository
+    name: addons
+    namespace: flux-system
+  interval: 5m0s
+  prune: true
+---
