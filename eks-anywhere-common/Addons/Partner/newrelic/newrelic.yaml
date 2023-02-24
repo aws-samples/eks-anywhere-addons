@@ -1,0 +1,38 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: newrelic
+  namespace: newrelic
+spec:
+  chart:
+    spec:
+      chart: nri-bundle
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: newrelic-charts
+        namespace: flux-system
+      version: 5.0.4
+  interval: 1m0s
+  targetNamespace: newrelic
+  values:
+    global:
+      cluster: eks-conformance-testing # This is just an identifier
+      lowDataMode: true
+    newrelic-infrastructure: 
+      privileged: true
+    kube-state-metrics:
+      image:
+        tag: v2.6.0
+      enabled: true
+    kubeEvents:
+      enabled: true
+    logging:
+      enabled: true
+  valuesFrom:
+  - kind: Secret
+    name: newrelic-secret
+    valuesKey: newrelic-token
+    targetPath: global.licenseKey
+   
