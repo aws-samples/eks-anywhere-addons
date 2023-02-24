@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: storageos-service-test
+  namespace: storageos
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+        - command:
+            - curl
+            - --verbose
+            - --location
+            - storageos.storageos.svc.cluster.local:5705
+          image: curlimages/curl:latest
+          name: job
+      restartPolicy: Never
