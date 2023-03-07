@@ -21,7 +21,7 @@ spec:
       cluster: eks-conformance-testing # This is just an identifier
       lowDataMode: true
     newrelic-infrastructure: 
-      privileged: true
+      privileged: false
     kube-state-metrics:
       image:
         tag: v2.6.0

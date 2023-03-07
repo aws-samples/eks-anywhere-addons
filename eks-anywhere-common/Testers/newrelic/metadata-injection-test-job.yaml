@@ -7,10 +7,11 @@ spec:
   backoffLimit: 1
   template:
     spec:
+      serviceAccount: newrelic-testjob-service-account
       initContainers:
-        - name: busybox
-          image: busybox
-          command: ['sh', '-c', "until nslookup newrelic-newrelic-nri-metadata-injection.newrelic.svc.cluster.local; do echo waiting for myservice; sleep 10; done"]
+        - name: kubectl
+          image: bitnami/kubectl
+          command: ['sh', '-c', "kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=nri-metadata-injection -n newrelic"]
       containers:
       - name: test-container
         image: busybox
