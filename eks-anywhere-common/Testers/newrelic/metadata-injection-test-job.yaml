@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: newrelic-testjob
+  namespace: newrelic
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      initContainers:
+        - name: busybox
+          image: busybox
+          command: ['sh', '-c', "until nslookup newrelic-bundle-nri-metadata-injection.newrelic.svc.cluster.local; do echo waiting for myservice; sleep 10; done"]
+      containers:
+      - name: test-container
+        image: busybox
+        command: [ "sh", "-c"]
+        args:
+        - >-
+          if [[ -z "${NEW_RELIC_METADATA_KUBERNETES_NODE_NAME}" ]]; then
+            echo "FAILURE"
+            exit 1
+          else
+            echo "SUCCESS"
+          fi
+      restartPolicy: Never
