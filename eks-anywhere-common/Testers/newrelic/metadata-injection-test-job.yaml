@@ -10,7 +10,7 @@ spec:
       initContainers:
         - name: busybox
           image: busybox
-          command: ['sh', '-c', "until nslookup newrelic-bundle-nri-metadata-injection.newrelic.svc.cluster.local; do echo waiting for myservice; sleep 10; done"]
+          command: ['sh', '-c', "until nslookup newrelic-newrelic-nri-metadata-injection.newrelic.svc.cluster.local; do echo waiting for myservice; sleep 10; done"]
       containers:
       - name: test-container
         image: busybox
