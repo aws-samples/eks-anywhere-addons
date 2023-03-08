@@ -18,6 +18,7 @@ spec:
   targetNamespace: newrelic
   values:
     global:
+      cluster: eks-conformance-testing
       lowDataMode: true
     newrelic-infrastructure: 
       privileged: false
@@ -34,8 +35,8 @@ spec:
     name: newrelic-secret
     valuesKey: newrelic-token
     targetPath: global.licenseKey
-  - kind: ConfigMap
-    name: aws-env-metadata
-    namespace: kube-system
-    valuesKey: clusterName
-    targetPath: global.cluster
+  # - kind: ConfigMap
+  #   name: aws-env-metadata
+  #   namespace: kube-system
+  #   valuesKey: clusterName
+  #   targetPath: global.cluster
