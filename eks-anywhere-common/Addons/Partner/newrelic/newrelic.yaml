@@ -18,7 +18,12 @@ spec:
   targetNamespace: newrelic
   values:
     global:
-      cluster: eks-conformance-testing # This is just an identifier
+      cluster: 
+        valuesFrom:
+        - kind: ConfigMap
+          name: prod-env-values
+          valuesKey: values-prod.yaml
+          namespace: kube-system
       lowDataMode: true
     newrelic-infrastructure: 
       privileged: false
