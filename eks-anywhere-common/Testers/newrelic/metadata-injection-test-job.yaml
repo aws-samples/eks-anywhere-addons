@@ -11,7 +11,7 @@ spec:
       initContainers:
         - name: kubectl
           image: bitnami/kubectl
-          command: ['sh', '-c', "kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=nri-metadata-injection -n newrelic"]
+          command: ['sh', '-c', "while [[$(kubectl get pods -l app.kubernetes.io/name=nri-metadata-injection -o 'jsonpath={..status.conditions[?(@.type==\"Running\")].status}') != \"True\" ]]; do echo \"waiting to init\"; sleep 10; done"]
       containers:
       - name: test-container
         image: busybox
