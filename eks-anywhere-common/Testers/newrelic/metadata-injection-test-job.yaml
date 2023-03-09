@@ -18,7 +18,7 @@ spec:
         command: [ "sh", "-c"]
         args:
         - >-
-          sleep 15;
+          sleep 60;
           if [[ -z "${NEW_RELIC_METADATA_KUBERNETES_NODE_NAME}" ]]; then
             echo "FAILURE"
             exit 1
