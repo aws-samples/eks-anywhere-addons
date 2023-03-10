@@ -3,3 +3,4 @@
  suse
  newrelic
  hashicorp
+ sysdig

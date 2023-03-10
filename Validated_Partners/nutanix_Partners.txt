@@ -2,3 +2,4 @@
  kubecost
  suse
  hashicorp
+ sysdig
