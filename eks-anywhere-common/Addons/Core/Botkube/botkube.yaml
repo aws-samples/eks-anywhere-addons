@@ -26,11 +26,11 @@ spec:
         kubectl: 
           enabled: true
   valuesFrom:
-  - kind: ConfigMap
+  - kind: Secret
     name: aws-env-metadata
     valuesKey: slack-channel-name
     targetPath: communications.default-group.slack.channels.default.name
-  - kind: ConfigMap
+  - kind: Secret
     name: aws-env-metadata
     valuesKey: cluster-name
     targetPath: settings.clusterName
