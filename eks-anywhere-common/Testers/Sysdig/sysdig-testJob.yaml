@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: sysdig-agent-tester
-  namespace: sysdig-agent
+  namespace: sysdig
 spec:
   template:
     spec:
