@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sysdig-agent-tester
+  namespace: sysdig-agent
+spec:
+  template:
+    spec:
+      serviceAccountName: 'sysdig-agent'
+      containers:
+        - name: test-sysdig-agent
+          image: 'alpine/k8s:1.26.2'
+          imagePullPolicy: Always
+          command:
+            - /bin/bash
+          args:
+            - '-c'
+            - >-
+              sysdig_pod="NotRunning";
+              while [[ "$sysdig_pod" != "sysdig-agent-"* ]]; do
+                sysdig_pod=`kubectl get pod -n sysdig-agent -l app=sysdig-agent --field-selector=status.phase==Running -o jsonpath="{.items[0].metadata.name}"` && echo $sysdig_pod;
+                sleep 5;
+              done;
+              echo Success;
+      restartPolicy: Never
+  backoffLimit: 1
+  # Communication with server successful
