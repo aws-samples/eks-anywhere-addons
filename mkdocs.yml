@@ -1,4 +1,4 @@
-site_name: Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework
+site_name: Amazon EKS Anywhere Conformance and Validation Framework
 repo_name: "aws-samples/eks-anywhere-addons"
 repo_url: "https://github.com/aws-samples/eks-anywhere-addons"
 docs_dir: "docs"
@@ -7,16 +7,10 @@ theme:
   features:
     - tabs
 nav:
-- Home:
-  - Overview: index.md
-extra_css:
-- css/material.css
-- css/mkdocstrings.css
+- Home: index.md
 
 markdown_extensions:
   - def_list
-  - admonition
-  - callouts
   - pymdownx.highlight
   - pymdownx.superfences
   - pymdownx.inlinehilite
