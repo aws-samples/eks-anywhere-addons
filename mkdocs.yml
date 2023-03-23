@@ -9,6 +9,10 @@ theme:
 nav:
 - Home:
   - Overview: index.md
+extra_css:
+- css/material.css
+- css/mkdocstrings.css
+
 markdown_extensions:
   - def_list
   - pymdownx.highlight
