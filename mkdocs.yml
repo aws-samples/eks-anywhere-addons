@@ -1,7 +1,7 @@
 site_name: Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework
 repo_name: "aws-samples/eks-anywhere-addons"
 repo_url: "https://github.com/aws-samples/eks-anywhere-addons"
-docs_dir: "root"
+docs_dir: "docs"
 theme:
   name: material
   features:
