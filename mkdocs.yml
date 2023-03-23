@@ -7,7 +7,7 @@ theme:
   features:
     - tabs
 nav:
-  - overview: '../README.md'
+  - overview: 'README.md'
   - Validated Partners: 
     - BareMetal: 'Validated_Partners/baremetal_partners.md'
     - Nutanix: 'Validated_Partners/nutanix_partners.md'
