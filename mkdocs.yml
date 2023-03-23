@@ -7,7 +7,7 @@ theme:
   features:
     - tabs
 nav:
-  - Overview: 'index.md'
+  - Overview: '../README.md'
 markdown_extensions:
   - def_list
   - pymdownx.highlight
