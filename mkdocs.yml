@@ -6,8 +6,6 @@ theme:
   name: material
   features:
     - tabs
-nav:
-  - Overview: '../README.md'
 markdown_extensions:
   - def_list
   - pymdownx.highlight
