@@ -7,12 +7,13 @@ theme:
   features:
     - tabs
 nav:
+  - overview: '../README.md'
   - Validated Partners: 
-    - BareMetal: 'docs/Validated_Partners/baremetal_partners.md'
-    - Nutanix: 'docs/Validated_Partners/nutanix_partners.md'
-    - Rover: 'docs/Validated_Partners/rover_partners.md'
-    - Snow: 'docs/Validated_Partners/snow_partners.md'
-    - vSphere: 'docs/Validated_Partners/vsphere_partners.md'
+    - BareMetal: 'Validated_Partners/baremetal_partners.md'
+    - Nutanix: 'Validated_Partners/nutanix_partners.md'
+    - Rover: 'Validated_Partners/rover_partners.md'
+    - Snow: 'Validated_Partners/snow_partners.md'
+    - vSphere: 'Validated_Partners/vsphere_partners.md'
 markdown_extensions:
   - def_list
   - pymdownx.highlight
