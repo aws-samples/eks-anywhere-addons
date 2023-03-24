@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: sysdig
         namespace: flux-system
-      version: 1.5.46
+      version: 1.6.3
   interval: 30s
   values:
     global:
