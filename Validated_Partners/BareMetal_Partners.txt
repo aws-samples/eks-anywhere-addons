@@ -1,4 +1,0 @@
- dynatrace
- kubecost
- suse
- hashicorp
