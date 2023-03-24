@@ -18,13 +18,13 @@ spec:
   values:
     global:
       sysdig:
-        region: us2   # us1 | us2 | us3 | us4 | eu1 | au1
+        region: us2     # us1 | us2 | us3 | us4 | eu1 | au1
       kspm:
-        deploy: false # Disabled by default to optimize resources. Activating it without the right cluster sizing could lead to instability
+        deploy: false   # Disabled by default to optimize resources. Activating it without the right cluster sizing could lead to instability
       clusterConfig:
         name: mycluster
     agent:
-      tolerations: [] # Nullifying tolerations disallows the agents from being executed in the Control Plane
+      tolerations: []   # Nullifying tolerations disallows the agents from being executed in the Control Plane
       # resourceProfile: custom
       # resources:
       #  requests:
@@ -40,7 +40,7 @@ spec:
       nodeAnalyzer:
         tolerations: []  # Nullifying tolerations disallows the nodeAnalyzers from being executed in the Control Plane
         benchmarkRunner:
-          deploy: false
+          deploy: false   # Benchmark Runner disabled by default
       secure:
         vulnerabilityManagement:
           newEngineOnly: true
