@@ -7,17 +7,17 @@ metadata:
 automountServiceAccountToken: true
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
-  name: newrelic-testjob-clusterrole
+  name: newrelic-testjob-role
   namespace: newrelic
 rules:
 - apiGroups: ["*"]
-  resources: ["*"]
-  verbs: ["get", "list", "watch"]
+  resources: ["pods","secret"]
+  verbs: ["get","list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: newrelic-testjob-clusterrole-binding
   namespace: newrelic
@@ -27,5 +27,5 @@ subjects:
   namespace: newrelic
 roleRef:
   kind: ClusterRole
-  name: newrelic-testjob-clusterrole
+  name: newrelic-testjob-role
   apiGroup: rbac.authorization.k8s.io
