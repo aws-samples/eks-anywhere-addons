@@ -1,5 +1,11 @@
- dynatrace
- kubecost
- suse
- sysdig
- hashicorp
+Kubernetes Version :  1.24 
+Date of Conformance Test : 2023-04-18
+ 
+Following ISV Partners have Validated their Conformance : 
+ 
+VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE
+dynatrace        dynatrace
+kubecost         cost-analyzer
+suse             neuvector
+sysdig           sysdig-agent
+hashicorp        vault
