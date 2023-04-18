@@ -1,3 +1,4 @@
+---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -26,15 +27,17 @@ spec:
           enabled: true
   valuesFrom:
   - kind: Secret
-    name: botkube-general-secrets
-    valuesKey: nutanix-slack-channel-name
+    name: aws-env-metadata
+    valuesKey: slack-channel-name
     targetPath: communications.default-group.slack.channels.default.name
+  - kind: Secret
+    name: aws-env-metadata
+    valuesKey: cluster-name
+    targetPath: settings.clusterName
   - kind: Secret
     name: botkube-secret
     valuesKey: botkube-token
     targetPath: communications.default-group.slack.token
-  - kind: Secret
-    name: botkube-general-secrets
-    valuesKey: nutanix-cluster-name
-    targetPath: settings.clusterName
+
+
 
