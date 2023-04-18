@@ -7,6 +7,5 @@ VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE
 dynatrace        dynatrace
 kubecost         cost-analyzer
 suse             neuvector
-newrelic         newrelic-bundle
 sysdig           sysdig-agent
 hashicorp        vault
