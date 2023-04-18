@@ -1,5 +1,5 @@
  dynatrace
  kubecost
  suse
- sysdig
+ newrelic
  hashicorp
