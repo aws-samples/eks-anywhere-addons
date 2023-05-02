@@ -149,7 +149,7 @@ This creates a flux GitRepository resource. The flux GitRepository resource will
 
 The name in the above command, *addons*, is arbitrary but must match the name used as the value of the *--source* argument in the following command.
 
-🚀 Add Kustomization for your add-on:
+🚀 Add Kustomization for your add-on
 ```bash
 # Example for Snowball Edge (replace --path with the target env as required)
 flux create kustomization addons-snow-partner \
