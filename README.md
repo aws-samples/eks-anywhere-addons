@@ -81,7 +81,62 @@ chmod +x installFlux.sh
 
 ## Local Testing (Linux/MacOS)
 
-🚀 Add `GitRepository` for your fork:
+🚀 First, lets create a plaintext secret in AWS Secrets Manager for your secrets (credentials, license keys, API keys, etc.) using instructions in [create an AWS Secrets Manager secret](https://docs.aws.amazon.com/secretsmanager/latest/userguide/create_secret.html) in `us-west-2` region.
+
+Next, install [external-secrets](https://github.com/external-secrets/external-secrets) on your cluster using the below helm installation of external-secrets to sync secrets between AWS Secrets manager and EKSA Cluster:
+
+```bash
+helm repo add external-secrets https://charts.external-secrets.io
+
+helm install external-secrets \
+    external-secrets/external-secrets \
+    -n external-secrets \
+    --create-namespace 
+```
+
+Next, lets create following Kubernetes generic secret in to your cluster for setting ClusterSecretStore to access AWS Secrets Manager to pull your secrets required for installation of your product:
+
+```bash
+aws iam create-access-key \
+  --user-name external-secrets-${EKS_DEPLOYMENT_MODEL_SHORT} > aws_creds.json
+
+ACCESS_KEY=$(cat aws_creds.json | jq -r .AccessKey.AccessKeyId)
+SECRET_KEY=$(cat aws_creds.json | jq -r .AccessKey.SecretAccessKey)
+
+kubectl create secret generic aws-secret \
+  --from-literal=access-key=$ACCESS_KEY \
+  --from-literal=secret=$SECRET_KEY
+
+rm -rf aws_creds.json
+```
+
+Next, lets create the following Kubernetes resource `ClusterSecretStore` to to access AWS Secrets Manager to pull your secrets required for installation of your product:
+
+```bash
+cat <<EOF | kubectl apply -f - 
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterSecretStore
+metadata:
+  name: eksa-configmap-store
+spec:
+  provider:
+    aws:  # set secretStore provider to AWS.
+      service: ParameterStore # Configure service to be Parameter Store
+      region: us-west-2  # Region where the secret is.
+      auth:
+        secretRef:
+          accessKeyIDSecretRef: 
+            name: aws-secret # References the secret we created
+            namespace: default
+            key: access-key  
+          secretAccessKeySecretRef:
+            name: aws-secret
+            namespace: default
+            key: secret
+EOF
+```
+
+Add `GitRepository` for your fork:
 ```bash
 flux create source git addons \
     --url=<forked repo from https://github.com/aws-samples/eks-anywhere-addons>\
