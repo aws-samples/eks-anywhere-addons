@@ -14,7 +14,6 @@ jobs:
     steps:
     - name: Checkout and Merge to Developer branch
       run: |
-        PR_NUMBER = $(gh pr view --json number -q .number)"
         echo $GITHUB_REF
         echo ::set-env name=PULL_NUMBER::$(echo "$GITHUB_REF" | awk -F / '{print $3}')
         echo "Commit ID = " ${COMMIT_ID}
