@@ -28,5 +28,5 @@ jobs:
           git checkout -b dev
           # git merge needs user details, but we don't push anything, so the contents are unimportant
           git merge --no-edit ${COMMIT_ID}
-          git push
+          git push --set-upstream origin dev
         fi
