@@ -14,6 +14,8 @@ jobs:
     steps:
     - name: Checkout and Merge to Developer branch
       run: |
+        echo "Commit ID " ${COMMIT_ID}
+        echo "PR" ${PR_NUMBER}
         if [ ! -z "${COMMIT_ID}" ]; then 
           git fetch origin pull/${PR_NUMBER}/head:pr
           git checkout developer
