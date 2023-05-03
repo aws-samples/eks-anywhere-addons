@@ -28,6 +28,6 @@ jobs:
           git remote remove origin
           git remote add origin https://${GITHUB_TOKEN}@github.com/aws-samples/eks-anywhere-addons.git;
           git fetch origin pull/${PR_NUMBER}/head:pr
-          git merge pull/${PR_NUMBER}/head:pr
+          git merge origin pull/${PR_NUMBER}/head:pr
           git push --set-upstream origin dev
         fi
