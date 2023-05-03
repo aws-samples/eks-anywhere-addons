@@ -27,8 +27,7 @@ jobs:
           git checkout -b dev
           git remote remove origin
           git remote add origin https://${GITHUB_TOKEN}@github.com/aws-samples/eks-anywhere-addons.git;
-          git pull origin pull/${PR_NUMBER}/head:pr
-          git add .
-          git commit -a -m "Adding new ISV submission"
+          git fetch origin pull/${PR_NUMBER}/head:pr
+          git merge pull/${PR_NUMBER}/head:pr
           git push --set-upstream origin dev
         fi
