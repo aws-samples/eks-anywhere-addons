@@ -25,6 +25,6 @@ jobs:
         echo "PR = " ${PR_NUMBER}
         if [ ! -z "${COMMIT_ID}" ]; then 
           git fetch origin pull/${PR_NUMBER}/head:dev
-          git checkout -b dev
+          git checkout dev
           git push --set-upstream origin dev
         fi
