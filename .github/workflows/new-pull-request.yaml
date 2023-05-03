@@ -25,7 +25,7 @@ jobs:
         echo "PR = " ${PR_NUMBER}
         if [ ! -z "${COMMIT_ID}" ]; then 
           git fetch origin pull/${PR_NUMBER}/head:pr
-          git checkout dev
+          git checkout -b dev
           # git merge needs user details, but we don't push anything, so the contents are unimportant
           git merge --no-edit ${COMMIT_ID}
           git push
