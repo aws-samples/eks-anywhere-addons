@@ -1,0 +1,695 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.4">
+    
+    
+      
+        <title>Overview - Amazon EKS Anywhere Conformance and Validation Framework</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.240905d7.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#amazon-eks-anywhere-eks-a-conformance-and-validation-framework" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="Amazon EKS Anywhere Conformance and Validation Framework" class="md-header__button md-logo" aria-label="Amazon EKS Anywhere Conformance and Validation Framework" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Amazon EKS Anywhere Conformance and Validation Framework
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overview
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-samples/eks-anywhere-addons" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/eks-anywhere-addons
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="Amazon EKS Anywhere Conformance and Validation Framework" class="md-nav__button md-logo" aria-label="Amazon EKS Anywhere Conformance and Validation Framework" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Amazon EKS Anywhere Conformance and Validation Framework
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-samples/eks-anywhere-addons" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/eks-anywhere-addons
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          Home
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Overview
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Overview
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#amazon-eks-anywhere-eks-a-conformance-and-validation-framework" class="md-nav__link">
+    Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    🏃‍♀️Getting Started
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contribution-flow" class="md-nav__link">
+    Contribution Flow
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisite-linuxmacos" class="md-nav__link">
+    Pre-requisite (Linux/MacOS)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-testing-linuxmacos" class="md-nav__link">
+    Local Testing (Linux/MacOS)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    Validation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    Troubleshooting
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-feedback" class="md-nav__link">
+    🤝 Support &amp; Feedback
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    Security
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    License
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#community" class="md-nav__link">
+    🙌 Community
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collaboration" class="md-nav__link">
+    🙌 Collaboration
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#amazon-eks-anywhere-eks-a-conformance-and-validation-framework" class="md-nav__link">
+    Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    🏃‍♀️Getting Started
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contribution-flow" class="md-nav__link">
+    Contribution Flow
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisite-linuxmacos" class="md-nav__link">
+    Pre-requisite (Linux/MacOS)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-testing-linuxmacos" class="md-nav__link">
+    Local Testing (Linux/MacOS)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    Validation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    Troubleshooting
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-feedback" class="md-nav__link">
+    🤝 Support &amp; Feedback
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    Security
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    License
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#community" class="md-nav__link">
+    🙌 Community
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collaboration" class="md-nav__link">
+    🙌 Collaboration
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Overview</h1>
+
+<h2 id="amazon-eks-anywhere-eks-a-conformance-and-validation-framework">Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework<a class="headerlink" href="#amazon-eks-anywhere-eks-a-conformance-and-validation-framework" title="Permanent link">¤</a></h2>
+<p>💥 Welcome to Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework 💥</p>
+<p>🎯 This repository is part of the Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework, designed to address general validation and quality assurance of Partner and third-party solutions (add-ons) running on EKS-A on supported operating systems, hardware and virtualization platforms.</p>
+<p>🎯 The EKS Anywhere conformance and validation framework provides an expandable and extensible approach to run conformance testing on different EKS deployment models such as EKS-A on VMware (VMC), EKS-A on Bare Metal, EKS-A on Snow , EKS-A on Nutanix and Local clusters for Amazon EKS on AWS Outposts. It allows running Kubernetes conformance testing, Partner and OSS add-on deployment and validation on EKS-A environments and helps Partners validate their hardware (IHV) and software (ISV) solutions deployed on variety of EKS environments.</p>
+<p>🎯 This repository is a GitOps repository powered by FluxCD and contains Partner and third-party solutions and functional tests for deployment in the supported deployment environments. Each deployment option is represented by the respective folder in this repository, where Partners and external contributors can submit a pull request. </p>
+<p>🎯 <a href="https://www.weave.works/technologies/gitops/">GitOps</a> is leveraged as a decoupling mechanism between physical test environments and ISV solutions, enabling Partners to test their solutions without direct access to the respective labs and avoid potentially costly maintenance of the test environments. </p>
+<h2 id="getting-started">🏃‍♀️Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">¤</a></h2>
+<p>Deployment of a third-party solution requires a PR for a FluxCD deployment submitted to this repository. </p>
+<p>🚀   The framework allows to submit your solution to a single location and deploy across all environments with the same configuration. In this case, create a new solution specific folder (e.g. <code>&lt;orgname&gt;</code> or <code>&lt;orgname&gt;/&lt;productname&gt;</code>) in the common folder <a href="https://github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-common/Addons/Partner">eks-anywhere-common/Addons/Partner</a> and submit your GitOps deployment (e.g. HelmRelease, manifests and/or other support package management resources) in that folder.</p>
+<p>🚀   If your product and/or configuration must be distinct for each of the deployment options then create a new solution under the respective target. For example, if it is for EKS-A on Snow then the path is <code>eks-anywhere-snow/Addons/Partner</code>. </p>
+<p>🚀 For kubernetes namespace resource for your product, please add labels as shown below for reporting purposes:</p>
+<div class="highlight"><pre><span></span><code>apiVersion: v1
+kind: Namespace
+metadata:
+    name: kubecost
+    labels:
+        aws.conformance.vendor: kubecost
+        aws.conformance.vendor-solution: cost-analyzer
+</code></pre></div>
+<p>🚀   You can deploy Helm via FluxCD HelmRelease custom resource. Here is a <a href="https:/github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-common/Addons/Partner/Kubecost">Helm example</a>. In particular the example covers specification of <a href="https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost-source.yaml">Helm repository</a> and <a href="https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost.yaml">Helm release</a>. </p>
+<p>🚀   Secrets management such as license key or credentials is implemented using the External Secrets add-on. You will need to share secrets with the AWS Partner team. The AWS Partner team will create those secrets in an AWS account and use External Secrets to bring them down to the target deployment cluster. After that, such secrets can be configured in your GitOps deployment folder and passed to the deployment using configuration values or if your helm deployment can use pre-created secrets, that option is also supported.  The sample folder also contains an example of leveraging a <a href="https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/external-secret.yaml">secret</a> with the deployment as well as an example of wiring that secret in your deployment <a href="https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost.yaml#L24">here</a> (line numbers may change in the link).</p>
+<p>🚀   Though deployment and validation of your solution on the target deployment option is helpful, it does not provide the required level of quality assurance for functional verification, which is generally achieved with a test framework and automation normally included in the CI/CD cycle of the Partner product. We recommend that Partners wrap their functional test as a container and submit as a Kubernetes job along with their deployments to enable broader test coverage and better customer experience. The functional test job should be submitted under <code>eks-anywhere-common/testers</code> (runs on all platforms) or under your respective environment folder such as <code>eks-anywhere-snow/testers</code> (e.g. <code>eks-anywhere-snow/testers/&lt;orgname&gt;/&lt;productname&gt;</code>). Example <a href="https://github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-snow/Testers/Sample">here</a>. </p>
+<h2 id="contribution-flow">Contribution Flow<a class="headerlink" href="#contribution-flow" title="Permanent link">¤</a></h2>
+<ol>
+<li>Fork the repo. </li>
+<li>Apply changes such as deployment and/or any documentation.</li>
+<li>Test them locally using FluxCD.</li>
+<li>Submit a PR to the main branch of this repository.</li>
+</ol>
+<h2 id="pre-requisite-linuxmacos">Pre-requisite (Linux/MacOS)<a class="headerlink" href="#pre-requisite-linuxmacos" title="Permanent link">¤</a></h2>
+<p>This solution requires Flux CLI locally and Flux Controller on your Kubernetes cluster. Flux requires access to a source repository via api and access to the kubernetes cluster you want to use for testing. Please follow the below steps for installing these pre-requisites.</p>
+<p>If you do not already have access to a running kubernetes cluster you can consider setting up an <a href="https://anywhere.eks.amazonaws.com/docs/getting-started/local-environment/">EKS Anywhere local cluster</a> on docker provider or a local <a href="https://k3s.io/">k3s</a> cluster or you may choose a hosted service such as <a href="https://aws.amazon.com/eks/">AWS EKS</a>.</p>
+<p>Flux integrates into your running cluster and needs the kubeconfig file of the cluster for testing. Flux will look in the default location, i.e. <em>~/.kube/config</em>. </p>
+<p>Before setting up Flux make sure your configuration file points to your cluster. You can use the following command for example to verify that a suitable kubeconfig file can be found and the cluster can be accessed. If no configuration is found you will get an error message indicating that <em>"<a href="http://localhost:8080/version">http://localhost:8080/version</a>"</em> cannot be accessed. Do not be confused by the port number. The port number for accessing the kubernetes cluster is part of the configuration file and the reported port in the error message is a default port.</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>ns
+</code></pre></div>
+<p>You can use the following to ensure the flux installation finds the cluster you want to use for testing.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">KUBECONFIG</span><span class="o">=</span><span class="nv">$PATH_TO_kubeconfig</span>.yaml
+</code></pre></div>
+<p>Once you have a kubernetes cluster running and the configuration file is properly setup you are ready to install flux.</p>
+<p><div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aws-samples/eks-anywhere-addons.git
+<span class="nb">cd</span><span class="w"> </span>eks-anywhere-addons
+chmod<span class="w"> </span>+x<span class="w"> </span>installFlux.sh
+./installFlux.sh
+</code></pre></div>
+<strong>Note:</strong> In order to commit back to the project you need to create a fork in GitHub of the <em>eks-anywhere-addons</em> repository into your own project. After the fork is created clone the source code from your fork. To keep the projects connected, you can add the AWS project as an upstream by adding he below to your .git/config file.</p>
+<div class="highlight"><pre><span></span><code>[remote &quot;upstream&quot;]
+    url = git@github.com:aws-samples/eks-anywhere-addons.git
+    fetch = +refs/heads/*:refs/remotes/upstream/*
+</code></pre></div>
+<h2 id="local-testing-linuxmacos">Local Testing (Linux/MacOS)<a class="headerlink" href="#local-testing-linuxmacos" title="Permanent link">¤</a></h2>
+<p>🚀 First, lets create a plaintext secret in AWS Secrets Manager for your secrets (credentials, license keys, API keys, etc.) using instructions in <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/create_secret.html">create an AWS Secrets Manager secret</a> in <code>us-west-2</code> region.</p>
+<p>Next, install <a href="https://github.com/external-secrets/external-secrets">external-secrets</a> on your cluster using the below helm installation of external-secrets to sync secrets between AWS Secrets manager and EKSA Cluster:</p>
+<div class="highlight"><pre><span></span><code>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>external-secrets<span class="w"> </span>https://charts.external-secrets.io
+
+helm<span class="w"> </span>install<span class="w"> </span>external-secrets<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>external-secrets/external-secrets<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-n<span class="w"> </span>external-secrets<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--create-namespace<span class="w"> </span>
+</code></pre></div>
+<p>Next, lets create following Kubernetes generic secret in to your cluster for setting ClusterSecretStore to access AWS Secrets Manager to pull your secrets required for installation of your product:</p>
+<div class="highlight"><pre><span></span><code>aws<span class="w"> </span>iam<span class="w"> </span>create-access-key<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--user-name<span class="w"> </span>external-secrets-<span class="si">${</span><span class="nv">EKS_DEPLOYMENT_MODEL_SHORT</span><span class="si">}</span><span class="w"> </span>&gt;<span class="w"> </span>aws_creds.json
+
+<span class="nv">ACCESS_KEY</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>aws_creds.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>.AccessKey.AccessKeyId<span class="k">)</span>
+<span class="nv">SECRET_KEY</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>aws_creds.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>.AccessKey.SecretAccessKey<span class="k">)</span>
+
+kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>aws-secret<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span>access-key<span class="o">=</span><span class="nv">$ACCESS_KEY</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">secret</span><span class="o">=</span><span class="nv">$SECRET_KEY</span>
+
+rm<span class="w"> </span>-rf<span class="w"> </span>aws_creds.json
+</code></pre></div>
+<p>Next, lets create the following Kubernetes resource <code>ClusterSecretStore</code> to to access AWS Secrets Manager to pull your secrets required for installation of your product:</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt;EOF | kubectl apply -f - </span>
+<span class="s">apiVersion: external-secrets.io/v1beta1</span>
+<span class="s">kind: ClusterSecretStore</span>
+<span class="s">metadata:</span>
+<span class="s">  name: eksa-configmap-store</span>
+<span class="s">spec:</span>
+<span class="s">  provider:</span>
+<span class="s">    aws:  # set secretStore provider to AWS.</span>
+<span class="s">      service: ParameterStore # Configure service to be Parameter Store</span>
+<span class="s">      region: us-west-2  # Region where the secret is.</span>
+<span class="s">      auth:</span>
+<span class="s">        secretRef:</span>
+<span class="s">          accessKeyIDSecretRef: </span>
+<span class="s">            name: aws-secret # References the secret we created</span>
+<span class="s">            namespace: default</span>
+<span class="s">            key: access-key  </span>
+<span class="s">          secretAccessKeySecretRef:</span>
+<span class="s">            name: aws-secret</span>
+<span class="s">            namespace: default</span>
+<span class="s">            key: secret</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Add <code>GitRepository</code> for your fork:
+<div class="highlight"><pre><span></span><code>flux<span class="w"> </span>create<span class="w"> </span><span class="nb">source</span><span class="w"> </span>git<span class="w"> </span>addons<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--url<span class="o">=</span>&lt;forked<span class="w"> </span>repo<span class="w"> </span>from<span class="w"> </span>https://github.com/aws-samples/eks-anywhere-addons&gt;<span class="se">\</span>
+<span class="w">    </span>--branch<span class="o">=</span>main<span class="w"> </span><span class="c1"># This should be replaced with your branch for testing your changes</span>
+</code></pre></div></p>
+<p>This creates a flux GitRepository resource. The flux GitRepository resource will periodically check the configured repo and branch for changes and sync any new commits. Since this project uses git, we are creating a <code>GitRepository</code> resource.</p>
+<p><strong>Note:</strong> If you need/want to work in a disconnected fashion you need to run a git server on your system and push the <em>eks-anywhere-addons</em> repository to your git server.</p>
+<p>The name in the above command, <em>addons</em>, is arbitrary but must match the name used as the value of the <em>--source</em> argument in the following command.</p>
+<p>🚀 Add Kustomization for your add-on:
+<div class="highlight"><pre><span></span><code><span class="c1"># Example for Snowball Edge (replace --path with the target env as required)</span>
+flux<span class="w"> </span>create<span class="w"> </span>kustomization<span class="w"> </span>addons-snow-partner<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--source<span class="o">=</span>addons<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--path<span class="o">=</span><span class="s2">&quot;./eks-anywhere-snow/Addons/Partner&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prune<span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--interval<span class="o">=</span>5m<span class="w"> </span>
+</code></pre></div></p>
+<p>The given example will attempt to deploy all solutions it can find in the <em>./eks-anywhere-snow/Addons/Partner</em> directory tree. You can limit your testing to only your application by providing a more specific path, <em>./eks-anywhere-common/Addons/Partner/foobar</em> for example will deploy anything found in the <em>foobar</em> subdirectory. The <em>--path</em> setting must match the location where your deployment is setup, not the location for the testJob. </p>
+<p>The name, in this example <em>addons-snow-partner</em>, is arbitrary. As mentioned the value for the <em>--source</em> argument must match the name given when the source reference was created.</p>
+<h2 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">¤</a></h2>
+<p>🚀 Validate by navigating to the target namespace and checking if all pods are running. As an example, Please see the kubernetes resources in botkube namespace as shown below:</p>
+<div class="highlight"><pre><span></span><code>❯ kga -n botkube
+NAME                                   READY   STATUS    RESTARTS   AGE
+pod/botkube-botkube-58c4579b44-87mbq   1/1     Running   0          7h55m
+
+NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/botkube-botkube   1/1     1            1           7h55m
+
+NAME                                         DESIRED   CURRENT   READY   AGE
+replicaset.apps/botkube-botkube-58c4579b44   1         1         1       7h55m
+</code></pre></div>
+<p>For functional testing you need to create a <strong>testJob</strong>. See <em>eks-anywhere-addons/eks-anywhere-common/Testers</em> for examples. The descriptions about <a href="https://kubernetes.io/docs/concepts/workloads/controllers/job/">Jobs</a> from upstream kubernetes provides helpful information and additional details.</p>
+<p>Presumably your application will provide a service that can be accessed to verify the application deployed as expected. In the test job performs a basic functional verification of your deployed product. The generic access pattern to access a service in the cluster is <code>servicename.namespace.svc.cluster.local:port</code> where <code>servicename</code> is the name of your service, <code>namespace</code> is the namespace you assigned in your deployment yaml description and <code>port</code> is the port number your service is running on. </p>
+<p>If you are uncertain about the service name you can use the following where <em>$NAMESPACE</em> is the namespace you assigned in your deployment yaml description. </p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>services<span class="w"> </span>-n<span class="w"> </span><span class="nv">$NAMESPACE</span>
+</code></pre></div>
+<p>🚀 Add Kustomization for testing your test job :</p>
+<div class="highlight"><pre><span></span><code>flux<span class="w"> </span>create<span class="w"> </span>kustomization<span class="w"> </span>addons-snow-partner<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--source<span class="o">=</span>addons<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--path<span class="o">=</span><span class="s2">&quot;./eks-anywhere-snow/testers/Partner&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prune<span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--interval<span class="o">=</span>5m<span class="w"> </span>
+</code></pre></div>
+<p>Use the below command to delete the existing job :</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>job<span class="w"> </span><span class="nv">$NAME_OF_TESTJOB</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$NAMESPACE</span>
+</code></pre></div>
+<p>To debug the test job use the <code>kubectl logs</code> command.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">¤</a></h2>
+<p>The<a href="https://fluxcd.io/flux/cheatsheets/troubleshooting/">FluxCD Troubleshooting</a> guide provides information on most commands to troubleshoot the deployment and helps you understand any issues you may encounter.</p>
+<h2 id="support-feedback">🤝 Support &amp; Feedback<a class="headerlink" href="#support-feedback" title="Permanent link">¤</a></h2>
+<p>Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework is maintained by AWS Solution Architects and is not an AWS service. Support is provided on a best effort basis. If you have feedback, feature ideas, or wish to report bugs, please use the <a href="https://github.com/aws-samples/eks-anywhere-addons/issues">Issues</a> section of this GitHub.</p>
+<h2 id="security">Security<a class="headerlink" href="#security" title="Permanent link">¤</a></h2>
+<p>See <a href="CONTRIBUTING.md#security-issue-notifications">CONTRIBUTING</a> for more information.</p>
+<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">¤</a></h2>
+<p>This library is licensed under the MIT-0 License. See the LICENSE file.</p>
+<h2 id="community">🙌 Community<a class="headerlink" href="#community" title="Permanent link">¤</a></h2>
+<p>We welcome all individuals who are enthusiastic about Kubernetes to become a part of this open source conformance framework. Your contributions and participation are invaluable to the success of this project.</p>
+<h2 id="collaboration">🙌 Collaboration<a class="headerlink" href="#collaboration" title="Permanent link">¤</a></h2>
+<p>Please join us on slack at <a href="awsdevelopers.slack.com">AWS Developers</a>. Get onboarded to slack by sharing your emails with us.</p>
+<p>Built with ❤️ at AWS.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["tabs"], "search": "assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.19047be9.min.js"></script>
+      
+    
+  </body>
+</html>
