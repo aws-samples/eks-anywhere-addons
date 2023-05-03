@@ -14,8 +14,8 @@ jobs:
     steps:
     - name: Checkout and Merge to Developer branch
       run: |
-        echo $GITHUB_REF
-        echo ::set-env name=PULL_NUMBER::$(echo "$GITHUB_REF" | awk -F / '{print $3}')
+        echo "GITUB_REF : " $GITHUB_REF
+        PULL_NUMBER=$(echo "$GITHUB_REF" | awk -F / '{print $3}')
         echo "Commit ID = " ${COMMIT_ID}
         echo "PR = " ${PR_NUMBER}
         echo "PULL NUMBER : " ${PULL_NUMBER}
