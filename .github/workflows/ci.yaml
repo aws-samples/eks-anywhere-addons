@@ -14,8 +14,12 @@ jobs:
     steps:
     - name: Checkout and Merge to Developer branch
       run: |
-        echo "Commit ID " ${COMMIT_ID}
-        echo "PR" ${PR_NUMBER}
+        PR_NUMBER = $(gh pr view --json number -q .number)"
+        echo $GITHUB_REF
+        echo ::set-env name=PULL_NUMBER::$(echo "$GITHUB_REF" | awk -F / '{print $3}')
+        echo "Commit ID = " ${COMMIT_ID}
+        echo "PR = " ${PR_NUMBER}
+        echo "PULL NUMBER : " ${PULL_NUMBER}
         if [ ! -z "${COMMIT_ID}" ]; then 
           git fetch origin pull/${PR_NUMBER}/head:pr
           git checkout developer
