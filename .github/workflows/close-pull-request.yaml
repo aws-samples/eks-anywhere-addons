@@ -20,7 +20,7 @@ jobs:
           git fetch origin pull/${PR_NUMBER}/head:${PR_NUMBER}
           git checkout ${PR_NUMBER}
           git pull
-          COMMITS=$(git log $(git merge-base gh-actions-test  ${PR_NUMBER})..${PR_NUMBER} --pretty=format:"%h")
+          COMMITS=$(git log $(git merge-base dev  ${PR_NUMBER})..${PR_NUMBER} --pretty=format:"%h")
           echo "Reverting $COMMITS"
           git checkout dev
           while read commit 
