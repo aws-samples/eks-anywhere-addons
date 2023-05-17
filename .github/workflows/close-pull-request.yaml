@@ -1,7 +1,7 @@
-name: PRs to gh-actions-test
+name: PRs to Main
 on: 
   pull_request:
-    branches: [gh-actions-test]
+    branches: [main]
     types: [closed]
 jobs:
   merge-master-back-to-dev:
@@ -20,7 +20,8 @@ jobs:
           git fetch --unshallow
           git fetch origin pull/${PR_NUMBER}/head:${PR_NUMBER}
           git checkout ${PR_NUMBER}
-          COMMITS=$(git log $(git merge-base dev  ${PR_NUMBER})..${PR_NUMBER} --pretty=format:"%h")
+          git fetch origin dev
+          COMMITS=$(git log $(git merge-base dev ${PR_NUMBER})..${PR_NUMBER} --pretty=format:"%h")
           echo "Reverting $COMMITS"
           git checkout dev
           while read commit 
@@ -28,4 +29,3 @@ jobs:
             git revert -m 1 $commit
           done <<< $COMMITS
           git push
-
