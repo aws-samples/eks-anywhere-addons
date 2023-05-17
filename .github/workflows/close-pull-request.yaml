@@ -1,7 +1,7 @@
-name: PRs to Main
+name: PRs to githubactionstest
 on: 
   pull_request:
-    branches: [main]
+    branches: [gh-actions-test]
     types: [closed]
 jobs:
   merge-master-back-to-dev:
