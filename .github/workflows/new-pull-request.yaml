@@ -20,7 +20,7 @@ jobs:
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-          echo "namespace_name" > namespace.tmp
+          echo "$namespace_name" > namespace.tmp
         fi
           
     - name: Generate the config map file content and create ConfigMap File
