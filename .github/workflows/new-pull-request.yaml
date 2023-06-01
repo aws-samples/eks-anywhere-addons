@@ -45,8 +45,7 @@ jobs:
         echo "  name: $namespace-configmap" >> $config_map_file
         echo "data:" >> $config_map_file
         echo "  Namespace: ${namespace}" >> $config_map_file
-        echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file          
-        cat $config_map_file
+        echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file
 
     - name: Set Git config
       run: |
@@ -60,6 +59,7 @@ jobs:
         if [ ! -z "${commitId}" ]; then 
           git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
           git checkout dev
+          cat $config_map_file
           git add $config_map_file
           git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
           git push --set-upstream origin dev
