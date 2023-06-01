@@ -20,14 +20,12 @@ jobs:
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-          echo "namespace_name=$namespace_name" > namespace.tmp
+          echo "namespace_name" > namespace.tmp
         fi
           
     - name: Generate the config map file content and create ConfigMap File
       run: |
           namespace=$(cat namespace.tmp)
-          cat namespace.tmp
-          echo "2 : " $namespace
           config_map_file="config-map-${namespace}-${{ github.event.pull_request.number }}.yml"
           echo "apiVersion: v1" >> $config_map_file
           echo "kind: ConfigMap" >> $config_map_file
@@ -36,6 +34,7 @@ jobs:
           echo "data:" >> $config_map_file
           echo "  Namespace: ${namespace}" >> $config_map_file
           echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file          
+          cat $config_map_file
 
     - name: Set Git config
       run: |
