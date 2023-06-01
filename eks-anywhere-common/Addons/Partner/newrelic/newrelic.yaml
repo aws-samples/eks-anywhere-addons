@@ -19,16 +19,22 @@ spec:
   values:
     global:
       cluster: eks-conformance-testing
-      lowDataMode: true
-    newrelic-infrastructure: 
+      lowDataMode: false
+    newrelic-infrastructure:
+      controlPlane:
+        enabled: false
       privileged: false
+      common:
+        config:
+          interval: 40s
+          namespaceSelector:
+            matchLabels:
+              scrape: "true"
     kube-state-metrics:
       image:
         tag: v2.6.0
       enabled: true
-    kubeEvents:
-      enabled: true
-    logging:
+    nri-metadata-injection:
       enabled: false
   valuesFrom:
   - kind: Secret

@@ -5,3 +5,4 @@ metadata:
   labels:
       aws.conformance.vendor: newrelic
       aws.conformance.vendor-solution: newrelic-bundle
+      scrape: "true"
