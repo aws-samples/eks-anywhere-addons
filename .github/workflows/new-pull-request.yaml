@@ -21,13 +21,16 @@ jobs:
     - name: Find Namespace YAML
       id: find-namespace-yaml
       run: |
-        git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.head.sha }}
-        namespace_file=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.head.sha }} | grep "namespace.yaml")
-        echo "file : " $namespace_file
+        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+        namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
-          namespace=$(yq eval '.metadata.name' "$namespace_file")
-          echo "namespace_name : " $namespace_name"
+          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+          echo "::set-output name=namespace_name::$namespace_name"
         fi
+          
+    - name: Use Namespace Name
+      run: |
+        echo "Namespace Name: ${{ steps.find-namespace-yaml.outputs.namespace_name }}"
 
     # - name: Extract namespace
     #   id: extract-namespace
