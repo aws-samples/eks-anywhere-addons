@@ -50,6 +50,7 @@ jobs:
         commitId=$(echo $GITHUB_SHA | cut -c1-7)
         echo "Commit ID = " ${commitId}
         if [ ! -z "${commitId}" ]; then 
+          git fetch -all
           git checkout dev
           git pull origin main
           git pull origin pull/${{ github.event.pull_request.number }}/head:dev
