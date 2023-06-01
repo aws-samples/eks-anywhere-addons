@@ -50,11 +50,9 @@ jobs:
         commitId=$(echo $GITHUB_SHA | cut -c1-7)
         echo "Commit ID = " ${commitId}
         if [ ! -z "${commitId}" ]; then 
-          git fetch --all
+          git fetch origin pull/${PR_NUMBER}/head:dev
           git checkout dev
-          git fetch origin main
-          git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
           git add $config_map_file
           git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
-          git push origin dev
+          git push --set-upstream origin dev
         fi
