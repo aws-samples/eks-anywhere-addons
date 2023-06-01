@@ -2,7 +2,8 @@ name: Run CI for ISV Addons
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
+    types: [opened, reopened, synchronize]
 
 jobs:
   build:
@@ -13,11 +14,11 @@ jobs:
       run: |
         git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
         git checkout pr_branch
-        if [[ ! -f "namespace.yml" ]]; then
-          echo "::error::namespace.yml not found"
+        if [[ ! -f "namespace.yaml" ]]; then
+          echo "::error::namespace.yaml not found"
           exit 1
         fi
-        namespace=$(yq eval '.metadata.namespace' namespace.yml)
+        namespace=$(yq eval '.metadata.namespace' namespace.yaml)
         if [[ -z "$namespace" ]]; then
           echo "::error::Kubernetes namespace not found in namespace.yml"
           exit 1
