@@ -30,7 +30,7 @@ jobs:
           
     - name: Use Namespace Name
       run: |
-        echo "Namespace Name: ${{ steps.find-namespace-yaml.outputs.namespace_name }}"
+        echo "Namespace Name: $namespace_name"
 
     # - name: Extract namespace
     #   id: extract-namespace
