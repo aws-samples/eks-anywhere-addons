@@ -21,7 +21,7 @@ jobs:
     - name: Find namespace.yaml file
       id: find-file
       run: |
-        git diff --name-only HEAD..$GITHUB_SHA | grep -E "namespace\.yaml$" > changed_files.txt
+        git diff --name-only origin/main $GITHUB_SHA | grep -E "namespace\.yaml$" > changed_files.txt
         echo "::set-output name=files::$(cat changed_files.txt)"
 
     - name: Extract namespace
