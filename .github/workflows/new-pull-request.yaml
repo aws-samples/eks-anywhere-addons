@@ -25,12 +25,14 @@ jobs:
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-          echo "namespace_name=$namespace_name" >> $GITHUB_ENV
+          echo "namespace_name=$namespace_name" > namespace.tmp
+          export namespace=$namespace_name
         fi
           
     - name: Use Namespace Name
       run: |
-        echo "Namespace Name: ${{ env.namespace_name }}"
+        echo "Namespace Name: $namespace"
+        cat namespact.tmp
 
     # - name: Extract namespace
     #   id: extract-namespace
