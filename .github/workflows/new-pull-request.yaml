@@ -25,7 +25,7 @@ jobs:
         echo "file : " $namespace_file
         if [ -n "$namespace_file" ]; then
           namespace=$(yq eval '.metadata.name' "$namespace_file")
-          echo "::set-output name=namespace_name::$namespace_name"
+          echo "namespace_name : " $namespace_name"
         fi
 
     # - name: Extract namespace
