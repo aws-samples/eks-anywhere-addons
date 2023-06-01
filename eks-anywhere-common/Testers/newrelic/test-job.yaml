@@ -12,11 +12,11 @@ spec:
       # timeout after 15 minutes
       template:
         spec:
-          serviceAccount: newrelic-testjob-service-account
-          initContainers:
-            - name: kubectl
-              image: bitnami/kubectl
-              command: ['sh', '-c', "while [[$(kubectl get pods -l app.kubernetes.io/name=nri-metadata-injection -o 'jsonpath={..status.conditions[?(@.type==\"Running\")].status}') != \"True\" ]]; do echo \"waiting to init\"; sleep 10; done"]
+          # serviceAccount: newrelic-testjob-service-account
+          # initContainers:
+          #   - name: kubectl
+          #     image: bitnami/kubectl
+          #     command: ['sh', '-c', "while [[$(kubectl get pods -l app.kubernetes.io/name=nri-metadata-injection -o 'jsonpath={..status.conditions[?(@.type==\"Running\")].status}') != \"True\" ]]; do echo \"waiting to init\"; sleep 10; done"]
           containers:
           - name: test-container
             image: golang:latest
