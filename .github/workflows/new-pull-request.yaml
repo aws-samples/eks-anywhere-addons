@@ -10,20 +10,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Check Namespace YAML and Kubernetes Namespace
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.x
+
+    - name: Find namespace.yaml file
+      id: find-file
       run: |
-        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
-        if [[ $(find . -type f -name "namespace.yaml" | wc -l) -eq 0 ]]; then
-          echo "::error::namespace.yaml not found"
-          exit 1
-        fi
-        namespace=$(yq eval '.metadata.name' $(find . -type f -name "namespace.yaml") | sed 's/"//g')
-        if [[ -z "$namespace" ]]; then
-          echo "::error::Kubernetes namespace not found in namespace.yml"
-          exit 1
-        fi
-        echo "Namespace: $namespace"
+        git diff --name-only HEAD..$GITHUB_SHA | grep -E "namespace\.yaml$" > changed_files.txt
+        echo "::set-output name=files::$(cat changed_files.txt)"
+
+    - name: Extract namespace
+      id: extract-namespace
+      run: |
+        while IFS= read -r file; do
+          echo "File Name: $file"
+          if [[ $file -eq "namespace.yaml" ]]; then
+            namespace=$(yq eval '.metadata.namespace' "$file" 2>/dev/null)
+            if [[ -z "$namespace" ]]; then
+              echo "::error::Kubernetes namespace not found in namespace.yml"
+              exit 1
+            fi
+            echo "Namespace: $namespace"
+          fi
+        done
+
+    # - name: Check Namespace YAML and Kubernetes Namespace
+    #   run: |
+    #     git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
+    #     if [[ $(find . -type f -name "namespace.yaml" | wc -l) -eq 0 ]]; then
+    #       echo "::error::namespace.yaml not found"
+    #       exit 1
+    #     fi
+    #     namespace=$(yq eval '.metadata.name' $(find . -type f -name "namespace.yaml") | sed 's/"//g')
+    #     if [[ -z "$namespace" ]]; then
+    #       echo "::error::Kubernetes namespace not found in namespace.yml"
+    #       exit 1
+    #     fi
+    #     echo "Namespace: $namespace"
     - name: Generate the config map file content and create ConfigMap File
       run: |
           config_map_file="config-map-${namespace}-${{ github.event.pull_request.number }}.yml"
