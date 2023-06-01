@@ -3,28 +3,53 @@ name: Run CI for ISV Addons
 on:
   pull_request:
     branches: [ main ]
+    types:
+      opened
+      synchronize
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.12.1]
     steps:
-    - uses: actions/checkout@v2
+    - name: Check Namespace YAML and Kubernetes Namespace
+      run: |
+        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
+        git checkout pr_branch
+        if [[ ! -f "namespace.yml" ]]; then
+          echo "::error::namespace.yml not found"
+          exit 1
+        fi
+        namespace=$(yq eval '.metadata.namespace' namespace.yml)
+        if [[ -z "$namespace" ]]; then
+          echo "::error::Kubernetes namespace not found in namespace.yml"
+          exit 1
+        fi
+        echo "Namespace: $namespace"
+    - name: Generate the config map file content and create ConfigMap File
+      run: |
+          config_map_file="config-map-${namespace}-${{ github.event.pull_request.number }}.yml"
+          echo "apiVersion: v1" >> $config_map_file
+          echo "kind: ConfigMap" >> $config_map_file
+          echo "metadata:" >> $config_map_file
+          echo "  name: $namespace-configmap" >> $config_map_file
+          echo "data:" >> $config_map_file
+          echo "  Namespace: ${namespace}" >> $config_map_file
+          echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file          
+
     - name: Set Git config
       run: |
           git config --local user.email "dev@null"
           git config --local user.name "CI Bot"
-    - name: Merge to Developer branch
+
+    - name: Add File and Merge to Developer branch
       run: |
-        PR_NUMBER=$(echo "$GITHUB_REF" | awk -F / '{print $3}')
-        COMMIT_ID=$(echo $GITHUB_SHA | cut -c1-7)
-        echo "Commit ID = " ${COMMIT_ID}
-        echo "PR = " ${PR_NUMBER}
-        if [ ! -z "${COMMIT_ID}" ]; then 
-          git fetch origin pull/${PR_NUMBER}/head:dev
+        commitId=$(echo $GITHUB_SHA | cut -c1-7)
+        echo "Commit ID = " ${commitId}
+        if [ ! -z "${commitId}" ]; then 
           git checkout dev
-          git push --set-upstream origin dev
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
+          git add $config_map_file
+          git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+          git push origin dev
         fi
