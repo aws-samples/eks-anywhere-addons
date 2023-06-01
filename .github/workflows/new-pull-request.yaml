@@ -61,8 +61,9 @@ jobs:
           config_map_filename=$(cat config_map_filename.tmp)
           config_map_file=$(echo $config_map_filename | xargs echo -n)
           echo $config_map_file
-          git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
+          git fetch --all
           git checkout dev_branch
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
           cat $config_map_file
           git add $config_map_file
           git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
