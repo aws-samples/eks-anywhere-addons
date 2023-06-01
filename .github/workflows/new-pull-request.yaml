@@ -66,5 +66,5 @@ jobs:
           cat $config_map_file
           git add $config_map_file
           git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
-          git push --set-upstream dev_branch 
+          git push --set-upstream origin dev_branch 
         fi
