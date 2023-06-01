@@ -21,8 +21,8 @@ jobs:
     - name: Find Namespace YAML
       id: find-namespace-yaml
       run: |
-        git diff-tree --no-commit-id --name-only -r ${{ github.sha }}
-        namespace_file=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep "namespace.yaml")
+        git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.head.sha }}
+        namespace_file=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.pull_request.head.sha }} | grep "namespace.yaml")
         echo "file : " $namespace_file
         if [ -n "$namespace_file" ]; then
           namespace=$(yq eval '.metadata.name' "$namespace_file")
