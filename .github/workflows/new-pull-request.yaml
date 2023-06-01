@@ -26,24 +26,24 @@ jobs:
           
     - name: Generate the config map file content and create ConfigMap File
       run: |
-          namespace_name=$(cat namespace.tmp)
-          namespace=$(echo $namespace_name | xargs echo -n)
-          echo $namespace
-          config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
-          echo $config_map_file
-          echo "apiVersion: v1" >> $config_map_file
-          echo "kind: ConfigMap" >> $config_map_file
-          echo "metadata:" >> $config_map_file
-          echo "  name: $namespace-configmap" >> $config_map_file
-          echo "data:" >> $config_map_file
-          echo "  Namespace: ${namespace}" >> $config_map_file
-          echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file          
-          cat $config_map_file
+        namespace_name=$(cat namespace.tmp)
+        namespace=$(echo $namespace_name | xargs echo -n)
+        echo $namespace
+        config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+        echo $config_map_file
+        echo "apiVersion: v1" >> $config_map_file
+        echo "kind: ConfigMap" >> $config_map_file
+        echo "metadata:" >> $config_map_file
+        echo "  name: $namespace-configmap" >> $config_map_file
+        echo "data:" >> $config_map_file
+        echo "  Namespace: ${namespace}" >> $config_map_file
+        echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file          
+        cat $config_map_file
 
     - name: Set Git config
       run: |
-          git config --local user.email "dev@null"
-          git config --local user.name "CI Bot"
+        git config --local user.email "dev@null"
+        git config --local user.name "CI Bot"
 
     - name: Add File and Merge to Developer branch
       run: |
