@@ -13,11 +13,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.x
-
     - name: Find Namespace YAML
       id: find-namespace-yaml
       run: |
@@ -26,44 +21,11 @@ jobs:
         if [ -n "$namespace_file" ]; then
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           echo "namespace_name=$namespace_name" > namespace.tmp
-          export namespace=$namespace_name
         fi
           
-    - name: Use Namespace Name
-      run: |
-        echo "Namespace Name: "$namespace
-        cat namespace.tmp
-
-    # - name: Extract namespace
-    #   id: extract-namespace
-    #   run: |
-    #     while IFS= read -r file; do
-    #       echo "File Name: $file"
-    #       if [[ $file -eq "namespace.yaml" ]]; then
-    #         namespace=$(yq eval '.metadata.namespace' "$file" 2>/dev/null)
-    #         if [[ -z "$namespace" ]]; then
-    #           echo "::error::Kubernetes namespace not found in namespace.yml"
-    #           exit 1
-    #         fi
-    #         echo "Namespace: $namespace"
-    #       fi
-    #     done
-
-    # - name: Check Namespace YAML and Kubernetes Namespace
-    #   run: |
-    #     git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
-    #     if [[ $(find . -type f -name "namespace.yaml" | wc -l) -eq 0 ]]; then
-    #       echo "::error::namespace.yaml not found"
-    #       exit 1
-    #     fi
-    #     namespace=$(yq eval '.metadata.name' $(find . -type f -name "namespace.yaml") | sed 's/"//g')
-    #     if [[ -z "$namespace" ]]; then
-    #       echo "::error::Kubernetes namespace not found in namespace.yml"
-    #       exit 1
-    #     fi
-    #     echo "Namespace: $namespace"
     - name: Generate the config map file content and create ConfigMap File
       run: |
+          namespace=$(cat namespace.tmp)
           config_map_file="config-map-${namespace}-${{ github.event.pull_request.number }}.yml"
           echo "apiVersion: v1" >> $config_map_file
           echo "kind: ConfigMap" >> $config_map_file
@@ -83,6 +45,7 @@ jobs:
         commitId=$(echo $GITHUB_SHA | cut -c1-7)
         echo "Commit ID = " ${commitId}
         if [ ! -z "${commitId}" ]; then 
+          git fetch --all
           git checkout dev
           git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
           git add $config_map_file
