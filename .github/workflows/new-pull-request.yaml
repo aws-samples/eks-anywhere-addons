@@ -27,8 +27,8 @@ jobs:
     - name: Generate the config map file content and create ConfigMap File
       run: |
           namespace=$(cat namespace.tmp)
-          echo $namespace
-          config_map_file="config-map-${namespace}-${{ github.event.pull_request.number }}.yml"
+          config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+          echo $config_map_file
           echo "apiVersion: v1" >> $config_map_file
           echo "kind: ConfigMap" >> $config_map_file
           echo "metadata:" >> $config_map_file
