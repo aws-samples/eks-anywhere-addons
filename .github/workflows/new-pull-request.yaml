@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v2
     - name: Check Namespace YAML and Kubernetes Namespace
       run: |
         git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
-        git checkout pr_branch
         if [[ ! -f "namespace.yaml" ]]; then
           echo "::error::namespace.yaml not found"
           exit 1
