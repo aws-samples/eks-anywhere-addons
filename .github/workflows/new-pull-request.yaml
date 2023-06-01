@@ -14,7 +14,7 @@ jobs:
     - name: Check Namespace YAML and Kubernetes Namespace
       run: |
         git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
-        if [[ $(find . -type f -name "namespace.yaml" | wc -l) -eq 0 ]];
+        if [[ $(find . -type f -name "namespace.yaml" | wc -l) -eq 0 ]]; then
           echo "::error::namespace.yaml not found"
           exit 1
         fi
