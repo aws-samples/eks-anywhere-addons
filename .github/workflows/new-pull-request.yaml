@@ -21,7 +21,12 @@ jobs:
     - name: Find namespace.yaml file
       id: find-file
       run: |
-        git diff --name-only HEAD $GITHUB_SHA
+        echo $GITHUB_SHA
+        commitId=$(echo $GITHUB_SHA | cut -c1-7)
+        echo "Commit ID = " ${commitId}
+        git diff --name-only main $GITHUB_SHA
+        git diff --name-only main $commitId
+        git diff --name-only HEAD $commitId
         git diff --name-only HEAD $GITHUB_SHA | grep -E "namespace.yaml" > changed_files.txt
         cat changed_files.txt
         echo "::set-output name=files::$(cat changed_files.txt)"
