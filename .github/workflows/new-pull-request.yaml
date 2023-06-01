@@ -17,12 +17,9 @@ jobs:
       id: find-namespace-yaml
       run: |
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-        directory=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files")
         echo $files
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
-          directory_name=$(dirname $namespace_file)
-          echo $directory_name
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           if [[ ! -z $namespace_name ]]; then
             echo "$namespace_name" > namespace.tmp
