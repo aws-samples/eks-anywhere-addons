@@ -19,5 +19,5 @@ jobs:
           git fetch --unshallow
           git checkout dev_branch
           git pull
-          git merge --no-ff main -m "Auto-merge main back to dev"
+          git merge --no-ff origin/main -m "Auto-merge main back to dev"
           git push
