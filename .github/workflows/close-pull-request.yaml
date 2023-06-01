@@ -16,7 +16,7 @@ jobs:
           git config --local user.name "CI Bot"
     - name: Merge main back to dev
       run: |
-          git fetch --unshallow
           git checkout dev_branch
-          git merge origin main --no-edit -m "Auto-merge main back to dev"
+          git fetch --all
+          git merge main --no-edit -m "Auto-merge main back to dev"
           git push origin dev_branch
