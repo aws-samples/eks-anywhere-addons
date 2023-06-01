@@ -20,5 +20,5 @@ jobs:
       run: |
           git fetch origin main:main
           git checkout dev_branch
-          git merge main --no-edit
+          git merge main --no-edit --allow-unrelated-histories
           git push origin dev_branch
