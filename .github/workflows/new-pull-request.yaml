@@ -20,8 +20,16 @@ jobs:
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-          echo "$namespace_name" > namespace.tmp
-          cat namespace.tmp
+          if [[ ! -z $namespace_name ]]; then
+            echo "$namespace_name" > namespace.tmp
+            cat namespace.tmp
+          else 
+            echo "No Namespace found"
+            exit 100
+          fi
+        else 
+          echo "No namespace.yaml file found"
+          exit 200
         fi
           
     - name: Generate the config map file content and create ConfigMap File
@@ -50,7 +58,7 @@ jobs:
         commitId=$(echo $GITHUB_SHA | cut -c1-7)
         echo "Commit ID = " ${commitId}
         if [ ! -z "${commitId}" ]; then 
-          git fetch origin pull/${PR_NUMBER}/head:dev
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
           git checkout dev
           git add $config_map_file
           git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
