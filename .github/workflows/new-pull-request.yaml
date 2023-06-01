@@ -21,6 +21,7 @@ jobs:
     - name: Find Namespace YAML
       id: find-namespace-yaml
       run: |
+        git diff-tree --no-commit-id --name-only -r ${{ github.sha }}
         namespace_file=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep "namespace.yaml")
         echo "file : " $namespace_file
         if [ -n "$namespace_file" ]; then
