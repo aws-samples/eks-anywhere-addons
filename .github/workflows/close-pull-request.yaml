@@ -18,6 +18,5 @@ jobs:
       run: |
           git fetch --unshallow
           git checkout dev_branch
-          git pull
-          git merge --no-ff origin/main -m "Auto-merge main back to dev"
-          git push
+          git merge main --no-edit -m "Auto-merge main back to dev"
+          git push origin dev_branch
