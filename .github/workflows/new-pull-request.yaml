@@ -38,6 +38,7 @@ jobs:
         namespace=$(echo $namespace_name | xargs echo -n)
         echo $namespace
         config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+        echo "$config_map_file" > config_map_filename.tmp
         echo $config_map_file
         echo "apiVersion: v1" >> $config_map_file
         echo "kind: ConfigMap" >> $config_map_file
@@ -57,6 +58,9 @@ jobs:
         commitId=$(echo $GITHUB_SHA | cut -c1-7)
         echo "Commit ID = " ${commitId}
         if [ ! -z "${commitId}" ]; then 
+          config_map_filename=$(cat config_map_filename.tmp)
+          config_map_file=$(echo $config_map_filename | xargs echo -n)
+          echo $config_map_file
           git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
           git checkout dev
           cat $config_map_file
