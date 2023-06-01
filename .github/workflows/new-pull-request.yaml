@@ -21,11 +21,13 @@ jobs:
         if [ -n "$namespace_file" ]; then
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           echo "$namespace_name" > namespace.tmp
+          cat namespace.tmp
         fi
           
     - name: Generate the config map file content and create ConfigMap File
       run: |
           namespace=$(cat namespace.tmp)
+          echo $namespace
           config_map_file="config-map-${namespace}-${{ github.event.pull_request.number }}.yml"
           echo "apiVersion: v1" >> $config_map_file
           echo "kind: ConfigMap" >> $config_map_file
