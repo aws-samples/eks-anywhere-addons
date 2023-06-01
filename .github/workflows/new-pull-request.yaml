@@ -31,8 +31,8 @@ jobs:
           
     - name: Use Namespace Name
       run: |
-        echo "Namespace Name: $namespace"
-        cat namespact.tmp
+        echo "Namespace Name: "$namespace
+        cat namespace.tmp
 
     # - name: Extract namespace
     #   id: extract-namespace
