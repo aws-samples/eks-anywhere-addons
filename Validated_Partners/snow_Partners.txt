@@ -1,5 +1,5 @@
 Kubernetes Version :  1.24 
-Date of Conformance Test : 2023-04-18
+Date of Conformance Test : 2023-06-12
  
 Following ISV Partners have Validated their Conformance : 
  
@@ -7,5 +7,6 @@ VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE
 dynatrace        dynatrace
 kubecost         cost-analyzer
 suse             neuvector
+newrelic         newrelic-bundle
 sysdig           sysdig-agent
 hashicorp        vault
