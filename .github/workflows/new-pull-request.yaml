@@ -72,7 +72,7 @@ jobs:
           git fetch --all
           git checkout dev_branch
           git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
-          cat $config_map_file
+          cat ./$subdirectory_name/$config_map_file
           git add ./$subdirectory_name/$config_map_file
           git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
           git push --set-upstream origin dev_branch 
