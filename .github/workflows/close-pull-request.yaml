@@ -10,14 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        ref: dev_branch
     - name: Set Git config
       run: |
           git config --local user.email "dev@null"
           git config --local user.name "CI Bot"
     - name: Merge main back to dev
       run: |
-          git fetch --unshallow
-          git checkout dev
-          git pull
-          git merge --no-ff main -m "Auto-merge main back to dev"
-          git push
+          git fetch origin main:main
+          git checkout dev_branch
+          git merge main --no-edit --allow-unrelated-histories --strategy-option=theirs
+          git checkout --force main .
+          git push origin dev_branch

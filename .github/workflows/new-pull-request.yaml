@@ -12,70 +12,81 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Set up Go
-      uses: actions/setup-go@v2
       with:
-        go-version: 1.x
+        ref: ${{ github.event.pull_request.head.ref }}
 
-    - name: Find namespace.yaml file
-      id: find-file
+    - name: Find Namespace YAML
+      id: find-namespace-yaml
       run: |
-        git diff --name-only HEAD..$GITHUB_SHA | grep -E "namespace\.yaml$" > changed_files.txt
-        echo "::set-output name=files::$(cat changed_files.txt)"
-
-    - name: Extract namespace
-      id: extract-namespace
-      run: |
-        while IFS= read -r file; do
-          echo "File Name: $file"
-          if [[ $file -eq "namespace.yaml" ]]; then
-            namespace=$(yq eval '.metadata.namespace' "$file" 2>/dev/null)
-            if [[ -z "$namespace" ]]; then
-              echo "::error::Kubernetes namespace not found in namespace.yml"
-              exit 1
-            fi
-            echo "Namespace: $namespace"
+        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+        echo $files
+        namespace_file=$(echo "$files" | grep "namespace.yaml")
+        if [ -n "$namespace_file" ]; then
+          subdirectory=$(dirname $namespace_file)
+          echo "Sub Directory = $subdirectory"
+          echo "$subdirectory" > subdirectory.tmp
+          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+          if [[ ! -z $namespace_name ]]; then
+            echo "$namespace_name" > namespace.tmp
+            cat namespace.tmp
+          else 
+            echo "No Namespace found"
+            exit 100
           fi
-        done
-
-    # - name: Check Namespace YAML and Kubernetes Namespace
-    #   run: |
-    #     git fetch origin pull/${{ github.event.pull_request.number }}/head:pr_branch
-    #     if [[ $(find . -type f -name "namespace.yaml" | wc -l) -eq 0 ]]; then
-    #       echo "::error::namespace.yaml not found"
-    #       exit 1
-    #     fi
-    #     namespace=$(yq eval '.metadata.name' $(find . -type f -name "namespace.yaml") | sed 's/"//g')
-    #     if [[ -z "$namespace" ]]; then
-    #       echo "::error::Kubernetes namespace not found in namespace.yml"
-    #       exit 1
-    #     fi
-    #     echo "Namespace: $namespace"
+        else 
+          echo "No namespace.yaml file found"
+          exit 200
+        fi
+          
     - name: Generate the config map file content and create ConfigMap File
       run: |
-          config_map_file="config-map-${namespace}-${{ github.event.pull_request.number }}.yml"
-          echo "apiVersion: v1" >> $config_map_file
-          echo "kind: ConfigMap" >> $config_map_file
-          echo "metadata:" >> $config_map_file
-          echo "  name: $namespace-configmap" >> $config_map_file
-          echo "data:" >> $config_map_file
-          echo "  Namespace: ${namespace}" >> $config_map_file
-          echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file          
+        namespace_name=$(cat namespace.tmp)
+        namespace=$(echo $namespace_name | xargs echo -n)
+        echo $namespace
+        config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+        echo $config_map_file
+        echo "apiVersion: v1" >> $config_map_file
+        echo "kind: ConfigMap" >> $config_map_file
+        echo "metadata:" >> $config_map_file
+        echo "  name: $namespace-configmap" >> $config_map_file
+        echo "data:" >> $config_map_file
+        echo "  Namespace: ${namespace}" >> $config_map_file
+        echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file
+        subdirectory_name=$(cat subdirectory.tmp)
+        echo $subdirectory_name
+        echo $config_map_file
+        rm subdirectory.tmp namespace.tmp
+        mv $config_map_file ./$subdirectory_name
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git add .
+        git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+        git fetch origin developer_branch
+        git checkout developer_branch
+        git merge --no-ff ${{ github.event.pull_request.head.sha }} --allow-unrelated-histories
+        git push origin developer_branch
+        # git fetch --all
+        # git checkout developer_branch
+        # git fetch origin pull/${{ github.event.pull_request.number }}/head:developer_branch
 
-    - name: Set Git config
-      run: |
-          git config --local user.email "dev@null"
-          git config --local user.name "CI Bot"
+    # - name: Checkout code
+    #   uses: actions/checkout@v2
+    #   with:
+    #     ref: developer_branch
 
-    - name: Add File and Merge to Developer branch
-      run: |
-        commitId=$(echo $GITHUB_SHA | cut -c1-7)
-        echo "Commit ID = " ${commitId}
-        if [ ! -z "${commitId}" ]; then 
-          git checkout dev
-          git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
-          git add $config_map_file
-          git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
-          git push origin dev
-        fi
+    # - name: Pull changes from dev branch
+    #   run: git pull
+
+    # - name: Merge PR branch
+    #   run: |
+    #     curl -X PUT \
+    #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+    #       -H "Accept: application/vnd.github.v3+json" \
+    #       "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/merge" \
+    #       -d '{
+    #         "commit_title": "Merge PR",
+    #         "merge_method": "squash"
+    #       }'
+
+    # - name: Push changes
+    #   run: git push
