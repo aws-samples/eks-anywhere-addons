@@ -20,6 +20,9 @@ jobs:
         echo $files
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
+          subdirectory=$(dirname $namespace_file)
+          echo "Sub Directory = $subdirectory"
+          echo "$subdirectory" > subdirectory.tmp
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           if [[ ! -z $namespace_name ]]; then
             echo "$namespace_name" > namespace.tmp
@@ -61,6 +64,8 @@ jobs:
         if [ ! -z "${commitId}" ]; then 
           config_map_filename=$(cat config_map_filename.tmp)
           config_map_file=$(echo $config_map_filename | xargs echo -n)
+          subdirectory_name=$(cat subdirectory.tmp)
+          echo $subdirectory_name
           echo $config_map_file
           git fetch --all
           git checkout dev_branch
