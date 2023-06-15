@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
 
     - name: Find Namespace YAML
       id: find-namespace-yaml
@@ -42,7 +44,6 @@ jobs:
         namespace=$(echo $namespace_name | xargs echo -n)
         echo $namespace
         config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
-        echo "$config_map_file" > config_map_filename.tmp
         echo $config_map_file
         echo "apiVersion: v1" >> $config_map_file
         echo "kind: ConfigMap" >> $config_map_file
@@ -51,30 +52,30 @@ jobs:
         echo "data:" >> $config_map_file
         echo "  Namespace: ${namespace}" >> $config_map_file
         echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file
+        subdirectory_name=$(cat subdirectory.tmp)
+        echo $subdirectory_name
+        echo $config_map_file
+        rm subdirectory.tmp namespace.tmp
+        mv $config_map_file ./$subdirectory_name
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+
+    - name: Merge PR branch
+      run: git merge --no-ff ${{ github.event.pull_request.head.ref }}  
 
     - name: Set Git config
       run: |
         git config --local user.email "dev@null"
-        git config --local user.name "CI Bot"
+        git config --local user.name "Conformitron Bot"
 
     - name: Add File and Merge to Developer branch
       run: |
-        commitId=$(echo $GITHUB_SHA | cut -c1-7)
-        echo "Commit ID = " ${commitId}
-        if [ ! -z "${commitId}" ]; then 
-          config_map_filename=$(cat config_map_filename.tmp)
-          config_map_file=$(echo $config_map_filename | xargs echo -n)
-          subdirectory_name=$(cat subdirectory.tmp)
-          echo $subdirectory_name
-          echo $config_map_file config_map_filename.tmp
-          rm subdirectory.tmp namespace.tmp config_map_filename.tmp
-          mv $config_map_file ./$subdirectory_name
-          git fetch --all
-          git checkout dev_branch
-          git fetch origin pull/${{ github.event.pull_request.number }}/head:dev_branch
-          ls -al $subdirectory_name
-          cat ./$subdirectory_name/$config_map_file
-          git add .
-          git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
-          git push --set-upstream origin dev_branch 
-        fi
+        # git fetch --all
+        # git checkout dev_branch
+        # git fetch origin pull/${{ github.event.pull_request.number }}/head:dev_branch
+        git add .
+        git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+        git push --set-upstream origin dev_branch 
