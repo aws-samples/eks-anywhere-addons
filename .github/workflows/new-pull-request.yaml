@@ -66,12 +66,13 @@ jobs:
           config_map_file=$(echo $config_map_filename | xargs echo -n)
           subdirectory_name=$(cat subdirectory.tmp)
           echo $subdirectory_name
-          echo $config_map_file
+          echo $config_map_file config_map_filename.tmp
+          rm subdirectory.tmp namespace.tmp config_map_filename.tmp
           mv $config_map_file ./$subdirectory_name
-          ls -al $subdirectory_name
           git fetch --all
           git checkout dev_branch
-          git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:dev_branch
+          ls -al $subdirectory_name
           cat ./$subdirectory_name/$config_map_file
           git add .
           git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
