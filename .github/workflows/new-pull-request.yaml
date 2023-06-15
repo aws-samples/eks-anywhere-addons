@@ -38,8 +38,13 @@ jobs:
           exit 200
         fi
           
-    - name: Merge PR Branch and Push to Developer Branch
+    - name: Generate the config map file content and Push it to Developer Branch
       run: |
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git fetch origin developer_branch
+        git checkout developer_branch
+        git merge --no-ff ${{ github.event.pull_request.head.sha }} --allow-unrelated-histories
         namespace_name=$(cat namespace.tmp)
         namespace=$(echo $namespace_name | xargs echo -n)
         echo $namespace
@@ -55,29 +60,8 @@ jobs:
         subdirectory_name=$(cat subdirectory.tmp)
         echo $subdirectory_name
         echo $config_map_file
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        git fetch origin developer_branch
-        git checkout developer_branch
-        git merge --no-ff ${{ github.event.pull_request.head.sha }} --allow-unrelated-histories
+        rm subdirectory.tmp namespace.tmp
+        mv $config_map_file ./$subdirectory_name
+        git add .
+        git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
         git push origin developer_branch
-        # namespace_name=$(cat namespace.tmp)
-        # namespace=$(echo $namespace_name | xargs echo -n)
-        # echo $namespace
-        # config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
-        # echo $config_map_file
-        # echo "apiVersion: v1" >> $config_map_file
-        # echo "kind: ConfigMap" >> $config_map_file
-        # echo "metadata:" >> $config_map_file
-        # echo "  name: $namespace-configmap" >> $config_map_file
-        # echo "data:" >> $config_map_file
-        # echo "  Namespace: ${namespace}" >> $config_map_file
-        # echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file
-        # subdirectory_name=$(cat subdirectory.tmp)
-        # echo $subdirectory_name
-        # echo $config_map_file
-        # rm subdirectory.tmp namespace.tmp
-        # mv $config_map_file ./$subdirectory_name/
-        # git add .
-        # git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
-        # git push origin developer_branch
