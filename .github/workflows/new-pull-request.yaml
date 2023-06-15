@@ -67,6 +67,8 @@ jobs:
           subdirectory_name=$(cat subdirectory.tmp)
           echo $subdirectory_name
           echo $config_map_file
+          mv $config_map_file ./$subdirectory_name
+          ls -al $subdirectory_name
           git fetch --all
           git checkout dev_branch
           git fetch origin pull/${{ github.event.pull_request.number }}/head:dev
