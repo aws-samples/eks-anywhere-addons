@@ -38,13 +38,14 @@ jobs:
           exit 200
         fi
           
-    - name: Merge PR Branch to Developer Branch
+    - name: Merge PR Branch and Push to Developer Branch
       run: |
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
         git fetch origin developer_branch
         git checkout developer_branch
         git merge --no-ff ${{ github.event.pull_request.head.sha }} --allow-unrelated-histories
+        git push
 
     - name: Generate the config map file content and Push it to Developer Branch
       run: |
