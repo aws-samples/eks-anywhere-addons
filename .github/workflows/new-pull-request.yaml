@@ -46,9 +46,6 @@ jobs:
         git checkout developer_branch
         git merge --no-ff ${{ github.event.pull_request.head.sha }} --allow-unrelated-histories
         git push origin developer_branch
-
-    - name: Generate the config map file content and Push it to Developer Branch
-      run: |
         namespace_name=$(cat namespace.tmp)
         namespace=$(echo $namespace_name | xargs echo -n)
         echo $namespace
