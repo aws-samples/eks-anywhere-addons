@@ -45,6 +45,8 @@ jobs:
         git fetch origin developer_branch
         git checkout developer_branch
         git merge --no-ff ${{ github.event.pull_request.head.sha }} --allow-unrelated-histories
+        git add .
+        git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
         git push origin developer_branch
         # namespace_name=$(cat namespace.tmp)
         # namespace=$(echo $namespace_name | xargs echo -n)
