@@ -63,6 +63,9 @@ jobs:
       with:
         ref: dev_branch
 
+    - name: Pull changes from dev branch
+      run: git pull
+
     - name: Merge PR branch
       run: git merge --no-ff ${{ github.event.pull_request.head.ref }}  
 
