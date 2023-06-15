@@ -85,11 +85,16 @@ jobs:
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
 
-    - name: Add File and Merge to Developer branch
-      run: |
-        # git fetch --all
-        # git checkout dev_branch
-        # git fetch origin pull/${{ github.event.pull_request.number }}/head:dev_branch
-        git add .
-        git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
-        git push --set-upstream origin dev_branch 
+    - name: Push changes
+        uses: ad-m/github-push-action@v0.5.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    # - name: Add File and Merge to Developer branch
+    #   run: |
+    #     # git fetch --all
+    #     # git checkout dev_branch
+    #     # git fetch origin pull/${{ github.event.pull_request.number }}/head:dev_branch
+    #     git add .
+    #     git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+    #     git push --set-upstream origin dev_branch 
