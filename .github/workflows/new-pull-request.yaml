@@ -63,7 +63,7 @@ jobs:
         git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
         git fetch origin dev_branch
         git checkout dev_branch
-        git merge --no-ff ${{ github.event.pull_request.head.sha }}
+        git merge --no-ff ${{ github.event.pull_request.head.sha }} --allow-unrelated-histories
         git push origin dev_branch
         # git fetch --all
         # git checkout dev_branch
