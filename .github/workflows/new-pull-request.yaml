@@ -61,18 +61,18 @@ jobs:
         git config --local user.name "Conformitron Bot"
         git add .
         git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
-        git fetch origin dev_branch
-        git checkout dev_branch
+        git fetch origin developer_branch
+        git checkout developer_branch
         git merge --no-ff ${{ github.event.pull_request.head.sha }} --allow-unrelated-histories
-        git push origin dev_branch
+        git push origin developer_branch
         # git fetch --all
-        # git checkout dev_branch
-        # git fetch origin pull/${{ github.event.pull_request.number }}/head:dev_branch
+        # git checkout developer_branch
+        # git fetch origin pull/${{ github.event.pull_request.number }}/head:developer_branch
 
     # - name: Checkout code
     #   uses: actions/checkout@v2
     #   with:
-    #     ref: dev_branch
+    #     ref: developer_branch
 
     # - name: Pull changes from dev branch
     #   run: git pull
