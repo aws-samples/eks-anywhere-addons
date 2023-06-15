@@ -92,6 +92,4 @@ jobs:
     #     git push --set-upstream origin dev_branch 
 
     - name: Push changes
-        uses: ad-m/github-push-action@v0.5.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      run: git push
