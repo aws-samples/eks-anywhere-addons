@@ -60,5 +60,6 @@ jobs:
         git config --local user.name "Conformitron Bot"
         git fetch origin developer_branch
         git checkout developer_branch
+        git fetch --all
         git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
         git push
