@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: dev_branch
+        ref: developer_branch
     - name: Set Git config
       run: |
           git config --local user.email "dev@null"
@@ -19,7 +19,7 @@ jobs:
     - name: Merge main back to dev
       run: |
           git fetch origin main:main
-          git checkout dev_branch
+          git checkout developer_branch
           git merge main --no-edit --allow-unrelated-histories --strategy-option=theirs
           git checkout --force main .
-          git push origin dev_branch
+          git push origin developer_branch
