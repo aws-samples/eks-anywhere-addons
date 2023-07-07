@@ -16,6 +16,34 @@ jobs:
       run: |
           git config --local user.email "dev@null"
           git config --local user.name "CI Bot"
+    - name: Remove new ConfigMap
+      run: |
+        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+        echo $files
+        namespace_file=$(echo "$files" | grep "namespace.yaml")
+        if [ -n "$namespace_file" ]; then
+          subdirectory=$(dirname $namespace_file)
+          echo "Sub Directory = $subdirectory"
+          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+          if [[ ! -z $namespace_name ]]; then
+            echo "$namespace_name"
+            namespace=$(echo $namespace_name | xargs echo -n)
+            echo $namespace
+            config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+            rm ./$subdirectory/$config_map_file 
+            git config --local user.email "dev@null"
+            git config --local user.name "Conformitron Bot"
+            git add .
+            git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+          else 
+            echo "No ConfigMap found"
+            exit 100
+          fi
+        else 
+          echo "No ConfigMap found"
+          exit 200
+        fi
+          
     - name: Merge main back to dev
       run: |
           git fetch origin main:main
