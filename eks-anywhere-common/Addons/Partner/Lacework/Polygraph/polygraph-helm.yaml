@@ -1,0 +1,19 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: lacework-agent
+  namespace: lacework
+spec:
+  chart:
+    spec:
+      chart: lacework-agent
+      sourceRef:
+        kind: HelmRepository
+        name: lacework
+        namespace: lacework
+  interval: 1m0s
+  targetNamespace: lacework
+  values:
+    laceworkConfig:
+      enabled: true
