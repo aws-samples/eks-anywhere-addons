@@ -15,7 +15,7 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.ref }}
 
-    - name: Find Namespace YAML
+    - name: Find Namespace YAML, Generate the config map file content
       id: find-namespace-yaml
       run: |
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
@@ -54,12 +54,13 @@ jobs:
           exit 200
         fi
           
-    - name: Generate the config map file content and Push it to Developer Branch
+    - name: Push new files to Developer Branch
       run: |
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
         git fetch origin developer_branch
         git checkout developer_branch
+        git checkout main $subdirectory
         git fetch --all
         git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
         git push
