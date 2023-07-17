@@ -65,7 +65,7 @@ jobs:
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         subdirectory=$(dirname $namespace_file)
         echo $subdirectory
-        git checkout main $subdirectory
+        git checkout origin/main $subdirectory
         git fetch --all
         git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
         git push
