@@ -14,21 +14,20 @@ spec:
         namespace: lacework
   interval: 1m0s
   targetNamespace: lacework
-  values:
-    valuesFrom:
-      - kind: Secret
-        name: lacework-secret
-        valuesKey: accessToken
-        targetPath: laceworkConfig.accessToken
-      - kind: Secret
-        name: lacework-secret
-        valuesKey: k8sCluster
-        targetPath: laceworkConfig.kubernetesCluster
-      - kind: Secret
-        name: lacework-secret
-        valuesKey: environment
-        targetPath: laceworkConfig.env
-      - kind: Secret
-        name: lacework-secret
-        valuesKey: serverUrl
-        targetPath: laceworkConfig.serverUrl
+  valuesFrom:
+    - kind: Secret
+      name: lacework-secret
+      valuesKey: accessToken
+      targetPath: laceworkConfig.accessToken
+    - kind: Secret
+      name: lacework-secret
+      valuesKey: k8sCluster
+      targetPath: laceworkConfig.kubernetesCluster
+    - kind: Secret
+      name: lacework-secret
+      valuesKey: environment
+      targetPath: laceworkConfig.env
+    - kind: Secret
+      name: lacework-secret
+      valuesKey: serverUrl
+      targetPath: laceworkConfig.serverUrl
