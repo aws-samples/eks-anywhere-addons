@@ -16,18 +16,18 @@ spec:
   targetNamespace: lacework
   valuesFrom:
     - kind: Secret
-      name: lacework-secret
+      name: lacework-secrets
       valuesKey: accessToken
       targetPath: laceworkConfig.accessToken
     - kind: Secret
-      name: lacework-secret
+      name: lacework-secrets
       valuesKey: k8sCluster
       targetPath: laceworkConfig.kubernetesCluster
     - kind: Secret
-      name: lacework-secret
+      name: lacework-secrets
       valuesKey: environment
       targetPath: laceworkConfig.env
     - kind: Secret
-      name: lacework-secret
+      name: lacework-secrets
       valuesKey: serverUrl
       targetPath: laceworkConfig.serverUrl
