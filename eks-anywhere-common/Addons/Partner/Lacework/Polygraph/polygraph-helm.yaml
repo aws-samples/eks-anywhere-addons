@@ -18,7 +18,7 @@ spec:
     valuesFrom:
       - kind: Secret
         name: lacework-secret
-        valuesKey: agentToken
+        valuesKey: accessToken
         targetPath: laceworkConfig.accessToken
       - kind: Secret
         name: lacework-secret
