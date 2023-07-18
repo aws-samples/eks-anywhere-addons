@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: lacework-testjob
+  namespace: lacework
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+        - name: job
+          image: dtzar/helm-kubectl
+          args:
+            - /bin/sh
+            - -c
+            - helm test lacework-agent
+      restartPolicy: Never
