@@ -15,7 +15,7 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.ref }}
 
-    - name: Find Namespace YAML, Generate the config map file content
+    - name: Find Namespace YAML
       id: find-namespace-yaml
       run: |
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
@@ -54,18 +54,23 @@ jobs:
           exit 200
         fi
           
-    - name: Push new files to Developer Branch
+    - name: Generate the config map file content and Push it to Developer Branch
       run: |
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
         git fetch origin developer_branch
         git checkout developer_branch
-        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-        echo $files
-        namespace_file=$(echo "$files" | grep "namespace.yaml")
-        subdirectory=$(dirname $namespace_file)
-        echo $subdirectory
-        git checkout origin/main $subdirectory
         git fetch --all
+        git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
+        git push
+        
+    - name: Move committed files to developer branches
+      run: |
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git fetch origin main
+        git checkout developer_branch
+        git checkout ${{ github.event.pull_request.head.ref }} -- ./$subdirectory/*
+        git commit -m "Copy committed files"
         git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
         git push
