@@ -61,6 +61,16 @@ jobs:
         git fetch origin developer_branch
         git checkout developer_branch
         echo "files: ${files}"
+        
+        namespace_file=$(echo "$files" | grep "namespace.yaml")
+        if [ -n "$namespace_file" ]; then
+          subdirectory=$(dirname $namespace_file)
+          echo "Sub Directory = $subdirectory"
+        else 
+          echo "No namespace.yaml file found"
+          exit 200
+        fi
+        
         git fetch --all
         for item in files; do
           echo "\${subdirectory}$/\${item}"
