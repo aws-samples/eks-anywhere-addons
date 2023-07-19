@@ -71,6 +71,7 @@ jobs:
         git fetch origin main
         git checkout developer_branch
         git checkout ${{ github.event.pull_request.head.ref }} -- $subdirectory
+        git add $subdirectory/*
         git commit -m "Copy committed files"
         git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
         git push
