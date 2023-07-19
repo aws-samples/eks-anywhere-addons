@@ -55,16 +55,18 @@ jobs:
         fi
     - name: Copy over new or updated files
       run: |
-        pwd
-        ls
-        git branch
-        
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git fetch origin developer_branch
+        git checkout developer_branch
+        git fetch --all
+        echo files | forEach "echo \${/subdirectory}$/\${item}"
+          
       
     - name: Generate the config map file content and Push it to Developer Branch
       run: |
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
-        git fetch origin developer_branch
         git checkout developer_branch
         git fetch --all
         git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
