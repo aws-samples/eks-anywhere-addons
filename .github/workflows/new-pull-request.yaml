@@ -60,7 +60,7 @@ jobs:
         git fetch origin developer_branch
         git checkout developer_branch
         git fetch --all
-        echo files | forEach "echo \${/subdirectory}$/\${item}"
+        echo files | foreach "echo \${/subdirectory}$/\${item}"
           
       
     - name: Generate the config map file content and Push it to Developer Branch
