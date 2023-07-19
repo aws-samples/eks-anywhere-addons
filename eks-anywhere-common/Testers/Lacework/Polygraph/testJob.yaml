@@ -11,6 +11,7 @@ spec:
         - name: job
           image: dtzar/helm-kubectl
           args:
+            - /bin/sh
             - helm test lacework-lacework-agent
       restartPolicy: Never
 ---
