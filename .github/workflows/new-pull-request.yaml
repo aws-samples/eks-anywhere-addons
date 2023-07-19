@@ -71,7 +71,7 @@ jobs:
           exit 200
         fi
         for item in files; do
-          echo "${subdirectory}$/${item}"
+          echo "${subdirectory}$/$item"
         done
       
     - name: Generate the config map file content and Push it to Developer Branch
