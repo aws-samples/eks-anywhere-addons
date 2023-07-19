@@ -70,7 +70,7 @@ jobs:
           echo "No namespace.yaml file found"
           exit 200
         fi
-        for item in files; do
+        for item in $files; do
           echo ${subdirectory}/$item
         done
       
