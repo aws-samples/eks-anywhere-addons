@@ -55,24 +55,31 @@ jobs:
         fi
     - name: Copy over new or updated files
       run: |
+        # Pull Subdirectory and Files  
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        git fetch origin developer_branch
-        git checkout developer_branch
-        echo "files: ${files}"
-        
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
           subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
+        
+        # Switch to Dev branch and make files commit 
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git fetch origin developer_branch
+        git checkout developer_branch
+        git fetch --all
+        
+        # checkout each file to Dev branch
+        for item in $files; do
+          echo "Copying ${subdirectory}/$item..."
+          git checkout ${{ github.event.pull_request.head.ref }} -- ${subdirectory}/$item
+          git add ${subdirectory}/$item
+        done
+        git commit -m "Adding new and changed files for $subdirectory PR number ${{ github.event.pull_request.number }}""
         else 
           echo "No namespace.yaml file found"
           exit 200
         fi
-        for item in $files; do
-          echo ${subdirectory}/$item
-        done
       
     - name: Generate the config map file content and Push it to Developer Branch
       run: |
