@@ -25,8 +25,8 @@ jobs:
           subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
           rm -rf ./$subdirectory 
-          git config --local user.email "dev@null"
-          git config --local user.name "Conformitron Bot"
+          # git config --local user.email "dev@null"
+          # git config --local user.name "Conformitron Bot"
           git add .
           git commit -m "Remove attempted PR files for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
         else 
