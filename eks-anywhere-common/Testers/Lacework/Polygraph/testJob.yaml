@@ -9,35 +9,12 @@ spec:
     spec:
       containers:
         - name: job
-          image: dtzar/helm-kubectl
+          image: 'alpine/k8s:1.26.2'
+          imagePullPolicy: Always
+          command:
+            - /bin/bash
           args:
-            - /bin/sh
-            - helm test lacework-lacework-agent
+            - '-c'
+            - >-
+              kubectl wait pods -n lacework -l name=lacework-agent --for condition=Ready --timeout=90s
       restartPolicy: Never
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: lacework-agent-access-token-secret-reader
-  namespace: lacework
-rules:
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get", "watch", "list"]
-  - apiGroups: [ "" ]
-    resources: [ "pods" ]
-    verbs: [ "get", "watch", "list", "delete", "create" ]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: read-lacework-agent-access-token
-  namespace: lacework
-subjects:
-  - kind: User
-    name: system:serviceaccount:lacework:default
-    apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: Role
-  name: lacework-agent-access-token-secret-reader
-  apiGroup: rbac.authorization.k8s.io
