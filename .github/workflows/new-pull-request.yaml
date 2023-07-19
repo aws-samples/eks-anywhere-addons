@@ -53,7 +53,13 @@ jobs:
           echo "No namespace.yaml file found"
           exit 200
         fi
-          
+    - name: Copy over new or updated files
+      run: |
+        pwd
+        ls
+        git branch
+        
+      
     - name: Generate the config map file content and Push it to Developer Branch
       run: |
         git config --local user.email "dev@null"
