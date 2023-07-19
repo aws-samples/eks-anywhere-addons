@@ -1,0 +1,43 @@
+name: PRs to Main
+on: 
+  pull_request:
+    branches: [main]
+    types: [closed]
+jobs:
+  merge-master-back-to-dev:
+    if: github.event.pull_request.merged == false
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: developer_branch
+    - name: Set Git config
+      run: |
+          git config --local user.email "dev@null"
+          git config --local user.name "CI Bot"
+    - name: Remove new ConfigMap
+      run: |
+        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+        echo $files
+        namespace_file=$(echo "$files" | grep "namespace.yaml")
+        if [ -n "$namespace_file" ]; then
+          subdirectory=$(dirname $namespace_file)
+          echo "Sub Directory = $subdirectory"
+          rm -rf ./$subdirectory 
+          git config --local user.email "dev@null"
+          git config --local user.name "Conformitron Bot"
+          git add .
+          git commit -m "Remove attempted PR files for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+        else 
+          echo "No ConfigMap found"
+          exit 200
+        fi
+          
+    - name: Merge main back to dev
+      run: |
+          git fetch origin main:main
+          git checkout developer_branch
+          git merge main --no-edit --allow-unrelated-histories --strategy-option=theirs
+          git checkout --force main .
+          git push origin developer_branch
