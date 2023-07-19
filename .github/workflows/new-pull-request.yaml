@@ -1,0 +1,76 @@
+name: Run CI for ISV Addons
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+
+    - name: Find Namespace YAML
+      id: find-namespace-yaml
+      run: |
+        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+        echo $files
+        namespace_file=$(echo "$files" | grep "namespace.yaml")
+        if [ -n "$namespace_file" ]; then
+          subdirectory=$(dirname $namespace_file)
+          echo "Sub Directory = $subdirectory"
+          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+          if [[ ! -z $namespace_name ]]; then
+            echo "$namespace_name"
+            namespace=$(echo $namespace_name | xargs echo -n)
+            echo $namespace
+            config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+            echo $config_map_file
+            echo "apiVersion: v1" >> $config_map_file
+            echo "kind: ConfigMap" >> $config_map_file
+            echo "metadata:" >> $config_map_file
+            echo "  name: $namespace-configmap" >> $config_map_file
+            echo "data:" >> $config_map_file
+            echo "  Namespace: ${namespace}" >> $config_map_file
+            echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file
+            echo $subdirectory
+            echo $config_map_file
+            mv $config_map_file ./$subdirectory/
+            git config --local user.email "dev@null"
+            git config --local user.name "Conformitron Bot"
+            git add .
+            git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+          else 
+            echo "No Namespace found"
+            exit 100
+          fi
+        else 
+          echo "No namespace.yaml file found"
+          exit 200
+        fi
+          
+    - name: Generate the config map file content and Push it to Developer Branch
+      run: |
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git fetch origin developer_branch
+        git checkout developer_branch
+        git fetch --all
+        git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
+        git push
+        
+    - name: Move committed files to developer branches
+      run: |
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git fetch origin main
+        git checkout developer_branch
+        git checkout ${{ github.event.pull_request.head.ref }} -- $subdirectory
+        git commit -m "Copy committed files"
+        git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
+        git push
