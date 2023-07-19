@@ -59,9 +59,11 @@ jobs:
         git config --local user.name "Conformitron Bot"
         git fetch origin developer_branch
         git checkout developer_branch
+        echo "files: ${files}"
         git fetch --all
-        echo files | foreach "echo \${/subdirectory}$/\${item}"
-          
+        for item in files; do
+          echo "\${subdirectory}$/\${item}"
+        done
       
     - name: Generate the config map file content and Push it to Developer Branch
       run: |
