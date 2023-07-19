@@ -72,6 +72,10 @@ jobs:
         if [ -n "$namespace_file" ]; then
           subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
+        else 
+          echo "No namespace.yaml file found"
+          exit 200
+        fi
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
         git fetch origin main
