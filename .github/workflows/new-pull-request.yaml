@@ -43,6 +43,7 @@ jobs:
             mv $config_map_file ./$subdirectory/
             git config --local user.email "dev@null"
             git config --local user.name "Conformitron Bot"
+            echo $subdirectory
             git checkout ${{ github.event.pull_request.head.ref }} -- $subdirectory
             git add .
             git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
