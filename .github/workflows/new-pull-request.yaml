@@ -72,7 +72,7 @@ jobs:
           # checkout each file to Dev branch
           for item in $files; do
             echo "Copying ${subdirectory}/$item..."
-            git checkout ${{ github.event.pull_request.head.ref }} -- ${subdirectory}/$item
+            git checkout ${{ github.event.pull_request.head.ref }} -- $item
             git add ${subdirectory}/$item
           done
           git commit -m "Adding new and changed files for $subdirectory PR number ${{ github.event.pull_request.number }}"
