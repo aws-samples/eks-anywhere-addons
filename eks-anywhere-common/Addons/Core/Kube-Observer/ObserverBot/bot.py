@@ -1,7 +1,7 @@
-import os
 import argparse
 
 import kubernetes.client
+import concurrent.futures
 from ghapi.all import GhApi
 from kubernetes import client, config
 from kubernetes.client import *
@@ -14,10 +14,21 @@ def run_observer():
     # Start the search at the namespace level since we want to watch for all things
     all_namespaces = core_api.list_namespace()
 
-    risky_pods = [ get_at_risk_pods(i) for i in all_namespaces.items if i.metadata.name == "default" ]
+    risky_pods = [ get_at_risk_pods(i) for i in all_namespaces.items ]
 
-    # Replica Sets and Deployments are the same things
-    # Drill into Pods that belong to a deployment -- ?
+    risky_deployments = [ get_at_risk_deployments(i.pod) for i in risky_pods ]
+
+    reports = [ build_report(i) for i in risky_deployments ]
+
+    # If we wanna go F A S T - maybe
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=len(all_namespaces)) as observer:
+    #     responses = list(observer.map(lambda ns: observe_orchestrate(ns), all_namespaces))
+
+    return 0
+
+
+# Multithreaded orchestrator for going F A S T - maybe
+def observe_orchestrate(ns: V1Namespace):
 
     pass
 
@@ -25,7 +36,7 @@ def run_observer():
 """
     Add various methods to check if a pod is failing or has failed.
 """
-def get_at_risk_pods(ns: V1Namespace) -> [V1Pod]:
+def get_at_risk_pods(ns: V1Namespace) -> []:
     all_ns_pods: [V1Pod] = core_api.list_namespaced_pod(ns.metadata.name).items
 
     at_risk_pods: [] = []
@@ -35,7 +46,11 @@ def get_at_risk_pods(ns: V1Namespace) -> [V1Pod]:
 
         # If the pod isn't in a "Success/Pending" state, immediately flag it
         if pod_status.phase not in { "Running", "Pending", "Succeeded" }:
-            at_risk_pods.append({pod, pod.status})
+            at_risk_pods.append({
+                "pod": pod,
+                "reason_type": V1PodStatus,
+                "reason": pod.status
+            })
             continue
 
         # If it's in one of those phases, check the containers inside
@@ -45,11 +60,19 @@ def get_at_risk_pods(ns: V1Namespace) -> [V1Pod]:
             # If state is ImagePullError - definitely bad
             # If state is Error - definitely bad
             if not status.ready:
-                at_risk_pods.append({pod, status})
+                at_risk_pods.append({
+                    "pod": pod,
+                    "reason_type": V1ContainerStatus,
+                    "reason": status
+                })
                 continue
             # The container has restarted >= 1 time
             if status.restart_count >= 1:
-                at_risk_pods.append({pod, status})
+                at_risk_pods.append({
+                    "pod": pod,
+                    "reason_type": V1ContainerStatus,
+                    "reason": status
+                })
                 continue
 
     # If delta in replicas and ready replicas - this might lead to false positives
@@ -59,7 +82,7 @@ def get_at_risk_pods(ns: V1Namespace) -> [V1Pod]:
 """
     Drill up from the failing pod level to the deployment that's causing the trouble
 """
-def get_high_risk_deployments(pods: kubernetes.client.V1Pod) -> [kubernetes.client.V1Deployment]:
+def get_at_risk_deployments(pod: kubernetes.client.V1Pod) -> [kubernetes.client.V1Deployment]:
     # metadata.owner_references.name - to get the owner of a pod
     # Find out the exact owners of the pods that are failing
 
@@ -78,7 +101,14 @@ def get_pod_logs(pod: kubernetes.client.V1Pod):
     Build the Github PR comment here, providing all the information they would need to
     debug the problem (hopefully)
 """
-def build_comment():
+def build_report(risk):
+    # risk:
+    #   deployment: V1Deployment
+    #   pod: V1Pod
+    #   reason_type: Any
+    #   reason: typeof(reason_type)
+
+
     pass
 
 """
@@ -107,7 +137,6 @@ if __name__ == "__main__":
         from dotenv import load_dotenv
 
         load_dotenv(".dev.env")
-        # print(os.getenv("GITHUB_TOKEN"))
         config.load_kube_config()
     else:
         print("loading incluster config")
