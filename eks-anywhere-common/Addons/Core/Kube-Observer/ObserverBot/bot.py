@@ -110,9 +110,7 @@ def get_at_risk_deployments(risk_report):
         at_risk = {
             "deployment": deployment,
             "ns": deployment_ns,
-            "risks": [
-                at_risk_replica_sets[replica_set]
-            ]
+            "risks": at_risk_replica_sets[replica_set]
         }
 
         at_risk_deployments.append(at_risk)
@@ -136,36 +134,47 @@ def build_report(risk_info):
     # risk:
     #   deployment: V1Deployment
     #   ns: String
-    #   risk:
+    #   risks:
     #     ns: String
     #     pod: V1Pod
     #     reason_type: Any
     #     reason: typeof(reason_type)
+
+    namespace_report = {
+        'ns': risk_info[0]['ns'],
+        'reports': []
+    }
+
     for risk in risk_info:
         report = f"Looks like your deployment `{risk['deployment'].metadata.name}` is failing.\n" \
                  f"Specifically, it looks like these pods are failing: \n"
         for pod_risk in risk["risks"]:
             report += f"* Pod: `{pod_risk['pod'].metadata.name}` with the error listed below.\n"
 
-        for pod_risk in risk["risks"]:
-            report += f"Logs for pod `{pod_risk['pod'].metadata.name}`: ```{get_pod_logs(pod_risk.pod)}```\n ---- "
+        report += '\n ---- \n'
 
-    return report
+        for pod_risk in risk["risks"]:
+            report += f"Logs for pod `{pod_risk['pod'].metadata.name}`: ```{get_pod_logs(pod_risk['pod'])}```\n ---- "
+
+        namespace_report["reports"].append(report)
+
+
+    return namespace_report
 
 """
     Get Issue Number from the namespace
     
     Send the information to GitHub using the api
 """
-def add_comment_to_pr(namespace, pod, logs):
-    comment_response = gh_api.issues.create_comment(
-        owner='aws-samples',
-        repo='eks-anywhere-addons',
-        issue_number=101,  # namespace.metadata.name derived from PR and namespace configmap
-        body='This is a comment made by the conformitron feedback provider with feedback for your pod.'
-             'It has failed with the following logs: '
-             '```' + get_pod_logs(pod) + '```'
-    )
+def add_comment_to_pr(report):
+    # comment_response = gh_api.issues.create_comment(
+    #     owner='aws-samples',
+    #     repo='eks-anywhere-addons',
+    #     issue_number=101,  # namespace.metadata.name derived from PR and namespace configmap
+    #     body='This is a comment made by the conformitron feedback provider with feedback for your pod.'
+    #          'It has failed with the following logs: '
+    #          '```' + get_pod_logs(pod) + '```'
+    # )
     pass
 
 
