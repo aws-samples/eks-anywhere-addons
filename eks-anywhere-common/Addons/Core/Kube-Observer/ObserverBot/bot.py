@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime
 
 import kubernetes.client
 import concurrent.futures
@@ -122,9 +123,34 @@ def get_at_risk_deployments(risk_report):
     Retrieve and return logs from the pod
 """
 def get_pod_logs(pod: kubernetes.client.V1Pod):
-    return core_api.read_namespaced_pod_log(pod.metadata.name, pod.metadata.namespace)
-    pass
+    pod_logs = core_api.read_namespaced_pod_log(pod.metadata.name, pod.metadata.namespace)
 
+    if not pod_logs:
+        no_logs = "Seems your pod isn't producing any logs. Instead providing you with other information.\n\n"
+
+        conditions = pod.status.conditions
+        no_logs += "The last conditions your pods went through were: \n"
+
+        for idx, condition in enumerate(conditions):
+            last_tr_time: datetime = condition.last_transition_time
+            no_logs += f"{idx+1}. {last_tr_time.isoformat()} - Reason: `{condition.reason}` \t Type: `{condition.type}`\n"
+
+        no_logs += "---- \n"
+
+        container_statuses = pod.status.container_status
+
+        for idx, status in enumerate(container_statuses):
+            no_logs += f"{idx + 1}. Container {status.container_id} has restarted: {status.restart_count} number of times.\n"
+
+        return {
+            'status': 500,
+            'logs': no_logs
+        }
+
+    return {
+        'status': 200,
+        'logs': pod_logs
+    }
 
 """
     Build the Github PR comment here, providing all the information they would need to
@@ -154,7 +180,12 @@ def build_report(risk_info):
         report += '\n ---- \n'
 
         for pod_risk in risk["risks"]:
-            report += f"Logs for pod `{pod_risk['pod'].metadata.name}`: ```{get_pod_logs(pod_risk['pod'])}```\n ---- "
+            pod_logs = get_pod_logs(pod_risk['pod'])
+            if pod_logs['status'] == 200:
+                pod_logs = f"```{pod_logs['logs']}```\n"
+            else:
+                pod_logs = f"{pod_logs['logs']}\n ----"
+            report += f"Logs for pod `{pod_risk['pod'].metadata.name}`: \n {pod_logs}"
 
         namespace_report["reports"].append(report)
 
