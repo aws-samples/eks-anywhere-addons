@@ -20,6 +20,8 @@ def run_observer():
 
     reports = [build_report(i) for i in risky_deployments]
 
+    responses = [add_comment_to_pr(i) for i in reports]
+
     # If we wanna go F A S T - maybe
     # with concurrent.futures.ThreadPoolExecutor(max_workers=len(all_namespaces)) as observer:
     #     responses = list(observer.map(lambda ns: observe_orchestrate(ns), all_namespaces))
@@ -32,10 +34,10 @@ def observe_orchestrate(ns: V1Namespace):
     pass
 
 
-"""
-    Add various methods to check if a pod is failing or has failed.
-"""
 def get_at_risk_pods(ns: V1Namespace) -> []:
+    """
+        Add various methods to check if a pod is failing or has failed.
+    """
     all_ns_pods: [V1Pod] = core_api.list_namespaced_pod(ns.metadata.name).items
 
     at_risk_pods: [] = []
@@ -73,10 +75,10 @@ def get_at_risk_pods(ns: V1Namespace) -> []:
     return at_risk_pods
 
 
-"""
-    Drill up from the failing pod level to the deployment that's causing the trouble
-"""
 def get_at_risk_deployments(risk_report):
+    """
+        Drill up from the failing pod level to the deployment that's causing the trouble
+    """
     # risk_report is [risk]
     # metadata.owner_references.name - to get the owner of a pod
     # Find out the exact owners of the pods that are failing
@@ -117,10 +119,10 @@ def get_at_risk_deployments(risk_report):
     return at_risk_deployments
 
 
-"""
-    Retrieve and return logs from the pod
-"""
 def get_pod_logs(pod: kubernetes.client.V1Pod):
+    """
+        Retrieve and return logs from the pod
+    """
     pod_logs = core_api.read_namespaced_pod_log(pod.metadata.name, pod.metadata.namespace)
 
     if not pod_logs:
@@ -135,8 +137,8 @@ def get_pod_logs(pod: kubernetes.client.V1Pod):
 
         no_logs += "---- \n"
 
-        container_statuses = pod.status.container_status
-
+        container_statuses = pod.status.container_statuses
+        no_logs += "Containers launched under your pods with their stats: \n"
         for idx, status in enumerate(container_statuses):
             no_logs += f"{idx + 1}. Container {status.container_id} has restarted: {status.restart_count} number of times.\n"
 
@@ -151,11 +153,27 @@ def get_pod_logs(pod: kubernetes.client.V1Pod):
     }
 
 
-"""
-    Build the Github PR comment here, providing all the information they would need to
-    debug the problem (hopefully)
-"""
+def find_namespace_configmap(ns_name: str) -> V1ConfigMap:
+    """
+
+    """
+    usable_config_maps = core_api.list_config_map_for_all_namespaces(label_selector="bot=conformitron")
+
+    # Specifically get conformitron CMs for the given namespace
+    ns_cm = [i for i in usable_config_maps.items if i.data['Namespace'] == ns_name]
+
+    if len(ns_cm) == 1:
+        return ns_cm[0]
+
+    else:
+        raise Exception('Looks like there has been a misconfiguration')
+
+
 def build_report(risk_info):
+    """
+        Build the Github PR comment here, providing all the information they would need to
+        debug the problem (hopefully)
+    """
     # risk:
     #   deployment: V1Deployment
     #   ns: String
@@ -167,6 +185,7 @@ def build_report(risk_info):
 
     namespace_report = {
         'ns': risk_info[0]['ns'],
+        'issue_number': find_namespace_configmap(risk_info[0]['ns']).data["prNumber"],
         'reports': []
     }
 
@@ -176,7 +195,7 @@ def build_report(risk_info):
         for pod_risk in risk["risks"]:
             report += f"* Pod: `{pod_risk['pod'].metadata.name}` with the error listed below.\n"
 
-        report += '\n ---- \n'
+        report += '---- \n'
 
         for pod_risk in risk["risks"]:
             pod_logs = get_pod_logs(pod_risk['pod'])
@@ -191,20 +210,23 @@ def build_report(risk_info):
     return namespace_report
 
 
-"""
-    Get Issue Number from the namespace
-    
-    Send the information to GitHub using the api
-"""
 def add_comment_to_pr(report):
-    # comment_response = gh_api.issues.create_comment(
-    #     owner='aws-samples',
-    #     repo='eks-anywhere-addons',
-    #     issue_number=101,  # namespace.metadata.name derived from PR and namespace configmap
-    #     body='This is a comment made by the conformitron feedback provider with feedback for your pod.'
-    #          'It has failed with the following logs: '
-    #          '```' + get_pod_logs(pod) + '```'
-    # )
+    """
+        Get Issue Number from the namespace
+
+        Send the information to GitHub using the api
+    """
+    gh_api = GhApi()
+    # report
+    #   ns: str
+    #   issue_number: number
+    #   reports: [ string ]
+    comment_response = gh_api.issues.create_comment(
+        owner='aws-samples',
+        repo='eks-anywhere-addons',
+        issue_number=report["issue_number"],  # namespace.metadata.name derived from PR and namespace configmap
+        body="---- New Deployment Report: \n".join(report["reports"])
+    )
     pass
 
 
@@ -221,8 +243,6 @@ if __name__ == "__main__":
     else:
         print("loading incluster config")
         config.load_incluster_config()
-
-    gh_api = GhApi()
 
     apps_api = client.AppsV1Api()
     core_api = client.CoreV1Api()
