@@ -2,7 +2,6 @@ import argparse
 from datetime import datetime
 
 import kubernetes.client
-import concurrent.futures
 from ghapi.all import GhApi
 from kubernetes import client, config
 from kubernetes.client import *
@@ -15,9 +14,9 @@ def run_observer():
     # Start the search at the namespace level since we want to watch for all things
     all_namespaces = core_api.list_namespace()
 
-    risky_pods = [ get_at_risk_pods(i) for i in all_namespaces.items ]
+    risky_pods = [get_at_risk_pods(i) for i in all_namespaces.items]
 
-    risky_deployments = [ get_at_risk_deployments(i) for i in risky_pods if i ]
+    risky_deployments = [get_at_risk_deployments(i) for i in risky_pods if i]
 
     reports = [build_report(i) for i in risky_deployments]
 
@@ -30,7 +29,6 @@ def run_observer():
 
 # Multithreaded orchestrator for going F A S T - maybe
 def observe_orchestrate(ns: V1Namespace):
-
     pass
 
 
@@ -46,7 +44,7 @@ def get_at_risk_pods(ns: V1Namespace) -> []:
         pod_status: V1PodStatus = pod.status
 
         # If the pod isn't in a "Success/Pending" state, immediately flag it
-        if pod_status.phase not in { "Running", "Pending", "Succeeded" }:
+        if pod_status.phase not in {"Running", "Pending", "Succeeded"}:
             at_risk_pods.append({
                 "ns": ns.metadata.name,
                 "pod": pod,
@@ -126,14 +124,14 @@ def get_pod_logs(pod: kubernetes.client.V1Pod):
     pod_logs = core_api.read_namespaced_pod_log(pod.metadata.name, pod.metadata.namespace)
 
     if not pod_logs:
-        no_logs = "Seems your pod isn't producing any logs. Instead providing you with other information.\n\n"
+        no_logs = "Seems your pod isn't producing any logs. Instead providing you with other information.\n"
 
         conditions = pod.status.conditions
         no_logs += "The last conditions your pods went through were: \n"
 
         for idx, condition in enumerate(conditions):
             last_tr_time: datetime = condition.last_transition_time
-            no_logs += f"{idx+1}. {last_tr_time.isoformat()} - Reason: `{condition.reason}` \t Type: `{condition.type}`\n"
+            no_logs += f"{idx + 1}. {last_tr_time.isoformat()} - Reason: `{condition.reason}` \t Type: `{condition.type}`\n"
 
         no_logs += "---- \n"
 
@@ -151,6 +149,7 @@ def get_pod_logs(pod: kubernetes.client.V1Pod):
         'status': 200,
         'logs': pod_logs
     }
+
 
 """
     Build the Github PR comment here, providing all the information they would need to
@@ -189,8 +188,8 @@ def build_report(risk_info):
 
         namespace_report["reports"].append(report)
 
-
     return namespace_report
+
 
 """
     Get Issue Number from the namespace
