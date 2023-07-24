@@ -133,14 +133,16 @@ def get_pod_logs(pod: kubernetes.client.V1Pod):
 
         for idx, condition in enumerate(conditions):
             last_tr_time: datetime = condition.last_transition_time
-            no_logs += f"{idx + 1}. {last_tr_time.isoformat()} - Reason: `{condition.reason}` \t Type: `{condition.type}`\n"
+            no_logs += (f"{idx + 1}. {last_tr_time.isoformat()} - Reason: `{condition.reason}`"
+                        f" \t Type: `{condition.type}`\n")
 
         no_logs += "---- \n"
 
         container_statuses = pod.status.container_statuses
         no_logs += "Containers launched under your pods with their stats: \n"
         for idx, status in enumerate(container_statuses):
-            no_logs += f"{idx + 1}. Container {status.container_id} has restarted: {status.restart_count} number of times.\n"
+            no_logs += (f"{idx + 1}. Container {status.container_id} has restarted:"
+                        f" {status.restart_count} number of times.\n")
 
         return {
             'status': 500,
@@ -227,7 +229,6 @@ def add_comment_to_pr(report):
         issue_number=report["issue_number"],  # namespace.metadata.name derived from PR and namespace configmap
         body="---- New Deployment Report: \n".join(report["reports"])
     )
-    pass
 
 
 if __name__ == "__main__":
