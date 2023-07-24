@@ -60,6 +60,8 @@ jobs:
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
           subdirectory=$(dirname $namespace_file)
+          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+          namespace=$(echo $namespace_name | xargs echo -n)
           echo "Sub Directory = $subdirectory"
         
           # Switch to Dev branch and make files commit 
@@ -74,7 +76,7 @@ jobs:
             git checkout ${{ github.event.pull_request.head.ref }} -- $item
             git add $item
           done
-          git commit -m "Adding new and changed files for $subdirectory PR number ${{ github.event.pull_request.number }}"
+          git commit -m "Adding new and changed files for $namespace PR number ${{ github.event.pull_request.number }}"
         else 
           echo "No namespace.yaml file found"
           exit 200
