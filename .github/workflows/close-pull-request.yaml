@@ -27,6 +27,8 @@ jobs:
           git config --local user.email "dev@null"
           git config --local user.name "Conformitron Bot"
           git log --grep="namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+          rm -rf ./$subdirectory
+          git add .
           git commit -m "Remove attempted PR files for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
         else 
           echo "No ConfigMap found"
