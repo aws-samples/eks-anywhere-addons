@@ -76,7 +76,7 @@ jobs:
             git checkout ${{ github.event.pull_request.head.ref }} -- $item
             git add $item
           done
-          git commit -m "Adding new and changed files for $namespace PR number ${{ github.event.pull_request.number }}"
+          git commit -m "Adding new and changed files for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
         else 
           echo "No namespace.yaml file found"
           exit 200
