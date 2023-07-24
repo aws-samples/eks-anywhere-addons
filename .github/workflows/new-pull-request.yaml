@@ -38,11 +38,8 @@ jobs:
             echo "data:" >> $config_map_file
             echo "  Namespace: ${namespace}" >> $config_map_file
             echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file
-            last_commit=$(git rev-parse HEAD)
-            echo "  commitID: ${{last_commit}}" >> $config_map_file   
             echo $subdirectory
             echo $config_map_file
-            echo $last_commit
             mv $config_map_file ./$subdirectory/
             git config --local user.email "dev@null"
             git config --local user.name "Conformitron Bot"
