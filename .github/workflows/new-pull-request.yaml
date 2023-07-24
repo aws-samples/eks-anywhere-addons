@@ -38,7 +38,7 @@ jobs:
             echo "data:" >> $config_map_file
             echo "  Namespace: ${namespace}" >> $config_map_file
             echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file
-            last_commit= git log -1
+            last_commit=$(git log -1)
             echo "  commitID: ${{last_commit}}" >> $config_map_file   
             echo $subdirectory
             echo $config_map_file
