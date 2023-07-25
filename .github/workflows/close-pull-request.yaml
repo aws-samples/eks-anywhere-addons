@@ -28,8 +28,9 @@ jobs:
           echo "Sub Directory = $subdirectory"
           git config --local user.email "dev@null"
           git config --local user.name "Conformitron Bot"
-          echo "Commits from ${{ github.event.pull_request.number }}"
-          git log --grep="namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+          echo "Commits from namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+          commits=$(echo "namespace $namespace and PR number ${{ github.event.pull_request.number }}")
+          git log --format=format:"%H" --grep=$commits
           rm -rf ./$subdirectory
           git add .
           git commit -m "Remove attempted PR files for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
