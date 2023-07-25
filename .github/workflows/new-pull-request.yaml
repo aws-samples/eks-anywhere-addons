@@ -44,7 +44,7 @@ jobs:
             git config --local user.email "dev@null"
             git config --local user.name "Conformitron Bot"
             git add .
-            git commit -m "Add config map for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+            git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
           else 
             echo "No Namespace found"
             exit 100
@@ -76,7 +76,7 @@ jobs:
             git checkout ${{ github.event.pull_request.head.ref }} -- $item
             git add $item
           done
-          git commit -m "Adding new and changed files for namespace $namespace and PR number ${{ github.event.pull_request.number }}"
+          git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
         else 
           echo "No namespace.yaml file found"
           exit 200
