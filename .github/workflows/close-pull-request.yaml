@@ -30,11 +30,9 @@ jobs:
           git config --local user.name "Conformitron Bot"
           
           # revert Git commits 
-          git fetch origin main:main
-          git checkout developer_branch
           echo "Commits from ${namespace}_PR_${{ github.event.pull_request.number }}"
           commits=$(echo "${namespace}_PR_${{ github.event.pull_request.number }}")
-          echo "commits: $(git log --format=format:"%H" --grep=$commits --all)"
+          echo "commits: $(git log --format=format:"%H" --grep="${commits}" --all)"
           rm -rf ./$subdirectory
           git add .
           git commit -m "Remove attempted PR files for ${namespace}_PR_${{ github.event.pull_request.number }}"
