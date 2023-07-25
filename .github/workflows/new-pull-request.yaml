@@ -68,7 +68,7 @@ jobs:
           git config --local user.email "dev@null"
           git config --local user.name "Conformitron Bot"
           git fetch origin developer_branch
-          git checkout developer_branch
+          git checkout origin/developer_branch
           git fetch --all
           
           # checkout each file to Dev branch
