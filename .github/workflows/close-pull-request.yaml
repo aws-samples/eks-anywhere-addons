@@ -23,6 +23,8 @@ jobs:
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -n "$namespace_file" ]; then
           subdirectory=$(dirname $namespace_file)
+          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+          namespace=$(echo $namespace_name | xargs echo -n)
           echo "Sub Directory = $subdirectory"
           git config --local user.email "dev@null"
           git config --local user.name "Conformitron Bot"
