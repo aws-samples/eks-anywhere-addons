@@ -26,6 +26,7 @@ jobs:
           echo "Sub Directory = $subdirectory"
           git config --local user.email "dev@null"
           git config --local user.name "Conformitron Bot"
+          echo "Commits from ${{ github.event.pull_request.number }}"
           git log --grep="namespace $namespace and PR number ${{ github.event.pull_request.number }}"
           rm -rf ./$subdirectory
           git add .
