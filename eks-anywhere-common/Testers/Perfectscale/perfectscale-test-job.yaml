@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: perfectscale-test-job
+  namespace: perfectscale
+spec:
+  template:
+    spec:
+      containers:
+      - name: perfectscale-test-job
+        image: curlimages/curl:latest
+        command: ["sh", "-c"]
+        args:
+        - |
+          while true; do
+            if curl --silent --fail perfectscale-exporter:80/health ; then
+              echo "Service is available: $(date)"
+              exit 0
+            else
+              echo "Service is not available yet. Retrying in 10 seconds..."
+              sleep 10
+            fi
+          done
+      restartPolicy: Never
