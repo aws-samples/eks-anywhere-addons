@@ -16,7 +16,9 @@ spec:
           args:
             - '-c'
             - >-
-              kubectl wait pods -n lacework -l name=lacework-agent --for condition=Ready --timeout=90s
+              kubectl wait pods -n lacework -l name=lacework-agent --for condition=Ready --timeout=90s;
+              output=$(kubectl logs --tail=100 -n lacework -l name=lacework-agent);
+              if grep -q "Connected to controller" <<< "$output"; then exit 0; else exit 1; fi;
       restartPolicy: Never
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -28,6 +30,9 @@ rules:
   - apiGroups: [ "" ]
     resources: [ "pods" ]
     verbs: [ "get", "watch", "list"]
+  - apiGroups: [ "" ]
+    resources: [ "pods/log" ]
+    verbs: [ "get", "watch", "list" ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
