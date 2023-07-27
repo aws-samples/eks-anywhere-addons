@@ -8,16 +8,21 @@ spec:
     spec:
       containers:
       - name: perfectscale-test-job
-        image: curlimages/curl:latest
+        image: badouralix/curl-jq:ubuntu
         command: ["sh", "-c"]
         args:
         - |
+          url="http://perfectscale-perfectscale-exporter:80/status/auth"
+
           while true; do
-            if curl --silent --fail perfectscale-perfectscale-exporter:80/health ; then
-              echo "Service is available: $(date)"
-              exit 0
+            response=$(curl -s "$url")
+            policy=$(echo "$response" | jq -r '.data.policy')
+
+            if [ "$policy" = "ok" ]; then
+              echo "Perfectscale Exporter was successfully connected to the backend"
+              break
             else
-              echo "Service is not available yet. Retrying in 10 seconds..."
+              echo "Waiting for connection..."
               sleep 10
             fi
           done
