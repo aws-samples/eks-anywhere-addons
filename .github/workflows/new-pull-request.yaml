@@ -26,6 +26,7 @@ jobs:
         
         # Find Namespace File
         namespace_file=$(echo "$files" | grep "namespace.yaml")
+        echo "namespace File = $namespace_file"
         if [ -z $namespace_file ]; then
           subdirectory=$(dirname filearr[0])
           if [ -f "${subdirectory}/namespace.yaml" ]; then
@@ -33,6 +34,8 @@ jobs:
             echo "updated namespace file = $namespace_file"
           fi
         fi
+        
+        
         # Parse namespace data
         if [ -n "$namespace_file" ]; then
           # subdirectory=$(dirname $namespace_file)
