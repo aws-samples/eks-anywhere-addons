@@ -22,7 +22,7 @@ jobs:
         echo $files
         subdirectory=$(dirname ${files[0]})
         namespace_file=$(echo "$files" | grep "namespace.yaml")
-        if [ -f "namespace.yaml" ]; then
+        if [ -f "${subdirectory}/namespace.yaml" ]; then
           namespace_file="namespace.yaml"
           echo "Namespace yaml exists"
         fi  
