@@ -38,7 +38,7 @@ jobs:
         
         # Parse namespace data
         if [ -n "$namespace_file" ]; then
-          # subdirectory=$(dirname $namespace_file)
+          subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           if [[ ! -z $namespace_name ]]; then
