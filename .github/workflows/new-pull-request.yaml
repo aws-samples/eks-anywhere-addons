@@ -31,7 +31,8 @@ jobs:
           if[[ -f "${subdirectory}/namespace.yaml" ]]; then
             namespace_file="${subdirectory}/namespace.yaml"
             echo "updated namespace file = $namespace_file"
-            
+          fi
+        fi
         # Parse namespace data
         if [ -n "$namespace_file" ]; then
           # subdirectory=$(dirname $namespace_file)
