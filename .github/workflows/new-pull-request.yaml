@@ -24,8 +24,8 @@ jobs:
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -f "namespace.yaml" ]; then
           namespace_file=$namespace.yaml
-          
-        if [ -n "$namespace_file" ] || [-f "namespace.yaml"]; then
+        fi  
+        if [ -n "$namespace_file" ]; then
           echo "Sub Directory = $subdirectory"
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           if [[ ! -z $namespace_name ]]; then
