@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: podinfo
+  namespace: podinfo
+spec:
+  chart:
+    spec:
+      chart: podinfo
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: podinfo
+        namespace: flux-system
+      version: 6.3.6
+  interval: 3m0s
+  targetNamespace: podinfo
