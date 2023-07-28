@@ -23,7 +23,8 @@ jobs:
         subdirectory=$(dirname ${files[0]})
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         if [ -f "namespace.yaml" ]; then
-          namespace_file=$namespace.yaml
+          namespace_file="namespace.yaml"
+          echo "Namespace yaml exists"
         fi  
         if [ -n "$namespace_file" ]; then
           echo "Sub Directory = $subdirectory"
