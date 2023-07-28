@@ -21,7 +21,8 @@ jobs:
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
         
-        echo "File 2 = ${files[2]}"
+        IFS=' ' read -a filearr <<< "$files"
+        echo "File 1 = ${filearr[0]}"
         
         # Find Namespace File
         namespace_file=$(echo "$files" | grep "namespace.yaml")
