@@ -20,7 +20,15 @@ jobs:
       run: |
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
+        
+        echo "File 1 = ${files[0]}"
+        
+        # Find Namespace File
         namespace_file=$(echo "$files" | grep "namespace.yaml")
+        if [ -z $namespace_file ]; then
+          
+        
+        # Parse namespace data
         if [ -n "$namespace_file" ]; then
           subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
