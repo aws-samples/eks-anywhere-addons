@@ -20,13 +20,9 @@ jobs:
       run: |
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
-        subdirectory=$(dirname ${files[0]})
         namespace_file=$(echo "$files" | grep "namespace.yaml")
-        if [ -f "${subdirectory}/namespace.yaml" ]; then
-          namespace_file="namespace.yaml"
-          echo "Namespace yaml exists"
-        fi  
         if [ -n "$namespace_file" ]; then
+          subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           if [[ ! -z $namespace_name ]]; then
@@ -48,7 +44,7 @@ jobs:
             git config --local user.email "dev@null"
             git config --local user.name "Conformitron Bot"
             git add .
-            git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
+            git commit -m "Add config map for $namespace_PR_${{ github.event.pull_request.number }}"
           else 
             echo "No Namespace found"
             exit 100
