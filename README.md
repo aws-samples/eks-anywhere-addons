@@ -40,10 +40,12 @@ metadata:
 
 1. Functional test should base its test cases on the specifications of the ISV product under test
 2. Functional test should validate the functionality of the ISV product and describe what the ISV product does
-3. Healthchecks, service endpoints checks or any other technical checks are not considered and accepted as valid functional test
-4. Functional test should be wrapped as a container and submitted as a Kubernetes job
-5. Functional test should enable broader test coverage and better customer experience
-6. Functional test should be submitted under `eks-anywhere-common/testers` (runs on all platforms) or under your respective environment folder such as `eks-anywhere-snow/testers` (e.g. `eks-anywhere-snow/testers/<orgname>/<productname>`). 
+3. Healthchecks, service endpoints checks or any other technical checks are do not represent sufficient coverage required for the functional test
+4. Functional test should be wrapped as a container, container image should be published to ECR, and/or provide evidence of successful recent vulnerability scan
+5. Functional test must be implemented as a Kubernetes Job and any non-zero exit status of the job execution will be considered a failure
+6. Functional test must be repeatable. That means that if the job has executed before successfully and no changes were applied, we expect to run it continuously and mark the product as failure if the test job starts producing failures even if previous executions against the same environment were successful
+7. Functional test should not require elevated security permissions, such as cluster roles, privileged mode, non-ephemeral storage
+8. Functional test should be submitted under `eks-anywhere-common/testers` (runs on all platforms) or under your respective environment folder such as `eks-anywhere-snow/testers` (e.g. `eks-anywhere-snow/testers/<orgname>/<productname>`)
 
 Refer the example [here](https://github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-common/Testers/Hashicorp/Vault/kvJob.yaml) for functional test job.
 
