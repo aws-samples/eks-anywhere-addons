@@ -40,8 +40,8 @@ metadata:
 
 1. Functional test should base its test cases on the specifications of the ISV product under test
 2. Functional test should validate the functionality of the ISV product and describe what the ISV product does
-3. Healthchecks, service endpoints checks or any other technical checks are do not represent sufficient coverage required for the functional test
-4. Functional test should be wrapped as a container, container image should be published to ECR, and/or provide evidence of successful recent vulnerability scan
+3. Healthchecks, service endpoints checks or any other technical checks do not represent sufficient coverage required for the functional test
+4. Functional test should be wrapped as a container, container image should be published on ECR, and/or provide evidence of successful recent vulnerability scan
 5. Functional test must be implemented as a Kubernetes Job and any non-zero exit status of the job execution will be considered a failure
 6. Functional test must be repeatable. That means that if the job has executed before successfully and no changes were applied, we expect to run it continuously and mark the product as failure if the test job starts producing failures even if previous executions against the same environment were successful
 7. Functional test should not require elevated security permissions, such as cluster roles, privileged mode, non-ephemeral storage
