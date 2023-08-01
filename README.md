@@ -34,7 +34,21 @@ metadata:
 
 🚀	Secrets management such as license key or credentials is implemented using the External Secrets add-on. You will need to share secrets with the AWS Partner team. The AWS Partner team will create those secrets in an AWS account and use External Secrets to bring them down to the target deployment cluster. After that, such secrets can be configured in your GitOps deployment folder and passed to the deployment using configuration values or if your helm deployment can use pre-created secrets, that option is also supported.  The sample folder also contains an example of leveraging a [secret](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/external-secret.yaml) with the deployment as well as an example of wiring that secret in your deployment [here](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost.yaml#L24) (line numbers may change in the link).
 
-🚀	Though deployment and validation of your solution on the target deployment option is helpful, it does not provide the required level of quality assurance for functional verification, which is generally achieved with a test framework and automation normally included in the CI/CD cycle of the Partner product. We recommend that Partners wrap their functional test as a container and submit as a Kubernetes job along with their deployments to enable broader test coverage and better customer experience. The functional test job should be submitted under `eks-anywhere-common/testers` (runs on all platforms) or under your respective environment folder such as `eks-anywhere-snow/testers` (e.g. `eks-anywhere-snow/testers/<orgname>/<productname>`). Example [here](https://github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-snow/Testers/Sample). 
+🚀	Though deployment and validation of your solution on the target deployment option is helpful, it does not provide the required level of quality assurance for functional verification, which is generally achieved with a test framework and automation normally included in the CI/CD cycle of the Partner product.
+
+## Functional Job Requirements
+
+1. Functional test should base its test cases on the specifications of the ISV product under test
+2. Functional test should validate the functionality of the ISV product and describe what the ISV product does
+3. Healthchecks, service endpoints checks or any other technical checks do not represent sufficient coverage required for the functional test
+4. Functional test should be wrapped as a container, container image should be published on ECR, and/or provide evidence of successful recent vulnerability scan
+5. Functional test must be implemented as a Kubernetes Job and any non-zero exit status of the job execution will be considered a failure
+6. Functional test must be repeatable. That means that if the job has executed before successfully and no changes were applied, we expect to run it continuously and mark the product as failure if the test job starts producing failures even if previous executions against the same environment were successful
+7. Functional test should not require elevated security permissions, such as cluster roles, privileged mode, non-ephemeral storage
+8. Functional test should be submitted under `eks-anywhere-common/testers` (runs on all platforms) or under your respective environment folder such as `eks-anywhere-snow/testers` (e.g. `eks-anywhere-snow/testers/<orgname>/<productname>`)
+
+Refer the example [here](https://github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-common/Testers/Hashicorp/Vault/kvJob.yaml) for functional test job.
+
 
 ## Contribution Flow
 
