@@ -30,6 +30,8 @@ jobs:
           git config --local user.name "Conformitron Bot"
           
           # revert Git commits 
+          git fetch origin developer_branch
+          git checkout developer_branch
           commits=$(echo "${namespace}_PR_${{ github.event.pull_request.number }}")
           echo "commits: $(git log --format=format:"%H" --grep=$commits --all)"
           rm -rf ./$subdirectory
