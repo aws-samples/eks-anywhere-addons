@@ -62,7 +62,7 @@ jobs:
             git config --local user.email "dev@null"
             git config --local user.name "Conformitron Bot"
             git add .
-            git commit -m "Add config map for $namespace_PR_${{ github.event.pull_request.number }}"
+            git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
           else 
             echo "No Namespace found"
             exit 100
