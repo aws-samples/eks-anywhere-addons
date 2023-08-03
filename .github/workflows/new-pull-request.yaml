@@ -24,17 +24,19 @@ jobs:
         IFS=' ' read -a filearr <<< "$files"
 
         
-        # Find Namespace File
+        # Find Namespace File in uploads list or in modified file subdirectory
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         echo "namespace File = $namespace_file"
+        subdirectory=$(dirname filearr[0])
         if [ -z $namespace_file ]; then
-          subdirectory=$(dirname filearr[0])
           if [ -f "${subdirectory}/namespace.yaml" ]; then
             namespace_file="${subdirectory}/namespace.yaml"
             echo "updated namespace file = $namespace_file"
+          else
+            echo "No Namespace file found in commit or subdirectory"
+            exit 200
           fi
         fi
-        
         
         # Parse namespace data
         if [ -n "$namespace_file" ]; then
