@@ -1,3 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-configmap
+  namespace: lacework
+data:
+  test.sh: |-
+    #!/bin/bash
+    kubectl wait pods -n lacework -l name=lacework-agent --for condition=Ready --timeout=90s
+    sleep 30
+    logs=$(kubectl logs -n lacework -l name=lacework-agent)
+    echo -e "Kubectl Logs from Agent: \n ${logs}"
+    if grep "stats.go" <<< "$logs"
+    then 
+      echo -e "\n ^‿^ Stats collection is running ^‿^"
+      exit 0
+    else
+      echo -e "\n סּ︵סּ Stats collection is not running סּ︵סּ" 
+      exit 1
+    fi
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -12,13 +33,17 @@ spec:
           image: 'alpine/k8s:1.26.2'
           imagePullPolicy: Always
           command:
-            - /bin/bash
-          args:
-            - '-c'
-            - >-
-              kubectl wait pods -n lacework -l name=lacework-agent --for condition=Ready --timeout=90s;
-              output=$(kubectl logs -n lacework -l name=lacework-agent);
-              if grep "stats.go" <<< "$output"; then exit 0; else exit 1; fi; # Check if stats.go is actively collecting
+            - /bin/test.sh
+          volumeMounts:
+            - name: test-configmap-volume
+              mountPath: /bin/test.sh
+              readOnly: true
+              subPath: test.sh
+      volumes:
+        - name: test-configmap-volume
+          configMap:
+            defaultMode: 0700
+            name: test-configmap
       restartPolicy: Never
 ---
 apiVersion: rbac.authorization.k8s.io/v1
