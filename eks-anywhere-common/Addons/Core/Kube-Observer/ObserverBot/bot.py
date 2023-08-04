@@ -46,7 +46,8 @@ def get_at_risk_pods(ns: V1Namespace) -> []:
         pod_status: V1PodStatus = pod.status
 
         # If the pod isn't in a "Success/Pending" state, immediately flag it
-        if pod_status.phase not in {"Running", "Pending", "Succeeded"}:
+        # Checks if it's failed/unknown
+        if pod_status.phase in {"Failed", "Unknown"}:
             at_risk_pods.append({
                 "ns": ns.metadata.name,
                 "pod": pod,
