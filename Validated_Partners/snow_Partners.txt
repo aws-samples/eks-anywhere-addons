@@ -5,6 +5,7 @@ Following ISV Partners have Validated their Conformance :
  
 VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE
 dynatrace        dynatrace
+accuknox         kubearmor
 kubecost         cost-analyzer
 lacework         polygraph
 suse             neuvector
