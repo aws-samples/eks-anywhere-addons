@@ -38,9 +38,7 @@ jobs:
           echo "commits: $(git log -1 --format=format:"%H"  --all)"
           git revert $commits
           git push
-          
-
-          
+      
         else 
           echo "No ConfigMap found"
           exit 200
