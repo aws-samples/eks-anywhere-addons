@@ -21,8 +21,6 @@ jobs:
         # Pull files down into a filename array
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
-        IFS=' ' read -a filearr <<< "$files"
-
         
         # Find Namespace File in uploads list or in modified file subdirectory
         namespace_file=$(echo "$files" | grep "namespace.yaml")
@@ -112,5 +110,3 @@ jobs:
         git fetch --all
         git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
         git push
-        commits=$(echo "${namespace}_PR_${{ github.event.pull_request.number }}")
-        echo "commits: $(git log --format=format:"%H" --grep=$commits --all)"
