@@ -42,7 +42,7 @@ jobs:
           # Reset the files associated with this PR 
           for item in $files; do
             git checkout ${{ github.event.pull_request.head.ref }} -- $item
-            git reset $item HEAD~1
+            git reset $(git log -1 --format=format:"%H"  --all) $item
           done   
           git push
           
