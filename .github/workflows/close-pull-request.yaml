@@ -34,7 +34,7 @@ jobs:
           git checkout developer_branch
           commits=$(echo "${namespace}_PR_${{ github.event.pull_request.number }}")
           echo "commits: $(git log -1 --format=format:"%H"  --all)"
-          rm -rf ./$subdirectory
+          git revert $commits
           git add .
           git commit -m "Remove attempted PR files for ${namespace}_PR_${{ github.event.pull_request.number }}"
         else 
