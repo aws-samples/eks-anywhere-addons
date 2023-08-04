@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kubearmor-tester
+  namespace: kubearmor
+spec:
+  template:
+    spec:
+      containers:
+        - name: job
+          image: 'alpine/k8s:1.26.2'
+          imagePullPolicy: Always
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - >-
+              echo 1. Checking readiness probe
+              kubectl wait --for=condition=ready --timeout=5m -n kubearmor pod -l kubearmor-app
+              echo 2. Checking audit port
+              kubearmor_audit="...";
+              while [[ "$kubearmor_audit" != *"Connected"* ]];
+              do kubearmor_audit=`curl -ksv --connect-timeout 4 telnet://kubearmor.kubearmor.svc.cluster.local:32767 2>&1` && echo Connecting;
+              sleep 2;
+              done;
+              echo Success;
+      restartPolicy: Never
+  backoffLimit: 1

@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubearmor
+  labels:
+      aws.conformance.vendor: accuknox
+      aws.conformance.vendor-solution: kubearmor
