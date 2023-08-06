@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: komodor-k8s-watcher
+  name: k8s-watcher
   namespace: komodor
 spec:
   chart:
