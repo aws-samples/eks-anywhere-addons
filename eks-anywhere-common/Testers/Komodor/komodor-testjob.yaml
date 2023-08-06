@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: komodor-tester
+  namespace: komodor
+spec:
+  template:
+    spec:
+      containers:
+        - name: job
+          image: 'alpine/k8s:1.26.2'
+          imagePullPolicy: Always
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - >-
+              kubectl wait --for=condition=ready --timeout=5m -n komodor pod -l app.kubernetes.io/name=k8s-watcher
+              kubectl logs -n komodor -l app.kubernetes.io/name=k8s-watcher -c k8s-watcher --since=1h | grep "Initialized successfully" && exit 0 || exit 1
+      restartPolicy: Never
+  backoffLimit: 1
