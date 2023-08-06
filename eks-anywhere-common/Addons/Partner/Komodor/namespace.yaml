@@ -5,6 +5,3 @@ metadata:
   labels:
       aws.conformance.vendor: komodor
       aws.conformance.vendor-solution: k8s-watcher
-      meta.helm.sh/release-namespace : ""
-      meta.helm.sh/release-name : komodor-k8s-watcher
-      app.kubernetes.io/managed-by : Helm
