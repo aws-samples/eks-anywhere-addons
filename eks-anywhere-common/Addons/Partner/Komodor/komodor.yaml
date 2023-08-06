@@ -15,7 +15,6 @@ spec:
         namespace: flux-system
       version: 1.15.5
   interval: 1m0s
-  targetNamespace: komodor
   values:
     global:
       thanos:
