@@ -23,12 +23,12 @@ spec:
     createNamespace: false
   valuesFrom:
     - kind: Secret
-      name: k8s-watcher-secret
+      name: k8s-watcher-secret-flux
       valuesKey: k8s-watcher-apiKey
       targetPath: apiKey
     - kind: Secret
-      name: k8s-watcher-secret
+      name: k8s-watcher-secret-flux
       valuesKey: k8s-watcher-clusterName
       targetPath: watcher.clusterName
     
-   
+  
