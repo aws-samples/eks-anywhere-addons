@@ -33,7 +33,7 @@ jobs:
             exit 200
           fi
         else
-          namespace_file=$(echo "$files" | grep "namespace.yaml) || echo "No Namespace File Found" && exit 200
+          namespace_file=$(echo "$files" | grep "namespace.yaml") || echo "No Namespace File Found" && exit 200
           echo "namespace File = $namespace_file"
           subdirectory=$(dirname filearr[0])
         fi
