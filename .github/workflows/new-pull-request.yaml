@@ -24,7 +24,7 @@ jobs:
         
         # Find Namespace File in uploads list or in modified file subdirectory
         if [ -z $namespace_file ]; then
-          ls subdirectory 
+          pwd 
           if [ -f "${subdirectory}/namespace.yaml" ]; then
             namespace_file="${subdirectory}/namespace.yaml"
             echo "updated namespace file = $namespace_file"
