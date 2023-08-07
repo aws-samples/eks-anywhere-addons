@@ -22,7 +22,9 @@ jobs:
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
         filearr=($files)
-        subdirectory=$(dirname filearr[0])
+        subdirectory=$(dirname ${filearr[0]})
+        echo $subdirectory
+        echo "${subdirectory}/namespace.yaml"
         
         # Find Namespace File in uploads list or in modified file subdirectory
         if [ -z $namespace_file ]; then
