@@ -15,7 +15,7 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.ref }}
         
-    - name: Find Namespace YAML
+    - name: Parse Namespace data, Create ConfigMap and Copy over committed files 
       id: find-namespace-yaml
       run: |
         # Pull files down into a filename array
@@ -23,22 +23,19 @@ jobs:
         echo $files
         filearr=($files)
         subdirectory=$(dirname ${filearr[0]})
-        echo $subdirectory
-        echo "${subdirectory}/namespace.yaml"
         
         # Find Namespace File in uploads list or in modified file subdirectory
         if [ -z $namespace_file ]; then
-          echo $subdirectory
-          echo "${subdirectory}/namespace.yaml"
           if [ -f "${subdirectory}/namespace.yaml" ]; then
             namespace_file="${subdirectory}/namespace.yaml"
             echo "updated namespace file = $namespace_file"
+          elif [echo "$files" | grep "namespace.yaml"]; then
+            namespace_file=$(echo "$files" | grep "namespace.yaml") || echo "No Namespace File Found" && exit 200
           else
             echo "No Namespace file found in commit or subdirectory"
             exit 200
           fi
         else
-          namespace_file=$(echo "$files" | grep "namespace.yaml") || echo "No Namespace File Found" && exit 200
           echo "namespace File = $namespace_file"
 
         fi
@@ -77,36 +74,20 @@ jobs:
           exit 200
         fi
 
-        
-    - name: Copy over new or updated files
-      run: |
-        # Pull Subdirectory and Files 
-        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-        namespace_file=$(echo "$files" | grep "namespace.yaml")
-        if [ -n "$namespace_file" ]; then
-          subdirectory=$(dirname $namespace_file)
-          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-          namespace=$(echo $namespace_name | xargs echo -n)
-          echo "Sub Directory = $subdirectory"
-        
-          # Switch to Dev branch and make files commit 
-          git config --local user.email "dev@null"
-          git config --local user.name "Conformitron Bot"
-          git fetch origin developer_branch
-          git checkout developer_branch
-          git fetch --all
-          
-          # checkout each file to Dev branch
-          for item in $files; do
-            git checkout ${{ github.event.pull_request.head.ref }} -- $item
-            git add $item
-          done
-          git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
-          git push
-        else 
-          echo "No namespace.yaml file found"
-          exit 200
-        fi
+        # Switch to Dev branch and make files commit 
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git fetch origin developer_branch
+        git checkout developer_branch
+        git fetch --all
+      
+        # checkout each file to Dev branch
+        for item in $files; do
+          git checkout ${{ github.event.pull_request.head.ref }} -- $item
+          git add $item
+        done
+        git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
+        git push
       
     - name: Generate the config map file content and Push it to Developer Branch
       run: |
