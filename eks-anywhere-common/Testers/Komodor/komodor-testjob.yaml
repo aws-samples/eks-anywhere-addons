@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: job
-          image: 'public.ecr.aws/komodor-public/k8s-watcher:test-arm'
+          image: public.ecr.aws/komodor-public/k8s-watcher:0.2.44
           env:
             - name: KOMOKW_API_KEY
               valueFrom:
