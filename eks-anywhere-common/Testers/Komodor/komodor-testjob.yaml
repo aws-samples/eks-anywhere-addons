@@ -8,21 +8,45 @@ spec:
     spec:
       containers:
         - name: job
-          image: 'alpine/k8s:1.26.2'
+          image: 'public.ecr.aws/komodor-public/k8s-watcher:test-arm'
+          env:
+            - name: KOMOKW_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: k8s-watcher-secret-flux
+                  key: k8s-watcher-apiKey
+            - name: KOMOKW_CLUSTER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: k8s-watcher-secret-flux
+                  key: k8s-watcher-clusterName             
           imagePullPolicy: Always
-          command:
-            - /bin/sh
+
+          command: [ "/bin/sh", "-c", "--"]
           args:
-            - -c
-            - >-
-              echo 1. Checking readiness probe for watcher
-              k8s_watcher_pod="...";
-              while [[ "$k8s_watcher_pod" != "komodor-k8s-watcher-"* ]]; 
-              do k8s_watcher_pod=`kubectl get pod -n komodor -l app.kubernetes.io/name=k8s-watcher --field-selector=status.phase==Running -o jsonpath="{.items[0].metadata.name}"` && echo Waiting;
-              sleep 15;
-              echo pod $k8s_watcher_pod is ready;
-              done;        
-              echo Success;
+          - >-
+            echo 1. Checking readiness probe for watcher
+            k8s_watcher_pod="...";
+            while [[ "$k8s_watcher_pod" != "komodor-k8s-watcher-"* ]]; 
+            do k8s_watcher_pod=`kubectl get pod -n komodor -l app.kubernetes.io/name=k8s-watcher --field-selector=status.phase==Running -o jsonpath="{.items[0].metadata.name}"` && echo Waiting;
+            sleep 15;
+            
+            echo "Running connectivity test" ;
+            arch=$(uname -m)
+
+            case "$arch" in
+                aarch64)
+                    architecture="amd64"
+                    ;;
+                x86_64)
+                    exec /opt/watcher-linux-amd64 test -connectivity
+                    ;;
+                *)
+                    architecture="arm64"
+                    ;;
+            esac            
+            /opt/watcher-linux-$architecture test -connectivity;
+            
       restartPolicy: Never
   backoffLimit: 1
 ---
