@@ -24,7 +24,9 @@ spec:
     daemon:
       tolerations:
         - key: node-role.eks-local.amazonaws.com/control-plane
-          operator: Exists
+          operator: Equal
+          effect: NoSchedule
+          tolerationSeconds: 0
   valuesFrom:
     - kind: Secret
       name: k8s-watcher-secret-flux
