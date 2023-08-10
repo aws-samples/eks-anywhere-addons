@@ -25,7 +25,7 @@ spec:
       tolerations:
         - key: node-role.eks-local.amazonaws.com/control-plane
           operator: Equal
-          effect: NoSchedule
+          effect: NoExecute
           tolerationSeconds: 0
   valuesFrom:
     - kind: Secret
