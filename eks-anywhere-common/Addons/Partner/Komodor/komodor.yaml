@@ -21,6 +21,10 @@ spec:
       thanos:
         enabled: false
     createNamespace: false
+    daemon:
+      tolerations:
+        key: node-role.eks-local.amazonaws.com/control-plane
+        operator: Exists
   valuesFrom:
     - kind: Secret
       name: k8s-watcher-secret-flux
