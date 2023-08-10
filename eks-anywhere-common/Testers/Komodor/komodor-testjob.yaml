@@ -36,7 +36,8 @@ spec:
               echo 2. Creating test configmap
               epoc_timestamp=$(date +%s)
               echo $epoc_timestamp > epoc_timestamp
-              kubectl create configmap -n komodor komodor-test-configmap --from-file=epoc_timestamp -o yaml --dry-run=client | kubectl replace -f -
+              kubectl delete configmap -n komodor komodor-test-configmap || true
+              kubectl create configmap -n komodor komodor-test-configmap --from-file=epoc_timestamp
 
 
               echo 3. Checking if komodor identified the configmap
@@ -67,7 +68,7 @@ rules:
   verbs: ["list"]
 - apiGroups: [""]
   resources: ["configmaps"]
-  verbs: ["create", "get", "list", "update"]
+  verbs: ["create", "get", "list", "update", "delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
