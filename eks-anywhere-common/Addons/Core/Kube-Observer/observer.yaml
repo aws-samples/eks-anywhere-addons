@@ -13,12 +13,14 @@ spec:
           serviceAccountName: observer-sa
           containers:
           - name: observer-pod
-            image: 771830474512.dkr.ecr.us-east-1.amazonaws.com/observer-bot:latest
+            image: 771830474512.dkr.ecr.us-east-2.amazonaws.com/observer-bot:latest
             imagePullPolicy: Always
             env:
               - name: GITHUB_TOKEN
                 valueFrom:
                   secretKeyRef:
                     name: observer-key
-                    key: observer_token
+                    key: observer-key
+              - name: REPO
+                value: 
           restartPolicy: Never

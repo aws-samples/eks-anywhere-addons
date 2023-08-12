@@ -1,3 +1,4 @@
+import os
 import argparse
 from datetime import datetime
 
@@ -205,7 +206,7 @@ def build_report(risk_info):
             if pod_logs['status'] == 200:
                 pod_logs = f"```{pod_logs['logs']}```\n"
             else:
-                pod_logs = f"{pod_logs['logs']}\n ----"
+                pod_logs = f"{pod_logs['logs']}\n ---- "
             report += f"Logs for pod `{pod_risk['pod'].metadata.name}`: \n {pod_logs}"
 
         namespace_report["reports"].append(report)
@@ -225,8 +226,8 @@ def add_comment_to_pr(report):
     #   issue_number: number
     #   reports: [ string ]
     comment_response = gh_api.issues.create_comment(
-        owner='aws-samples',
-        repo='eks-anywhere-addons',
+        owner=repo_owner,
+        repo=repo,
         issue_number=report["issue_number"],  # namespace.metadata.name derived from PR and namespace configmap
         body="---- New Deployment Report: \n".join(report["reports"])
     )
@@ -244,6 +245,9 @@ if __name__ == "__main__":
         config.load_kube_config()
     else:
         print("loading incluster config")
+        repo_owner = os.environ['OWNER']
+        repo = os.environ['REPO']
+
         config.load_incluster_config()
 
     apps_api = client.AppsV1Api()
