@@ -22,5 +22,7 @@ spec:
                     name: observer-key
                     key: observer-key
               - name: REPO
-                value: 
+                value: eks-anywhere-addons
+              - name: OWNER
+                value: 5herlocked
           restartPolicy: Never
