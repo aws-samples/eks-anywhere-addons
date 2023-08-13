@@ -36,22 +36,21 @@ spec:
               echo 2. Creating test configmap
               epoc_timestamp=$(date +%s)
               echo $epoc_timestamp > epoc_timestamp
-              kubectl delete configmap -n komodor komodor-test-configmap || true
+              kubectl delete configmap -n komodor komodor-test-configmap --ignore-not-found=true
               kubectl create configmap -n komodor komodor-test-configmap --from-file=epoc_timestamp
-
 
               echo 3. Checking if komodor identified the configmap
               komodor_value_for_configmap="..."
               count=0
               maximum_count=10
               while [[ "$komodor_value_for_configmap" != *"$epoc_timestamp"* ]] && [ $count -lt $maximum_count ]; do
-                  sleep 30
+                  sleep 60
                   echo "Waiting for Komodor to identify the configmap"
                   komodor_value_for_configmap=$(curl -s --location --request GET "https://app.komodor.com/resources/api/v1/configurations/config-maps/events/search?komodorUids=configmap|$KOMOKW_CLUSTER_NAME|komodor|komodor-test-configmap&limit=1&fields=newData&order=DESC" \
                   --header "Accept: application/json" \
                   --header "x-api-key: $KOMOKW_API_KEY" | jq '.data[0].newData.data | to_entries[0].value')
-                  echo latest_value in komodor = $komodor_value_for_configmap
-                  echo latest_value in configmap = $epoc_timestamp
+                  echo current latest_value in komodor = $komodor_value_for_configmap
+                  echo current latest_value in configmap = $epoc_timestamp
                   ((count++))
               done              
       restartPolicy: Never
