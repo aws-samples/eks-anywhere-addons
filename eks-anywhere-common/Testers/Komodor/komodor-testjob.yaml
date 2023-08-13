@@ -45,6 +45,7 @@ spec:
               count=0
               maximum_count=10
               while [[ "$komodor_value_for_configmap" != *"$epoc_timestamp"* ]] && [ $count -lt $maximum_count ]; do
+                  sleep 30
                   echo "Waiting for Komodor to identify the configmap"
                   komodor_value_for_configmap=$(curl -s --location --request GET "https://app.komodor.com/resources/api/v1/configurations/config-maps/events/search?komodorUids=configmap|$KOMOKW_CLUSTER_NAME|komodor|komodor-test-configmap&limit=1&fields=newData&order=DESC" \
                   --header "Accept: application/json" \
@@ -52,7 +53,6 @@ spec:
                   echo latest_value in komodor = $komodor_value_for_configmap
                   echo latest_value in configmap = $epoc_timestamp
                   ((count++))
-                  sleep 30
               done              
       restartPolicy: Never
   backoffLimit: 1
