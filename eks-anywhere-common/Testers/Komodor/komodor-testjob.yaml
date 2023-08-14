@@ -1,60 +1,74 @@
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
-  name: komodor-tester
+  name: komodor-tester-cron
   namespace: komodor
 spec:
-  template:
+  schedule: "10 10 * * *"
+  jobTemplate:
     spec:
-      containers:
-        - name: job
-          image: 'alpine/k8s:1.26.2'    
-          env:
-            - name: KOMOKW_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: k8s-watcher-secret-flux
-                  key: k8s-watcher-apiKey
-            - name: KOMOKW_CLUSTER_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: k8s-watcher-secret-flux
-                  key: k8s-watcher-clusterName    
-          imagePullPolicy: Always
-          command: ["/bin/bash", "-c"]
-          args:
-            - |
-              #!/bin/bash
-              echo 1. Checking readiness probe for watcher
-              k8s_watcher_pod="..."
-              while [[ "$k8s_watcher_pod" != "komodor-k8s-watcher-"* ]]; do
-                  k8s_watcher_pod=$(kubectl get pod -n komodor -l app.kubernetes.io/name=k8s-watcher --field-selector=status.phase==Running -o jsonpath="{.items[0].metadata.name}") && echo Waiting
-                  echo Found watcher pod:  $k8s_watcher_pod
-                  sleep 5
-              done
+      template:
+        spec:
+          containers:
+            - name: job
+              image: 'alpine/k8s:1.26.2'
+              env:
+                - name: KOMOKW_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: k8s-watcher-secret-flux
+                      key: k8s-watcher-apiKey
+                - name: KOMOKW_CLUSTER_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: k8s-watcher-secret-flux
+                      key: k8s-watcher-clusterName
+              imagePullPolicy: Always
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  #!/bin/bash
+                  echo 1. Checking readiness probe for watcher
+                  k8s_watcher_pod="..."
+                  while [[ "$k8s_watcher_pod" != "komodor-k8s-watcher-"* ]]; do
+                      k8s_watcher_pod=$(kubectl get pod -n komodor -l app.kubernetes.io/name=k8s-watcher --field-selector=status.phase==Running -o jsonpath="{.items[0].metadata.name}") && echo Waiting
+                      echo Found watcher pod:  $k8s_watcher_pod
+                      sleep 5
+                  done
 
-              echo 2. Creating test configmap
-              epoc_timestamp=$(date +%s)
-              echo $epoc_timestamp > epoc_timestamp
-              kubectl delete configmap -n komodor komodor-test-configmap --ignore-not-found=true
-              kubectl create configmap -n komodor komodor-test-configmap --from-file=epoc_timestamp
+                  echo 2. Creating test configmap
+                  epoc_timestamp=$(date +%s)
+                  echo $epoc_timestamp > epoc_timestamp
+                  kubectl delete configmap -n komodor komodor-test-configmap --ignore-not-found=true
+                  kubectl create configmap -n komodor komodor-test-configmap --from-file=epoc_timestamp
 
-              echo 3. Checking if komodor identified the configmap
-              komodor_value_for_configmap="..."
-              count=0
-              maximum_count=10
-              while [[ "$komodor_value_for_configmap" != *"$epoc_timestamp"* ]] && [ $count -lt $maximum_count ]; do
-                  sleep 60
-                  echo "Waiting for Komodor to identify the configmap"
-                  komodor_value_for_configmap=$(curl -s --location --request GET "https://app.komodor.com/resources/api/v1/configurations/config-maps/events/search?komodorUids=configmap|$KOMOKW_CLUSTER_NAME|komodor|komodor-test-configmap&limit=1&fields=newData&order=DESC" \
-                  --header "Accept: application/json" \
-                  --header "x-api-key: $KOMOKW_API_KEY" | jq '.data[0].newData.data | to_entries[0].value')
-                  echo current latest_value in komodor = $komodor_value_for_configmap
-                  echo current latest_value in configmap = $epoc_timestamp
-                  ((count++))
-              done              
-      restartPolicy: Never
-  backoffLimit: 1
+                  echo 3. Checking if komodor identified the configmap
+                  komodor_value_for_configmap="..."
+                  count=0
+                  maximum_count=10
+                  while [ $count -lt $maximum_count ]; do
+                      sleep 60
+
+                      komodor_value_for_configmap=$(curl -s --location --request GET "https://app.komodor.com/resources/api/v1/configurations/config-maps/events/search?komodorUids=configmap|$KOMOKW_CLUSTER_NAME|komodor|komodor-test-configmap&limit=1&fields=newData&order=DESC" \
+                          --header "Accept: application/json" \
+                          --header "x-api-key: $KOMOKW_API_KEY" | jq -r '.data[0].newData.data | try to_entries[0].value')
+
+                      if [[ "$komodor_value_for_configmap" == "$epoc_timestamp" ]]; then
+                          echo "Configmap value matches the desired timestamp. Exiting with code 0."
+                          exit 0
+                      fi
+
+                      echo "Waiting for Komodor to identify the configmap"
+                      echo "Current latest value in komodor = $komodor_value_for_configmap"
+                      echo "Desired timestamp in configmap = $epoc_timestamp"
+                      ((count++))
+                  done
+
+                  echo "Faild to find the configmap in Komodor. Exiting"
+                  exit 1
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
