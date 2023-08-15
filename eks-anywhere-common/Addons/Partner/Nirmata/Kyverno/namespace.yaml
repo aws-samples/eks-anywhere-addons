@@ -5,4 +5,4 @@ metadata:
   name: kyverno
   labels:
       aws.conformance.vendor: nirmata
-      aws.conformance.vendor-solution: kyverno
+      aws.conformance.vendor-solution: enterprise-kyverno
