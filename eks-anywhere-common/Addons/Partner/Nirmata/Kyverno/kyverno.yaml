@@ -13,8 +13,8 @@ spec:
         kind: HelmRepository
         name: nirmata
         namespace: flux-system
-      version: "1.6.8"
-  interval: 2m0s
+      version: "1.6.10"
+  interval: 1m0s
   releaseName: kyverno
   targetNamespace: kyverno
   valuesFrom:
