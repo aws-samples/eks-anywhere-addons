@@ -14,6 +14,11 @@ spec:
         name: nirmata
         namespace: flux-system
       version: "1.6.8"
-  interval: 1m0s
+  interval: 2m0s
   releaseName: kyverno
   targetNamespace: kyverno
+  valuesFrom:
+  - kind: Secret
+    name: nirmata-secret
+    valuesKey: nirmata-license-key
+    targetPath: licenseManager.licenseKey
