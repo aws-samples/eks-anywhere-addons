@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kyverno-tester
+  namespace: kyverno
+spec:
+  template:
+    spec:
+      serviceAccountName: 'kyverno'
+      containers:
+        - name: job
+          image: 'alpine/k8s:1.26.2'
+          imagePullPolicy: Always
+          command:
+            - /bin/bash
+          args:
+            - -c
+            - >-
+              echo 1. Checking readiness probe...
+              kyverno_pod="...";
+              while [[ "$kyverno_pod" != "kyverno-"* ]]; 
+              do kyverno_pod=`kubectl get pod -n kyverno -l app=kyverno --field-selector=status.phase==Running -o jsonpath="{.items[0].metadata.name}"` && echo Waiting;
+              sleep 15;
+              done;
+              echo ...Success;
+      restartPolicy: Never
+  backoffLimit: 1
