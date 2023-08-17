@@ -4,7 +4,7 @@ metadata:
   name: kyverno-test-cronjob
   namespace: kyverno
 spec:
-  schedule: "*/1 * * * *"
+  schedule: "10 10 * * *"
   jobTemplate:
     spec:
       template:
