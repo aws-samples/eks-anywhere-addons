@@ -91,7 +91,7 @@ jobs:
         git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
         git push
       
-    - name: Generate the config map file content and Push it to Developer Branch
+    - name: Merge over the newly added files and ConfigMap
       run: |
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
