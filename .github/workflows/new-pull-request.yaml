@@ -54,6 +54,7 @@ jobs:
             echo "kind: ConfigMap" >> $config_map_file
             echo "metadata:" >> $config_map_file
             echo "  name: $namespace-configmap" >> $config_map_file
+            echo "  namespace: $namespace" >> $config_map_file
             echo "  labels:" >> $config_map_file
             echo "    bot: conformitron" >> $config_map_file
             echo "data:" >> $config_map_file
