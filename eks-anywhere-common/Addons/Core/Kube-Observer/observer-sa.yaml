@@ -2,30 +2,37 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: observer-sa
+  namespace: observer
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
   name: watch-pods
 rules:
-  - apiGroups: [""]
-    resources:
-      - pods
+  - apiGroups: ["*"]
+    resources: 
+      - "pods"
+      - "namespaces"
+      - "replicasets"
+      - "statefulsets"
+      - "daemonset"
+      - "jobs"
+      - "services"
     verbs:
-      - get
-      - list
-      - delete
-
+      - "get"
+      - "list"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   name: attach-observer-role-to-sa
+  namespace: observer
 subjects:
   - kind: ServiceAccount
-    name: observer-kubectl
+    name: observer-sa
+    namespace: observer
 roleRef:
-  kind: Role
+  kind: ClusterRole
   name: watch-pods
   apiGroup: rbac.authorization.k8s.io

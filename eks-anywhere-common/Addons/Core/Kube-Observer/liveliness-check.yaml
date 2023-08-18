@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: liveliness-check
+  labels:
+    app: liveliness-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: liveliness
+  template:
+    metadata:
+      labels:
+        app: liveliness
+    spec:
+      containers: 
+      - name: liveness
+        image: registry.k8s.io/busybox
+        args:
+        - /bin/sh
+        - -c
+        - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/healthy
+          initialDelaySeconds: 5
+          periodSeconds: 5

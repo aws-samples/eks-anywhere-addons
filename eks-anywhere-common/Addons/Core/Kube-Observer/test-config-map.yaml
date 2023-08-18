@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: liveliness-config-map
+  labels:
+    bot: conformitron
+data:
+  Namespace: default
+  prNumber: '101'
