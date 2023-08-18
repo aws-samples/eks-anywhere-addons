@@ -54,11 +54,12 @@ jobs:
             echo "kind: ConfigMap" >> $config_map_file
             echo "metadata:" >> $config_map_file
             echo "  name: $namespace-configmap" >> $config_map_file
+            echo "  namespace: $namespace" >> $config_map_file
             echo "  labels:" >> $config_map_file
             echo "    bot: conformitron" >> $config_map_file
             echo "data:" >> $config_map_file
             echo "  Namespace: ${namespace}" >> $config_map_file
-            echo "  prNumber: ${{ github.event.pull_request.number }}" >> $config_map_file
+            echo "  prNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
             echo $subdirectory
             echo $config_map_file
             mv $config_map_file ./$subdirectory/
