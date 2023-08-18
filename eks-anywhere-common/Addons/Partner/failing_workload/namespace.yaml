@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: failing_workload
+  labels:
+    aws.conformance.vendor: aws
+    aws.conformance.vendor-solution: failing_workload
