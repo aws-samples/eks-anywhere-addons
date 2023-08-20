@@ -15,9 +15,11 @@ rules:
       - "pods"
       - "namespaces"
       - "replicasets"
+      - "deployments"
       - "statefulsets"
       - "daemonset"
       - "jobs"
+      - "configmaps"
       - "services"
     verbs:
       - "get"

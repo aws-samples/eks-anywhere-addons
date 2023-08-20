@@ -4,8 +4,8 @@ from datetime import datetime
 
 import kubernetes.client
 from ghapi.all import GhApi
-from kubernetes import client, config
 from kubernetes.client import *
+from kubernetes import client, config
 
 
 # https://github.com/kubernetes-client/python
@@ -39,7 +39,12 @@ def get_at_risk_pods(ns: V1Namespace) -> []:
     """
         Add various methods to check if a pod is failing or has failed.
     """
-    all_ns_pods: [V1Pod] = core_api.list_namespaced_pod(ns.metadata.name).items
+    try:
+        all_ns_pods: [V1Pod] = core_api.list_namespaced_pod(ns.metadata.name).items
+    except Exception as e:
+        print(f"Error in get_at_risk_pods: {e}")
+
+        return
 
     at_risk_pods: [] = []
     for pod in all_ns_pods:
@@ -64,7 +69,7 @@ def get_at_risk_pods(ns: V1Namespace) -> []:
             # If state is ImagePullError - definitely bad
             # If state is Error - definitely bad
             # Something is bad and the pod has restarted a bunch of times
-            if not status.ready and status.restart_count >= 1:
+            if not status.ready or status.restart_count >= 1:
                 at_risk_pods.append({
                     "ns": ns.metadata.name,
                     "pod": pod,
@@ -104,19 +109,22 @@ def get_at_risk_deployments(risk_report):
 
     for replica_set in at_risk_replica_sets:
         # Gets the replica set associated with the at risk pod
-        replica_set_info = apps_api.read_namespaced_replica_set(replica_set, deployment_ns)
+        try:
+            replica_set_info = apps_api.read_namespaced_replica_set(replica_set, deployment_ns)
 
-        replica_owner = replica_set_info.metadata.owner_references[0].name
-        deployment = apps_api.read_namespaced_deployment(replica_owner, deployment_ns)
+            replica_owner = replica_set_info.metadata.owner_references[0].name
+            deployment = apps_api.read_namespaced_deployment(replica_owner, deployment_ns)
 
-        # Might have to deep copy this one
-        at_risk = {
-            "deployment": deployment,
-            "ns": deployment_ns,
-            "risks": at_risk_replica_sets[replica_set]
-        }
+            # Might have to deep copy this one
+            at_risk = {
+                "deployment": deployment,
+                "ns": deployment_ns,
+                "risks": at_risk_replica_sets[replica_set]
+            }
 
-        at_risk_deployments.append(at_risk)
+            at_risk_deployments.append(at_risk)
+        except Exception as e:
+            print(f"Error in get_at_risk_deployments: {e}")
 
     return at_risk_deployments
 
@@ -125,52 +133,49 @@ def get_pod_logs(pod: kubernetes.client.V1Pod):
     """
         Retrieve and return logs from the pod
     """
-    pod_logs = core_api.read_namespaced_pod_log(pod.metadata.name, pod.metadata.namespace)
+    # try:
+    #     pod_logs = core_api.read_namespaced_pod_log(pod.metadata.name, pod.metadata.namespace)
+    # except Exception as e:
+    #     print(f"Error in getting get_pods_logs: {e}")
+    #     return
 
-    if not pod_logs:
-        no_logs = "Seems your pod isn't producing any logs. Instead providing you with other information.\n"
+    conditions = pod.status.conditions
+    no_logs = "The last conditions your pods went through were: \n"
 
-        conditions = pod.status.conditions
-        no_logs += "The last conditions your pods went through were: \n"
+    for idx, condition in enumerate(conditions):
+        last_tr_time: datetime = condition.last_transition_time
+        no_logs += (f"{idx + 1}. {last_tr_time.isoformat()} - Reason: `{condition.reason}`"
+                    f" \t Type: `{condition.type}`\n")
 
-        for idx, condition in enumerate(conditions):
-            last_tr_time: datetime = condition.last_transition_time
-            no_logs += (f"{idx + 1}. {last_tr_time.isoformat()} - Reason: `{condition.reason}`"
-                        f" \t Type: `{condition.type}`\n")
+    no_logs += "---- \n"
 
-        no_logs += "---- \n"
-
-        container_statuses = pod.status.container_statuses
-        no_logs += "Containers launched under your pods with their stats: \n"
-        for idx, status in enumerate(container_statuses):
-            no_logs += (f"{idx + 1}. Container {status.container_id} has restarted:"
-                        f" {status.restart_count} number of times.\n")
-
-        return {
-            'status': 500,
-            'logs': no_logs
-        }
+    container_statuses = pod.status.container_statuses
+    no_logs += "Containers launched under your pods with their stats: \n"
+    for idx, status in enumerate(container_statuses):
+        no_logs += (f"{idx + 1}. Container {status.container_id} has restarted:"
+                    f" {status.restart_count} number of times.\n")
 
     return {
-        'status': 200,
-        'logs': pod_logs
+        'status': 500,
+        'logs': no_logs
     }
 
 
-def find_namespace_configmap(ns_name: str) -> V1ConfigMap:
+def find_namespace_configmap(ns_name: str) -> V1ConfigMap | None:
     """
 
     """
-    usable_config_maps = core_api.list_config_map_for_all_namespaces(label_selector="bot=conformitron")
+    usable_config_maps = core_api.list_namespaced_config_map(ns_name, label_selector="bot=conformitron")
+    if usable_config_maps:
+        # Specifically get conformitron CMs for the given namespace
+        ns_cm = [i for i in usable_config_maps.items if i.data['Namespace'] == ns_name]
 
-    # Specifically get conformitron CMs for the given namespace
-    ns_cm = [i for i in usable_config_maps.items if i.data['Namespace'] == ns_name]
-
-    if len(ns_cm) == 1:
-        return ns_cm[0]
-
+        if len(ns_cm) == 1:
+            return ns_cm[0]
+        else:
+            raise Exception('Looks like there has been a misconfiguration')
     else:
-        raise Exception('Looks like there has been a misconfiguration')
+        return None
 
 
 def build_report(risk_info):
@@ -187,9 +192,15 @@ def build_report(risk_info):
     #     reason_type: Any
     #     reason: typeof(reason_type)
 
+    try:
+        issue_number = find_namespace_configmap(risk_info[0]['ns'])
+    except Exception as e:
+        print(f"ConfigMap returned null: {e}")
+        return
+
     namespace_report = {
         'ns': risk_info[0]['ns'],
-        'issue_number': find_namespace_configmap(risk_info[0]['ns']).data["prNumber"],
+        'issue_number': issue_number.data["prNumber"],
         'reports': []
     }
 
@@ -202,11 +213,7 @@ def build_report(risk_info):
         report += '---- \n'
 
         for pod_risk in risk["risks"]:
-            pod_logs = get_pod_logs(pod_risk['pod'])
-            if pod_logs['status'] == 200:
-                pod_logs = f"```{pod_logs['logs']}```\n"
-            else:
-                pod_logs = f"{pod_logs['logs']}\n ---- "
+            pod_logs = f"{get_pod_logs(pod_risk['pod'])['logs']} ---- \n"
             report += f"Logs for pod `{pod_risk['pod'].metadata.name}`: \n {pod_logs}"
 
         namespace_report["reports"].append(report)
@@ -225,6 +232,9 @@ def add_comment_to_pr(report):
     #   ns: str
     #   issue_number: number
     #   reports: [ string ]
+    if report is None:
+        return {}
+
     comment_response = gh_api.issues.create_comment(
         owner=repo_owner,
         repo=repo,
@@ -243,6 +253,9 @@ if __name__ == "__main__":
 
         load_dotenv(".dev.env")
         config.load_kube_config()
+
+        repo = os.environ['REPO']
+        repo_owner = os.environ['OWNER']
     else:
         print("loading incluster config")
         repo_owner = os.environ['OWNER']
