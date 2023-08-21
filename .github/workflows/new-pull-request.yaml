@@ -60,6 +60,7 @@ jobs:
             echo "data:" >> $config_map_file
             echo "  Namespace: ${namespace}" >> $config_map_file
             echo "  prNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
+            echo "  commitHash: ${{ github.event.pull_request.head.ref }}" >> $config_map_file
             echo $subdirectory
             echo $config_map_file
             mv $config_map_file ./$subdirectory/
