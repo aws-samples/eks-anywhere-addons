@@ -85,27 +85,15 @@ jobs:
           exit 200
         fi
 
-        # if files were updated, Move those files over
-        if [! ${#files[@]} -eq 0]; then
-          # Switch to Dev branch and make files commit 
-          git fetch --all
-          git config --local user.email "dev@null"
-          git config --local user.name "Conformitron Bot"
-          git fetch origin developer_branch
-          git checkout developer_branch
-        
-        # checkout each file to Dev branch
-          for item in $files; do
-            git checkout ${{ github.event.pull_request.head.ref }} -- $item
-            git add $item
-            echo $item
-          done
-          git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
-          git push
-        else
-          echo "No other files updated"
-        fi
-        
+        # Move updated files over
+        for item in $files; do
+          git checkout ${{ github.event.pull_request.head.ref }} -- $item
+          git add $item
+          echo $item
+        done
+        git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
+        git push
+      
     # - name: Merge over the newly added files and ConfigMap
     #   run: |
     #     git fetch --all
