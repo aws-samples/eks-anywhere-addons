@@ -8,4 +8,4 @@ metadata:
 data:
   Namespace: podinfo
   prNumber: "16"
-  commitHash: c37d816b3abb45c994ccbf8e6983b0a958924bff
+  commitHash: 9c17c0015d6ebd78e2ec035dbafaf2e0457e744c
