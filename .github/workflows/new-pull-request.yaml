@@ -68,6 +68,7 @@ jobs:
             git config --local user.name "Conformitron Bot"
             git add .
             git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
+            git push
           else 
             echo "No Namespace found"
             exit 100
