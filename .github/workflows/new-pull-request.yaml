@@ -66,8 +66,14 @@ jobs:
             mv $config_map_file ./$subdirectory/
             git config --local user.email "dev@null"
             git config --local user.name "Conformitron Bot"
+          
+          # checkout each file to Dev branch
+            for item in $files; do
+              git checkout ${{ github.event.pull_request.head.ref }} -- $item
+              git add $item
+            done
             git add .
-            git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
+            git commit -m "Add config mapand updated files for ${namespace}_PR_${{ github.event.pull_request.number }}"
           else 
             echo "No Namespace found"
             exit 100
@@ -77,19 +83,15 @@ jobs:
           exit 200
         fi
 
-        # Switch to Dev branch and make files commit 
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        git fetch origin developer_branch
-        git checkout developer_branch
-        git fetch --all
+        # # Switch to Dev branch and make files commit 
+        # git config --local user.email "dev@null"
+        # git config --local user.name "Conformitron Bot"
+        # git fetch origin developer_branch
+        # git checkout developer_branch
+        # git fetch --all
       
-        # checkout each file to Dev branch
-        for item in $files; do
-          git checkout ${{ github.event.pull_request.head.ref }} -- $item
-          git add $item
-        done
-        git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
+
+        # git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
         git push
       
     - name: Merge over the newly added files and ConfigMap
