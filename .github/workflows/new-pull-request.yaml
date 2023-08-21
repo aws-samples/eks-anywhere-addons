@@ -18,6 +18,13 @@ jobs:
     - name: Parse Namespace data, Create ConfigMap and Copy over committed files 
       id: find-namespace-yaml
       run: |
+        # Checkout Developer_Branch to add files to
+        git fetch --all
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git checkout developer_branch
+        
+        
         # Pull files down into a filename array
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
