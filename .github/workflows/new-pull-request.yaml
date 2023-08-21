@@ -85,7 +85,6 @@ jobs:
         git fetch --all
       
         # checkout each file to Dev branch
-        if [$files]
         for item in $files; do
           git checkout ${{ github.event.pull_request.head.ref }} -- $item
           git add $item
