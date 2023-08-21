@@ -96,6 +96,7 @@ jobs:
           git push
         else
           echo "No other files updated"
+        fi
         
     - name: Merge over the newly added files and ConfigMap
       run: |
