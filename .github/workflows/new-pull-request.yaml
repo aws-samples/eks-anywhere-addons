@@ -98,11 +98,11 @@ jobs:
           echo "No other files updated"
         fi
         
-    - name: Merge over the newly added files and ConfigMap
-      run: |
-        git fetch --all
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        git checkout developer_branch
-        git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
-        git push
+    # - name: Merge over the newly added files and ConfigMap
+    #   run: |
+    #     git fetch --all
+    #     git config --local user.email "dev@null"
+    #     git config --local user.name "Conformitron Bot"
+    #     git checkout developer_branch
+    #     git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
+    #     git push
