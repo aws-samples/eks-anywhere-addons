@@ -77,21 +77,30 @@ jobs:
           exit 200
         fi
 
-        # Switch to Dev branch and make files commit 
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        git fetch origin developer_branch
-        git checkout developer_branch
-        git fetch --all
+        # # Switch to Dev branch and make files commit 
+        # git config --local user.email "dev@null"
+        # git config --local user.name "Conformitron Bot"
+        # git fetch origin developer_branch
+        # git checkout developer_branch
+        # git fetch --all
       
         # checkout each file to Dev branch
         for item in $files; do
           git checkout ${{ github.event.pull_request.head.ref }} -- $item
           git add $item
         done
-        git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
+    
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git checkout developer_branch
+        git fetch --all
         git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
         git push
+    
+        # git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
+        # git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
+        # git push
+    
       
     # - name: Merge over the newly added files and ConfigMap
     #   run: |
