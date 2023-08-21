@@ -80,11 +80,11 @@ jobs:
         # if files were updated, Move those files over
         if [${#files[@]} -eq 0]; then
           # Switch to Dev branch and make files commit 
+          git fetch --all
           git config --local user.email "dev@null"
           git config --local user.name "Conformitron Bot"
           git fetch origin developer_branch
           git checkout developer_branch
-          git fetch --all
         
         # checkout each file to Dev branch
           for item in $files; do
@@ -100,9 +100,9 @@ jobs:
         
     - name: Merge over the newly added files and ConfigMap
       run: |
+        git fetch --all
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
         git checkout developer_branch
-        git fetch --all
         git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
         git push
