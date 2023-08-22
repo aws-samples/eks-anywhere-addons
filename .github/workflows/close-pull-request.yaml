@@ -62,6 +62,8 @@ jobs:
           
     - name: Merge main back to dev
       run: |
+          git config --local user.email "dev@null"
+          git config --local user.name "Conformitron Bot"
           git fetch origin main:main
           git checkout developer_branch
           # git merge main --no-edit --allow-unrelated-histories --strategy-option=theirs
