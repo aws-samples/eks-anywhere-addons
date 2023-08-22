@@ -65,7 +65,7 @@ jobs:
         git checkout developer_branch
         
         # Create ConfigMap File and Add to Developer_Branch
-        if[-n "$namespace"]; then
+        if [-n "$namespace"]; then
           config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
           echo $config_map_file
           echo "apiVersion: v1" >> $config_map_file
