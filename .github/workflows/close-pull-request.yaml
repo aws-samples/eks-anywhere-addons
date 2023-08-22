@@ -56,7 +56,8 @@ jobs:
         #   git push
         
           # Remove tested files
-          config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+          config_map_file="${subdirectory}/config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+          echo $config_map_file
           git checkout $(git log -1 --format=format:"%H"  --all) $config_map_file
           git add $config_map_file
           echo $config_map_file
