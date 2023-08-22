@@ -47,18 +47,36 @@ jobs:
           git config --local user.email "dev@null"
           git config --local user.name "Conformitron Bot"
           
-          # revert Git commits [This removes 184 files then adds 180 back in that weren't in the PR, checking out better method]
-          git fetch origin developer_branch
-          git checkout developer_branch
-          commits=$(git log -1 --format=format:"%H"  --all)
-          echo "commits: $(git log --format=format:"%H"  --all)"
-          git revert $commits
-          git push
-      
+        #   # revert Git commits [This removes 184 files then adds 180 back in that weren't in the PR, checking out better method]
+        #   git fetch origin developer_branch
+        #   git checkout developer_branch
+        #   commits=$(git log -1 --format=format:"%H"  --all)
+        #   echo "commits: $(git log --format=format:"%H"  --all)"
+        #   git revert $commits
+        #   git push
+        
+          # Remove tested files
+          config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+          git checkout $(git log -1 --format=format:"%H"  --all) $config_map_file
+          git add $config_map_file
+          echo $config_map_file
+          for item in $files; do
+            git checkout $(git log -1 --format=format:"%H"  --all) $item
+            git add $item
+            echo $item
+          done
+          git commit -m "Removing new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
+          git push      
+
+
         else 
           echo "No ConfigMap found"
           exit 200
         fi
+        
+
+      
+        
           
     - name: Merge main back to dev
       run: |
