@@ -1,0 +1,104 @@
+name: Run CI for ISV Addons
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        
+    - name: Parse Namespace data, Create ConfigMap and Copy over committed files 
+      id: find-namespace-yaml
+      run: |
+        # Checkout Developer_Branch to add files to
+        git fetch --all
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git checkout developer_branch
+        
+        
+        # Pull files down into a filename array
+        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+        echo $files
+        filearr=($files)
+        subdirectory=$(dirname ${filearr[0]})
+        
+        # Find Namespace File in uploads list or in modified file subdirectory
+        if [ -z $namespace_file ]; then
+          if [ -f "${subdirectory}/namespace.yaml" ]; then
+            namespace_file="${subdirectory}/namespace.yaml"
+            echo "updated namespace file = $namespace_file"
+          elif [echo "$files" | grep "namespace.yaml"]; then
+            namespace_file=$(echo "$files" | grep "namespace.yaml") || echo "No Namespace File Found" && exit 200
+          else
+            echo "No Namespace file found in commit or subdirectory"
+            exit 200
+          fi
+        else
+          echo "namespace File = $namespace_file"
+        fi
+        
+        # Parse namespace data
+        if [ -n "$namespace_file" ]; then
+          subdirectory=$(dirname $namespace_file)
+          echo "Sub Directory = $subdirectory"
+          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+          if [[ ! -z $namespace_name ]]; then
+            echo "$namespace_name"
+            namespace=$(echo $namespace_name | xargs echo -n)
+            echo $namespace
+            config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+            echo $config_map_file
+            echo "apiVersion: v1" >> $config_map_file
+            echo "kind: ConfigMap" >> $config_map_file
+            echo "metadata:" >> $config_map_file
+            echo "  name: $namespace-configmap" >> $config_map_file
+            echo "  namespace: $namespace" >> $config_map_file
+            echo "  labels:" >> $config_map_file
+            echo "    bot: conformitron" >> $config_map_file
+            echo "data:" >> $config_map_file
+            echo "  Namespace: ${namespace}" >> $config_map_file
+            echo "  prNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
+            echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
+            echo $subdirectory
+            echo $config_map_file
+            mv $config_map_file ./$subdirectory/
+            git config --local user.email "dev@null"
+            git config --local user.name "Conformitron Bot"
+            git add .
+            git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
+            git push
+          else 
+            echo "No Namespace found"
+            exit 100
+          fi
+        else 
+          echo "No namespace.yaml file found"
+          exit 200
+        fi
+
+        # Move updated files over
+        for item in $files; do
+          git checkout ${{ github.event.pull_request.head.ref }} -- $item
+          git add $item
+          echo $item
+        done
+        git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
+        git push
+      
+    # - name: Merge over the newly added files and ConfigMap
+    #   run: |
+    #     git fetch --all
+    #     git config --local user.email "dev@null"
+    #     git config --local user.name "Conformitron Bot"
+    #     git checkout developer_branch
+    #     git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
+    #     git push
