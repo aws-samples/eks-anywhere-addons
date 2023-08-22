@@ -68,7 +68,7 @@ jobs:
           done
           git commit -m "Removing new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
           git push      
-
+          
 
         else 
           echo "No ConfigMap found"
