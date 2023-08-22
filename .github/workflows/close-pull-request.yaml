@@ -67,6 +67,6 @@ jobs:
           git fetch origin main:main
           git checkout developer_branch
           # git merge main --no-edit --allow-unrelated-histories --strategy-option=theirs
-          git checkout main .
+          git checkout --no-overlay main .
           git commit -m "Re-aligning with main branch"
           git push origin developer_branch
