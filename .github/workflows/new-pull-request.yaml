@@ -63,6 +63,7 @@ jobs:
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
         git checkout developer_branch
+        pwd
         
         # Create ConfigMap File and Add to Developer_Branch
         if [ -n "$namespace" ]; then
@@ -81,6 +82,15 @@ jobs:
           echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
           echo $subdirectory
           echo $config_map_file
+          
+          # Create subdirectory if not already existing
+          if [ ! -d $subdirectory ]; then
+            mkdir ./$subdirectory/
+          else
+            echo "$subdirectory already exists"
+          fi
+          
+          
           mv $config_map_file ./$subdirectory/
           git add .
           git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
