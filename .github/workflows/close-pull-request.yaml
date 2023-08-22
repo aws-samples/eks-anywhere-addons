@@ -56,16 +56,16 @@ jobs:
         #   git push
         
         
-          git branch
-          git log --format=format:"%H"  --all
+          git fetch --all
+          git log --format=format:"%H"
           # Remove tested files
           config_map_file="${subdirectory}/config-map-$namespace-${{ github.event.pull_request.number }}.yml"
           echo $config_map_file
-          git checkout $(git log -1 --format=format:"%H"  --all) $config_map_file
+          git checkout $(git log -1 --format=format:"%H") $config_map_file
           git add $config_map_file
           echo $config_map_file
           for item in $files; do
-            git checkout $(git log -1 --format=format:"%H"  --all) $item
+            git checkout $(git log -1 --format=format:"%H") $item
             git add $item
             echo $item
           done
