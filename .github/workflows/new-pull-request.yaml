@@ -30,7 +30,7 @@ jobs:
           if [ -f "${subdirectory}/namespace.yaml" ]; then
             namespace_file="${subdirectory}/namespace.yaml"
             echo "updated namespace file = $namespace_file"
-          elif [ echo "$files" | grep "namespace.yaml"]; then
+          elif [ -n "$(echo "$files" | grep "namespace.yaml")" ]; then
             namespace_file=$(echo "$files" | grep "namespace.yaml") || echo "No Namespace File Found" && exit 200
           else
             echo "No Namespace file found in commit or subdirectory"
