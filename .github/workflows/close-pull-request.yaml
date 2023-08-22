@@ -55,6 +55,9 @@ jobs:
         #   git revert $commits
         #   git push
         
+        
+          git branch
+          git log --format=format:"%H"  --all
           # Remove tested files
           config_map_file="${subdirectory}/config-map-$namespace-${{ github.event.pull_request.number }}.yml"
           echo $config_map_file
