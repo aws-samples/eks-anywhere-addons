@@ -1,6 +1,7 @@
 name: PRs to Main
 on: 
   pull_request:
+    branches: [merge_into]
     types: [closed]
 jobs:
   merge-master-back-to-dev:
