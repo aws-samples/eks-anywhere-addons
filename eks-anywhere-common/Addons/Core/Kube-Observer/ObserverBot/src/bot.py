@@ -196,37 +196,36 @@ def commit_notified(conformitron_cm: V1ConfigMap) -> bool:
     print(result)  # Output: False (indicating that a comment has not been made for the commit)
     ```
     """
-    notified_cm_name = 'notified_prs'
+    notified_cm_name = 'notified-prs'
 
     commit_storage = CommitStorage('observer')
     cm_ns = conformitron_cm.data['Namespace']
     cm_commit_hash = conformitron_cm.data['commitHash']
 
+    # This will always return a CM
     observer_config = commit_storage.create_if_not_exist_or_get(notified_cm_name, {})
 
-    if not observer_config:
-        # It was created right now
-        commit_storage.update_configmap(notified_cm_name, {
-            f"{cm_ns}": f"{cm_commit_hash}"
-        })
+    pre_existing_config = observer_config.data
+    try:
+        if pre_existing_config[cm_ns] == cm_commit_hash:
+            # we've already commented on that specific hash
+            return True
+    except (KeyError, TypeError):
+        # we've never seen the namespace
+        if pre_existing_config:
+            pre_existing_config[cm_ns] = cm_commit_hash
+        else:
+            pre_existing_config = {
+                f"{cm_ns}": f"{cm_commit_hash}"
+            }
+
+        commit_storage.update_configmap(notified_cm_name, pre_existing_config)
         return False
     else:
-        # It was already there
-        pre_existing_config = observer_config.data
-        try:
-            if pre_existing_config[cm_ns] == cm_commit_hash:
-                # we've already commented on that specific hash
-                return True
-        except KeyError:
-            # we've never seen the namespace
-            pre_existing_config[cm_ns] = cm_commit_hash
-            commit_storage.update_configmap(notified_cm_name, pre_existing_config)
-            return False
-        else:
-            # we haven't commented on the current hash
-            pre_existing_config[cm_ns] = cm_commit_hash
-            commit_storage.update_configmap(notified_cm_name, pre_existing_config)
-            return False
+        # we haven't commented on the current hash
+        pre_existing_config[cm_ns] = cm_commit_hash
+        commit_storage.update_configmap(notified_cm_name, pre_existing_config)
+        return False
 
 
 def find_namespace_configmap(ns_name: str) -> V1ConfigMap | None:
@@ -292,7 +291,13 @@ def build_report(risk_info):
     """
 
     try:
-        issue_number = find_namespace_configmap(risk_info[0]['ns'])
+        if risk_info:
+            issue_number = find_namespace_configmap(risk_info[0]['ns'])
+
+            if not issue_number:
+                return
+        else:
+            return
     except Exception as e:
         print(f"ConfigMap returned null: {e}")
         return
@@ -343,6 +348,7 @@ def add_comment_to_pr(report):
         issue_number=report["issue_number"],  # namespace.metadata.name derived from PR and namespace configmap
         body="---- New Deployment Report: \n".join(report["reports"])
     )
+    # TODO: If create_comment fails, drop the fact that we ever commented on it, so in the next run it should flair
 
 
 if __name__ == "__main__":

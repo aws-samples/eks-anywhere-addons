@@ -25,12 +25,17 @@ class CommitStorage:
                 metadata=client.V1ObjectMeta(name=name),
                 data=data
             )
-            self.create_configmap(name, data)
+            resp = self.create_configmap(name, data)
+            return resp
         else:
             return cm
 
     def get_configmap(self, name):
-        return self.api_instance.read_namespaced_config_map(name=name, namespace=self.namespace)
+        try:
+            resp = self.api_instance.read_namespaced_config_map(name=name, namespace=self.namespace)
+            return resp
+        except Exception:
+            return None
 
     def update_configmap(self, name, data) -> None:
         body = client.V1ConfigMap(
