@@ -17,12 +17,6 @@ jobs:
     - name: Parse Namespace data, Create ConfigMap and Copy over committed files 
       id: find-namespace-yaml
       run: |
-        # Checkout Developer_Branch to add files to
-        git fetch --all
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        git checkout developer_branch
-        
         
         # Pull files down into a filename array
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
@@ -35,7 +29,7 @@ jobs:
           if [ -f "${subdirectory}/namespace.yaml" ]; then
             namespace_file="${subdirectory}/namespace.yaml"
             echo "updated namespace file = $namespace_file"
-          elif [echo "$files" | grep "namespace.yaml"]; then
+          elif [ -n "$(echo "$files" | grep "namespace.yaml")" ]; then
             namespace_file=$(echo "$files" | grep "namespace.yaml") || echo "No Namespace File Found" && exit 200
           else
             echo "No Namespace file found in commit or subdirectory"
@@ -54,27 +48,6 @@ jobs:
             echo "$namespace_name"
             namespace=$(echo $namespace_name | xargs echo -n)
             echo $namespace
-            config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
-            echo $config_map_file
-            echo "apiVersion: v1" >> $config_map_file
-            echo "kind: ConfigMap" >> $config_map_file
-            echo "metadata:" >> $config_map_file
-            echo "  name: $namespace-configmap" >> $config_map_file
-            echo "  namespace: $namespace" >> $config_map_file
-            echo "  labels:" >> $config_map_file
-            echo "    bot: conformitron" >> $config_map_file
-            echo "data:" >> $config_map_file
-            echo "  Namespace: ${namespace}" >> $config_map_file
-            echo "  prNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
-            echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
-            echo $subdirectory
-            echo $config_map_file
-            mv $config_map_file ./$subdirectory/
-            git config --local user.email "dev@null"
-            git config --local user.name "Conformitron Bot"
-            git add .
-            git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
-            git push
           else 
             echo "No Namespace found"
             exit 100
@@ -83,7 +56,49 @@ jobs:
           echo "No namespace.yaml file found"
           exit 200
         fi
-
+        
+        # Checkout Developer_Branch to add files to
+        git fetch --all
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git checkout developer_branch
+        pwd
+        
+        # Create ConfigMap File and Add to Developer_Branch
+        if [ -n "$namespace" ]; then
+          config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+          echo $config_map_file
+          echo "apiVersion: v1" >> $config_map_file
+          echo "kind: ConfigMap" >> $config_map_file
+          echo "metadata:" >> $config_map_file
+          echo "  name: $namespace-configmap" >> $config_map_file
+          echo "  namespace: $namespace" >> $config_map_file
+          echo "  labels:" >> $config_map_file
+          echo "    bot: conformitron" >> $config_map_file
+          echo "data:" >> $config_map_file
+          echo "  Namespace: ${namespace}" >> $config_map_file
+          echo "  prNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
+          echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
+          echo $subdirectory
+          echo $config_map_file
+          
+          # Create subdirectory if not already existing
+          if [ ! -d $subdirectory ]; then
+            mkdir ./$subdirectory/
+          else
+            echo "$subdirectory already exists"
+          fi
+          
+          
+          mv $config_map_file ./$subdirectory/
+          git add .
+          git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
+          git push
+        else 
+          echo "No namespace attribute found in Namespace File"
+          exit 200
+        fi
+        
         # Move updated files over
         for item in $files; do
           git checkout ${{ github.event.pull_request.head.ref }} -- $item
