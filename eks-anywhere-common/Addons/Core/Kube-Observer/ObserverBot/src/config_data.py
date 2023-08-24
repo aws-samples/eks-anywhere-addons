@@ -3,7 +3,7 @@ from kubernetes import client, config
 
 class CommitStorage:
     def __init__(self, namespace):
-        config.load_kube_config()
+        config.load_incluster_config()
         self.namespace = namespace
         self.api_instance = client.CoreV1Api()
 
