@@ -20,6 +20,7 @@ rules:
       - "daemonset"
       - "jobs"
       - "services"
+      - "configmaps"
     verbs:
       - "get"
       - "list"
@@ -31,7 +32,7 @@ metadata:
   namespace: observer
 rules:
   - apiGroups:
-      - "" # Represents core api group?
+      - "*" # Represents core api group?
     resources:
       - "configmaps"
     verbs:
