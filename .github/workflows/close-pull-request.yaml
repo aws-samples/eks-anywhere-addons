@@ -51,7 +51,7 @@ jobs:
           # revert Git commits [This removes 184 files then adds 180 back in that weren't in the PR, checking out better method]
           git fetch origin developer_branch
           git checkout developer_branch
-          commits=$(git --no-pager log --format=format:"%H" ${prsha}...HEAD)"
+          commits=$(git --no-pager log --format=format:"%H" ${prsha}...HEAD)
           echo "commits: $commits"
           git revert $commits
           git push
