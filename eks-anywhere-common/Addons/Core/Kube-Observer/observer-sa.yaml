@@ -37,8 +37,6 @@ rules:
       - "configmaps"
     verbs:
       - "*"
-    resourceNames:
-      - "notified-prs"
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
