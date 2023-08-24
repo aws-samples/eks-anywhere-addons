@@ -11,16 +11,7 @@ metadata:
   name: watch-pods
 rules:
   - apiGroups: ["*"]
-    resources: 
-      - "pods"
-      - "namespaces"
-      - "replicasets"
-      - "deployments"
-      - "statefulsets"
-      - "daemonset"
-      - "jobs"
-      - "configmaps"
-      - "services"
+    resources: ["*"]
     verbs:
       - "get"
       - "list"
