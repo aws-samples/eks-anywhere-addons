@@ -49,10 +49,11 @@ jobs:
           # revert Git commits 
           git fetch origin developer_branch
           git checkout developer_branch
-          git --no-pager log --pretty=oneline
-          commits=$(git --no-pager log --format=format:"%H")
+          echo "Commit history: $(git --no-pager log --pretty=oneline --all)"
+          TAG=PR_${{ github.event.pull_request.number }}
+          commits=$(git rev-list -n 1 $TAG)
           echo "commits: $commits"
-          git revert $commits
+          git revert $commits --no-edit
           git push
       
         else 
