@@ -47,14 +47,14 @@ jobs:
           # configmap_file=./$subdirectory/config-map-$namespace-${{ github.event.pull_request.number }}.yml
           
           # revert Git commits 
-          git fetch origin developer_branch
-          git checkout developer_branch
-          echo "Commit history: $(git --no-pager log --pretty=oneline --all)"
-          TAG=PR_${{ github.event.pull_request.number }}
-          commits=$(git rev-list -n 1 $TAG)
-          echo "commits: $commits"
-          git revert $commits --no-edit
-          git push
+          # git fetch origin developer_branch
+          # git checkout developer_branch
+          # echo "Commit history: $(git --no-pager log --pretty=oneline --all)"
+          # TAG=PR_${{ github.event.pull_request.number }}
+          # commits=$(git rev-list -n 1 $TAG)
+          # echo "commits: $commits"
+          # git revert $commits --no-edit
+          # git push
       
         else 
           echo "No ConfigMap found"
