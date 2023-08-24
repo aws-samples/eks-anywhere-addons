@@ -44,14 +44,14 @@ jobs:
           git config --local user.name "Conformitron Bot"
           
           # Grab PR sha for commit filtering 
-          configmap_file=./$subdirectory/${namespace}_PR_${{ github.event.pull_request.number }}.yml
+          configmap_file=./$subdirectory/config-map-$namespace-${{ github.event.pull_request.number }}.yml
           prsha=$(grep -E '^\s*data:\s*$|^\s*commitHash:\s*' "$configmap_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           echo "PR SHA = ${prsha}"
           
-          # revert Git commits [This removes 184 files then adds 180 back in that weren't in the PR, checking out better method]
+          # revert Git commits 
           git fetch origin developer_branch
           git checkout developer_branch
-          commits=$(git --no-pager log -5 --format=format:"%H" --all)
+          commits=$(git --no-pager log -5 --all)
           echo "commits: $commits"
           # git revert $commits
           git push
