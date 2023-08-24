@@ -52,7 +52,7 @@ jobs:
           git checkout developer_branch
           commits=$(git --no-pager log --format=format:"%H")
           echo "commits: $commits"
-          # git revert $commits
+          git revert $commits
           git push
       
         else 
