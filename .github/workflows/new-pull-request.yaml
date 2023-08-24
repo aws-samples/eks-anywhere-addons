@@ -93,8 +93,8 @@ jobs:
           
           mv $config_map_file ./$subdirectory/
           git add .
-          # git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
-          # git push
+          git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
+          git push
         else 
           echo "No namespace attribute found in Namespace File"
           exit 200
