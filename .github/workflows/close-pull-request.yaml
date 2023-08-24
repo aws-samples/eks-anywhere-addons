@@ -46,14 +46,14 @@ jobs:
           # Grab PR sha for commit filtering 
           configmap_file=./$subdirectory/${namespace}_PR_${{ github.event.pull_request.number }}
           prsha=$(grep -E '^\s*data:\s*$|^\s*commitHash:\s*' "$configmap_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-          echo $prsha
+          echo "PR SHA = ${prsha}
           
           # revert Git commits [This removes 184 files then adds 180 back in that weren't in the PR, checking out better method]
           git fetch origin developer_branch
           git checkout developer_branch
-          commits=$(git --no-pager log --format=format:"%H" ${prsha}...HEAD)
+          commits=$(git --no-pager log --format=format:"%H" --all)
           echo "commits: $commits"
-          git revert $commits
+          # git revert $commits
           git push
       
         else 
