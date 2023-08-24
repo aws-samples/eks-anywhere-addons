@@ -30,7 +30,7 @@ class CommitStorage:
         else:
             return cm
 
-    def get_configmap(self, name):
+    def get_configmap(self, name) -> client.V1ConfigMap | None:
         try:
             resp = self.api_instance.read_namespaced_config_map(name=name, namespace=self.namespace)
             return resp

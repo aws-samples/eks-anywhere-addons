@@ -5,6 +5,7 @@ from datetime import datetime
 import kubernetes.client
 from config_data import *
 from ghapi.all import GhApi
+from urllib.error import HTTPError
 from kubernetes.client import *
 from kubernetes import client, config
 
@@ -243,7 +244,7 @@ def find_namespace_configmap(ns_name: str) -> V1ConfigMap | None:
         else:
             return None
     else:
-        raise AssertionError("Looks like there isn't a configuration for this ns")
+        raise AssertionError(f"Looks like there isn't a configuration for this ns: {ns_name}")
 
 
 def build_report(risk_info):
@@ -342,13 +343,22 @@ def add_comment_to_pr(report):
     if report is None:
         return {}
 
-    comment_response = gh_api.issues.create_comment(
-        owner=repo_owner,
-        repo=repo,
-        issue_number=report["issue_number"],  # namespace.metadata.name derived from PR and namespace configmap
-        body="---- New Deployment Report: \n".join(report["reports"])
-    )
-    # TODO: If create_comment fails, drop the fact that we ever commented on it, so in the next run it should flair
+    print(report)
+
+    try:
+        comment_response = gh_api.issues.create_comment(
+            owner=repo_owner,
+            repo=repo,
+            issue_number=report["issue_number"],  # namespace.metadata.name derived from PR and namespace configmap
+            body="---- New Deployment Report: \n".join(report["reports"])
+        )
+    except Exception as e:
+        # TODO: If create_comment fails, drop the fact that we ever commented on it, so in the next run it should flair
+        print(f"GH_Error: {e}")
+        commit_store = CommitStorage('observer')
+        observer_cm_data = commit_store.get_configmap('notified-prs').data
+        observer_cm_data[report['ns']] = ""
+        commit_store.update_configmap('notified-prs', observer_cm_data)
 
 
 if __name__ == "__main__":
