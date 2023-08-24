@@ -66,6 +66,7 @@ jobs:
         git config --local user.name "Conformitron Bot"
         git fetch origin main:main
         git checkout developer_branch
+        git pull 
         # git merge main --no-edit --allow-unrelated-histories --strategy-option=theirs
         git checkout --no-overlay main .
         git commit -m "Re-aligning with main branch"
