@@ -66,4 +66,4 @@ subjects:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: modified-configmaps
+  name: modified-configmap
