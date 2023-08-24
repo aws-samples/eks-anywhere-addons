@@ -11,10 +11,41 @@ metadata:
   name: watch-pods
 rules:
   - apiGroups: ["*"]
-    resources: ["*"]
+    resources: 
+      - "pods"
+      - "namespaces"
+      - "replicasets"
+      - "deployments"
+      - "statefulsets"
+      - "daemonset"
+      - "jobs"
+      - "services"
     verbs:
       - "get"
       - "list"
+  - apiGroups: ["*"]
+    resourceNames:
+      - 'notified-prs'
+    resources:
+      - "configmaps"
+    verbs:
+      - "*"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: modified-configmap
+  namespace: observer
+rules:
+  - apiGroups:
+      - "" # Represents core api group?
+    resources:
+      - "configmaps"
+    verbs:
+      - "*"
+    resourceNames:
+      - "notified-prs"
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -29,3 +60,18 @@ roleRef:
   kind: ClusterRole
   name: watch-pods
   apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: attach-configmap-role-to-sa
+  namespace: observer
+subjects:
+  - kind: ServiceAccount
+    name: observer-sa
+    namespace: observer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: modified-configmaps
