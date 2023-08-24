@@ -49,7 +49,7 @@ jobs:
           # revert Git commits 
           git fetch origin developer_branch
           git checkout developer_branch
-          echo "Commit history: $(git --no-pager log --format=format:"%H")"
+          echo "Commit history: $(git --no-pager log --pretty=oneline)"
           commits=$(git --no-pager log --format=format:"%H")
           echo "commits: $commits"
           git revert $commits
