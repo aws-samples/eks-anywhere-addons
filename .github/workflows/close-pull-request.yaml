@@ -50,7 +50,6 @@ jobs:
           git fetch origin developer_branch
           git checkout developer_branch
           git pull 
-          echo "Commit history: $(git --no-pager log --pretty=oneline --all)"
           TAG=PR_${{ github.event.pull_request.number }}
           commits=$(git rev-list -n 1 $TAG)
           echo "commits: $commits"
