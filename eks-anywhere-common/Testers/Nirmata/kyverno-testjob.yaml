@@ -1,0 +1,68 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kyverno-test-cronjob
+  namespace: kyverno
+spec:
+  schedule: "10 10 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: 'kyverno'
+          containers:
+            - name: job
+              image: 'alpine/k8s:1.26.2'
+              imagePullPolicy: Always
+              command:
+                - /bin/bash
+              args:
+                - -c
+                - >-
+                  echo -e "1. Checking readiness probe for kyvenro pod...\n"
+                  kyverno_pod="...";
+                  while [[ "$kyverno_pod" != "kyverno-"* ]];
+                  do 
+                    kyverno_pod=`kubectl get pod -n kyverno -l app=kyverno --field-selector=status.phase==Running -o jsonpath="{.items[0].metadata.name}"` && echo Waiting;
+                    sleep 15;
+                  done;
+                  echo ...Success;
+                  echo -e "apiVersion: kyverno.io/v1
+                  \nkind: ClusterPolicy
+                  \nmetadata:
+                  \n  name: autotest-disallow-default-namespace
+                  \n  annotations:
+                  \n    pod-policies.kyverno.io/autogen-controllers: none
+                  \nspec:
+                  \n  validationFailureAction: Audit
+                  \n  background: true
+                  \n  rules:
+                  \n  - name: validate-namespace
+                  \n    match:
+                  \n      any:
+                  \n      - resources:
+                  \n          kinds:
+                  \n          - Pod
+                  \n    validate:
+                  \n      message: \"Using default namespace is not allowed.\"
+                  \n      pattern:
+                  \n        metadata:
+                  \n          namespace: \"!default\"" | kubectl apply -f -
+
+                  echo -e "2. Checking policy....\n"
+
+                  sleep 30;
+
+                  policy_status=`kubectl get cpol autotest-disallow-default-namespace -o jsonpath="{.status.ready}"`;
+                  if [[ "$policy_status" == "true" ]]; 
+                  then
+                      echo "Verified Kyverno deployment"
+                      kubectl delete cpol autotest-disallow-default-namespace
+                      exit 0
+                  fi 
+
+                  echo "Failed to verify Kyverno deployment. Exiting"
+                  exit 1
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
