@@ -2,10 +2,9 @@ from kubernetes import client, config
 
 
 class CommitStorage:
-    def __init__(self, namespace):
-        config.load_incluster_config()
+    def __init__(self, client, namespace):
         self.namespace = namespace
-        self.api_instance = client.CoreV1Api()
+        self.api_instance = client
 
     def create_configmap(self, name, data):
         body = client.V1ConfigMap(

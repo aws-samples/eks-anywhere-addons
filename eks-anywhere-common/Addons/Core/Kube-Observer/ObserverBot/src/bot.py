@@ -5,7 +5,6 @@ from datetime import datetime
 import kubernetes.client
 from config_data import *
 from ghapi.all import GhApi
-from urllib.error import HTTPError
 from kubernetes.client import *
 from kubernetes import client, config
 
@@ -44,12 +43,12 @@ def observe_orchestrate(ns: V1Namespace):
 
 def get_at_risk_pods(ns: V1Namespace) -> []:
     """
-    This method retrieves at-risk pods in a given namespace.
-
-    :param ns: The namespace in which to search for at-risk pods.
-    :type ns: V1Namespace
-    :return: A list of at-risk pods.
-    :rtype: list
+    :param ns: V1Namespace object representing the namespace for which to retrieve at-risk pods.
+    :return: A list of dictionaries, each representing an at-risk pod. Each dictionary contains the following keys:
+        - 'ns': The name of the namespace.
+        - 'pod': The V1Pod object representing the at-risk pod.
+        - 'reason_type': The type of reason (V1PodStatus or V1ContainerStatus) indicating why the pod is at risk.
+        - 'reason': The reason for the pod being at risk.
     """
     try:
         all_ns_pods: [V1Pod] = core_api.list_namespaced_pod(ns.metadata.name).items
@@ -95,10 +94,20 @@ def get_at_risk_pods(ns: V1Namespace) -> []:
 
 def get_at_risk_deployments(risk_report):
     """
-    Get at risk deployments based on the provided risk report.
-
     :param risk_report: A list of dictionaries representing the risk report.
-    :return: A list of dictionaries representing the at risk deployments.
+    :return: A list of dictionaries representing the at-risk deployments.
+
+    The `get_at_risk_deployments` method takes a risk report as input and returns a list of at-risk deployments.
+    The risk report is expected to be a list of dictionaries where each dictionary represents a risk. Each risk
+    contains information about a failing pod, including the namespace (`ns`) and the pod metadata. The method uses
+    this information to determine the at-risk deployments.
+
+    If the extraction of the pod owner fails (due to a `TypeError`), the method assumes that the pod is a raw pod
+    (not associated with a replica set) and adds it to a special key `"raw_pod"` in the `at_risk_replica_sets` dictionary.
+
+    In case of any exceptions during the retrieval of replica set or deployment information, an error message is printed.
+
+    Finally, the method returns the `at_risk_deployments` list, which contains the at-risk deployments.
     """
     # risk_report is [risk]
     # metadata.owner_references.name - to get the owner of a pod
@@ -114,7 +123,18 @@ def get_at_risk_deployments(risk_report):
 
     # Get at risk replica sets
     for risk in risk_report:
-        pod_owner = risk["pod"].metadata.owner_references[0].name
+        try:
+            pod_owner = risk["pod"].metadata.owner_references[0].name
+        except TypeError as e:
+            print("Using a raw pod stop. get some help.")
+            print(f"Raw pod vals: {risk['pod']}")
+            raw_pods_key = 'raw_pod'
+
+            if raw_pods_key in at_risk_replica_sets:
+                at_risk_replica_sets[raw_pods_key].append(risk)
+            else:
+                at_risk_replica_sets[raw_pods_key] = [risk]
+            continue
 
         if pod_owner in at_risk_replica_sets:
             at_risk_replica_sets[pod_owner].append(risk)
@@ -123,6 +143,15 @@ def get_at_risk_deployments(risk_report):
 
     for replica_set in at_risk_replica_sets:
         # Gets the replica set associated with the at risk pod
+        if replica_set == "raw_pod":
+            at_risk = {
+                "deployment": "raw_pods",
+                "ns": deployment_ns,
+                "risks": at_risk_replica_sets[replica_set]
+            }
+            at_risk_deployments.append(at_risk)
+            continue
+
         try:
             replica_set_info = apps_api.read_namespaced_replica_set(replica_set, deployment_ns)
 
@@ -145,13 +174,11 @@ def get_at_risk_deployments(risk_report):
 
 def get_pod_logs(pod: kubernetes.client.V1Pod):
     """
-    Get the logs and status information for a given pod.
+    Get the logs and status of a given pod.
 
-    :param pod: The pod object for which to retrieve logs and status.
+    :param pod: The pod for which to retrieve logs and status.
     :type pod: kubernetes.client.V1Pod
-    :return: A dictionary containing the status code and the logs.
-             The status code will be 500 and the logs will be a string
-             representation of the pod's status and container statistics.
+    :return: A dictionary containing the status code and logs.
     :rtype: dict
     """
     # try:
@@ -184,22 +211,14 @@ def get_pod_logs(pod: kubernetes.client.V1Pod):
 
 def commit_notified(conformitron_cm: V1ConfigMap) -> bool:
     """
-    :param conformitron_cm: A V1ConfigMap object containing the necessary information about the commit.
-    :return: A boolean value indicating whether a comment has already been made for the commit.
+    Checks if a specific commit has already been notified.
 
-    This method checks if a comment has already been made for a specific commit in a specific namespace.
-    It uses a CommitStorage object to store and update the information.
-
-    Example usage:
-    ```
-    conformitron_cm = V1ConfigMap()  # Instantiate the V1ConfigMap object with the necessary data
-    result = commit_notified(conformitron_cm)  # Call the commit_notified method
-    print(result)  # Output: False (indicating that a comment has not been made for the commit)
-    ```
+    :param conformitron_cm: V1ConfigMap object representing the Conformitron ConfigMap
+    :return: boolean value indicating if the commit has already been notified
     """
     notified_cm_name = 'notified-prs'
 
-    commit_storage = CommitStorage('observer')
+    commit_storage = CommitStorage(core_api, 'observer')
     cm_ns = conformitron_cm.data['Namespace']
     cm_commit_hash = conformitron_cm.data['commitHash']
 
@@ -231,9 +250,10 @@ def commit_notified(conformitron_cm: V1ConfigMap) -> bool:
 
 def find_namespace_configmap(ns_name: str) -> V1ConfigMap | None:
     """
-    :param ns_name: The name of the namespace to search for the configuration map.
-    :return: The first usable configuration map found in the specified namespace with the label "bot=conformitron".
-        Returns `None` if no usable configuration map is found.
+    :param ns_name: The name of the namespace to search for the configmap in.
+    :return: The first usable configmap found in the specified namespace with the label "bot=conformitron",
+        or None if none are found.
+
     """
     usable_config_maps = core_api.list_namespaced_config_map(ns_name, label_selector="bot=conformitron")
 
@@ -249,46 +269,14 @@ def find_namespace_configmap(ns_name: str) -> V1ConfigMap | None:
 
 def build_report(risk_info):
     """
-    :param risk_info: list of dictionaries containing risk information
-    :return: dictionary containing the report for each namespace
-
-    This method builds a report for each namespace based on the provided risk information.
-    The risk information should be in the following format:
-
-    ```
-    risk_info = [
-        {
-            'deployment': V1Deployment,
-            'ns': str,
-            'risks': [
-                {
-                    'ns': str,
-                    'pod': V1Pod,
-                    'reason_type': Any,
-                    'reason': type of reason_type
-                },
-                ...
-            ]
-        },
-        ...
-    ]
-    ```
-
-    The method retrieves the issue number from the namespace's configmap and creates a report for each risk.
-    Each risk is represented in the report as a failing deployment and a list of pods associated with that deployment.
-    The report also includes the logs for each pod.
-    The final report is returned as a dictionary with the following structure:
-
-    ```
-    namespace_report = {
-        'ns': str (namespace),
-        'issue_number': str (issue number from configmap),
-        'reports': [
-            str (report for each risk),
-            ...
-        ]
-    }
-    ```
+    :param risk_info: A list containing information about deployment risks. Each element in the list should be a
+        dictionary with the following keys:
+        - 'ns': The name of the namespace.
+        - 'deployment': The name of the deployment or 'raw_pod' if it is a raw pod.
+        - 'risks': A list of dictionaries, where each dictionary represents a specific risk associated with a pod. Each
+            dictionary should have the following keys:
+            - 'pod': The pod object.
+    :return: A dictionary containing the namespace, associated issue number, and reports of deployment risks.
     """
 
     try:
@@ -299,6 +287,7 @@ def build_report(risk_info):
                 return
         else:
             return
+        print(f"Found associated issue number: {issue_number}")
     except Exception as e:
         print(f"ConfigMap returned null: {e}")
         return
@@ -310,7 +299,11 @@ def build_report(risk_info):
     }
 
     for risk in risk_info:
-        report = f"Looks like your deployment `{risk['deployment'].metadata.name}` is failing.\n" \
+        if risk['deployment'] == "raw_pod":
+            deployment = "raw_pod"
+        else:
+            deployment = risk['deployment'].metadata.name
+        report = f"Looks like your deployment `{deployment}` is failing.\n" \
                  f"Specifically, it looks like these pods are failing: \n"
         for pod_risk in risk["risks"]:
             report += f"* Pod: `{pod_risk['pod'].metadata.name}` with the error listed below.\n"
@@ -328,12 +321,16 @@ def build_report(risk_info):
 
 def add_comment_to_pr(report):
     """
-    Adds a comment to a pull request with the given report.
+    Adds a comment to a pull request on GitHub.
 
-    :param report: A dictionary that contains the following:
-                    - "issue_number": The issue number of the pull request.
-                    - "reports": A list of strings representing the deployment reports.
-    :return: A dictionary with the response from the GitHub API.
+    :param report: The report containing information about the comment to be added.
+                   It should have the following structure:
+                   {
+                       "ns": str,  # The namespace of the pull request
+                       "issue_number": int,  # The issue number of the pull request
+                       "reports": [str]  # A list of strings representing the reports to be added
+                   }
+    :return: None
     """
     gh_api = GhApi()
     # report
@@ -353,9 +350,9 @@ def add_comment_to_pr(report):
             body="---- New Deployment Report: \n".join(report["reports"])
         )
     except Exception as e:
-        # TODO: If create_comment fails, drop the fact that we ever commented on it, so in the next run it should flair
+        # If create_comment fails, drop the fact that we ever commented on it, so in the next run it should flair
         print(f"GH_Error: {e}")
-        commit_store = CommitStorage('observer')
+        commit_store = CommitStorage(core_api, 'observer')
         observer_cm_data = commit_store.get_configmap('notified-prs').data
         observer_cm_data[report['ns']] = ""
         commit_store.update_configmap('notified-prs', observer_cm_data)
