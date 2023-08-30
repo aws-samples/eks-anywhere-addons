@@ -19,7 +19,7 @@ jobs:
         TAG=PR_${{ github.event.pull_request.number }}
         commits=$(git rev-list HEAD --grep=$TAG)
         echo "commits: $commits"
-        git revert $commits
+        git revert $commits --no-edit
         
         # Reset Modified 
         git config --local user.email "dev@null"
