@@ -65,7 +65,7 @@ jobs:
         git checkout developer_branch
         git pull origin
         TAG=PR_${{ github.event.pull_request.number }}
-        commits=$(git rev-list --grep=$TAG HEAD )
+        commits=$(git rev-list HEAD )
         echo "commits: $commits"
         # git revert commits
         
