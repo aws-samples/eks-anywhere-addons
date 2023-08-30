@@ -12,6 +12,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         ref: developer_branch
+        fetch-depth: 0
     - name: Remove new ConfigMap
       run: |
         # # Pull files down into a filename array
@@ -62,8 +63,8 @@ jobs:
         # fi
         
         # Get Commits from this PR
-        git checkout developer_branch
-        git pull origin
+        # git checkout developer_branch
+        # git pull origin
         TAG=PR_${{ github.event.pull_request.number }}
         commits=$(git rev-list HEAD )
         echo "commits: $commits"
