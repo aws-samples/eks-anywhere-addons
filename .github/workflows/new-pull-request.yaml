@@ -119,3 +119,5 @@ jobs:
     #     git checkout developer_branch
     #     git merge --no-ff ${{ github.event.pull_request.head.ref }} --allow-unrelated-histories --no-edit
     #     git push
+    
+    # Local branch then squash back into the same tagged commit to Dev branch
