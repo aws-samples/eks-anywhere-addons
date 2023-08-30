@@ -19,6 +19,8 @@ jobs:
         TAG=PR_${{ github.event.pull_request.number }}
         commits=$(git rev-list HEAD --grep=$TAG)
         echo "commits: $commits"
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
         git revert $commits --no-edit
         
         # Reset Modified 
