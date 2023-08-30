@@ -13,62 +13,13 @@ jobs:
       with:
         ref: developer_branch
         fetch-depth: 0
-    - name: Remove new ConfigMap
+    - name: Remove Updates from this PR
       run: |
-        # # Pull files down into a filename array
-        # files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-        # echo $files
-        # filearr=($files)
-        # subdirectory=$(dirname ${filearr[0]})
-        
-        # # Find Namespace File in uploads list or in modified file subdirectory
-        # if [ -z $namespace_file ]; then
-        #   if [ -f "${subdirectory}/namespace.yaml" ]; then
-        #     namespace_file="${subdirectory}/namespace.yaml"
-        #     echo "updated namespace file = $namespace_file"
-        #   elif [echo "$files" | grep "namespace.yaml"]; then
-        #     namespace_file=$(echo "$files" | grep "namespace.yaml") || echo "No Namespace File Found" && exit 200
-        #   else
-        #     echo "No Namespace file found in commit or subdirectory"
-        #     exit 200
-        #   fi
-        # else
-        #   echo "namespace File = $namespace_file"
-        # fi
-        
-        # if [ -n "$namespace_file" ]; then
-        #   subdirectory=$(dirname $namespace_file)
-        #   namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-        #   namespace=$(echo $namespace_name | xargs echo -n)
-        #   echo "Sub Directory = $subdirectory"
-        #   git config --local user.email "dev@null"
-        #   git config --local user.name "Conformitron Bot"
-          
-        #   # # Grab PR sha for commit filtering 
-        #   # configmap_file=./$subdirectory/config-map-$namespace-${{ github.event.pull_request.number }}.yml
-          
-        #   # revert Git commits 
-        #   git fetch origin developer_branch
-        #   git checkout developer_branch
-        #   git pull 
-        #   TAG=PR_${{ github.event.pull_request.number }}
-        #   commits=$(git rev-list -n --grep=$TAG)
-        #   echo "commits: $commits"
-        #   git revert $commits --no-edit
-        #   git push
-      
-        # else 
-        #   echo "No ConfigMap found"
-        #   exit 200
-        # fi
-        
         # Get Commits from this PR
-        # git checkout developer_branch
-        # git pull origin
         TAG=PR_${{ github.event.pull_request.number }}
         commits=$(git rev-list HEAD --grep=$TAG)
         echo "commits: $commits"
-        # git revert commits
+        git revert $commits
         
         # Reset Modified 
         git config --local user.email "dev@null"
