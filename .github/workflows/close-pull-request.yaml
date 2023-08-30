@@ -25,7 +25,8 @@ jobs:
         git config --local user.name "Conformitron Bot"
     
         for commit in $commits; do
-          { echo $commit && git revert $commit --no-edit } || echo "Commit $commit not reverted" 
+          echo $commit 
+          git revert $commit --no-edit || echo "Commit $commit not reverted" 
         done
         git push
         
