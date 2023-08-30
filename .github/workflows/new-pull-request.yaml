@@ -107,7 +107,7 @@ jobs:
           echo $item
         done
         git commit -m "Adding configmap, new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
-        git tag PR_${{ github.event.pull_request.number }}
+        # git tag PR_${{ github.event.pull_request.number }}
         git push
         git push origin PR_${{ github.event.pull_request.number }}
       
