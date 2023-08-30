@@ -51,7 +51,7 @@ jobs:
           git checkout developer_branch
           git pull 
           TAG=PR_${{ github.event.pull_request.number }}
-          commits=$(git rev-list -n 1 $TAG)
+          commits=$(git rev-list -n 10)
           echo "commits: $commits"
           git revert $commits --no-edit
           git push
