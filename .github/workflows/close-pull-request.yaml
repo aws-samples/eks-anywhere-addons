@@ -63,7 +63,7 @@ jobs:
         
         # Get Commits from this PR
         git checkout developer_branch
-        git pull
+        git pull origin
         TAG=PR_${{ github.event.pull_request.number }}
         commits=$(git rev-list --grep=$TAG HEAD )
         echo "commits: $commits"
