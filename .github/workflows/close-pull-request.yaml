@@ -63,7 +63,7 @@ jobs:
         
         # Get Commits from this PR
         TAG=PR_${{ github.event.pull_request.number }}
-        commits=$(git rev-list -n --grep=$TAG)
+        commits=$(git rev-list --grep=$TAG HEAD )
         echo "commits: $commits"
         # git revert commits
         
