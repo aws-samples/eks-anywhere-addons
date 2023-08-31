@@ -50,6 +50,12 @@ jobs:
           subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+          git fetch --all
+          git config --local user.email "dev@null"
+          git config --local user.name "Conformitron Bot"
+          git checkout developer_branch
+          git pull 
+          
           if [[ ! -z $namespace_name ]]; then
             echo "$namespace_name"
             namespace=$(echo $namespace_name | xargs echo -n)
@@ -69,12 +75,8 @@ jobs:
             echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
             echo $subdirectory
             echo $config_map_file
-            
             mv $config_map_file ./$subdirectory/
-            git config --local user.email "dev@null"
-            git config --local user.name "Conformitron Bot" 
             git add .
-            git commit -m "Adding ConfigMap to PR Branch"
           else 
             echo "No Namespace found"
             exit 100
@@ -85,12 +87,6 @@ jobs:
         fi
 
         # Move updated files over
-        git fetch --all
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        git checkout developer_branch
-        git pull 
-
         git checkout ${{ github.event.pull_request.head.ref }} -- ./$subdirectory/$config_map_file
         git add ./$subdirectory/$config_map_file
         for item in $files; do

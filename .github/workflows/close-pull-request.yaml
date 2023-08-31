@@ -30,16 +30,3 @@ jobs:
         done
         git push
         
-        # Reset Modified 
-        # git config --local user.email "dev@null"
-        # git config --local user.name "Conformitron Bot"
-        # git fetch origin main:main
-        # git checkout developer_branch
-        # git merge main --no-edit --allow-unrelated-histories --strategy-option=theirs
-        # git checkout --no-overlay main .
-        # git commit -m "Re-aligning with main branch"
-        # git tag -d PR_${{ github.event.pull_request.number }}
-        # git push origin developer_branch
-          
-    # - name: Merge main back to dev
-    #   run: |
