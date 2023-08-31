@@ -18,32 +18,30 @@ jobs:
     - name: Parse Namespace data, Create ConfigMap and Copy over committed files 
       id: find-namespace-yaml
       run: |
-        # Checkout Developer_Branch to add files to
-        git fetch --all
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        git checkout developer_branch
-        
-        
         # Pull files down into a filename array
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
         filearr=($files)
+        namespace_file=$(echo "$files" | grep "namespace.yaml")
         subdirectory=$(dirname ${filearr[0]})
         
         # Find Namespace File in uploads list or in modified file subdirectory
-        if [ -z $namespace_file ]; then
+        if [ -z $namespace_file ]
+          git fetch --all
+          git config --local user.email "dev@null"
+          git config --local user.name "Conformitron Bot"
+          git checkout developer_branch
+          git pull 
           if [ -f "${subdirectory}/namespace.yaml" ]; then
             namespace_file="${subdirectory}/namespace.yaml"
-            echo "updated namespace file = $namespace_file"
-          elif [ echo "$files" | grep "namespace.yaml"]; then
-            namespace_file=$(echo "$files" | grep "namespace.yaml") || echo "No Namespace File Found" && exit 200
+            echo "namespace file = $namespace_file"
           else
-            echo "No Namespace file found in commit or subdirectory"
+            echo "No Namespace file found in existing subdirectory"
             exit 200
-          fi
+        elif [ -n $namespace_file ]
+          echo "Namespace File: $namespace_file"
         else
-          echo "namespace File = $namespace_file"
+          echo "No Namespace file found in commit or subdirectory"
         fi
         
         # Parse namespace data
