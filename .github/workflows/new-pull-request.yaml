@@ -38,6 +38,7 @@ jobs:
           else
             echo "No Namespace file found in existing subdirectory"
             exit 200
+          fi
         elif [ -n $namespace_file ]; then
           echo "Namespace File: $namespace_file"
         else
