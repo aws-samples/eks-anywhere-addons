@@ -69,7 +69,10 @@ jobs:
             echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
             echo $subdirectory
             echo $config_map_file
+            
             mv $config_map_file ./$subdirectory/
+            git config --local user.email "dev@null"
+            git config --local user.name "Conformitron Bot" 
             git add .
             git commit -m "Adding ConfigMap to PR Branch"
           else 
