@@ -26,7 +26,7 @@ jobs:
         # Find Namespace File in uploads list or in modified file subdirectory
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         subdirectory=$(dirname ${filearr[0]})
-        if [ -z $namespace_file ]
+        if [ -z $namespace_file ]; then
           git fetch --all
           git config --local user.email "dev@null"
           git config --local user.name "Conformitron Bot"
@@ -38,7 +38,7 @@ jobs:
           else
             echo "No Namespace file found in existing subdirectory"
             exit 200
-        elif [ -n $namespace_file ]
+        elif [ -n $namespace_file ]; then
           echo "Namespace File: $namespace_file"
         else
           echo "No Namespace file found in commit or subdirectory"
