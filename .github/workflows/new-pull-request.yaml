@@ -72,6 +72,8 @@ jobs:
             mv $config_map_file ./$subdirectory/
             git config --local user.email "dev@null"
             git config --local user.name "Conformitron Bot"
+            git checkout developer_branch
+            git pull 
             git add .
             git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
             git push
@@ -85,6 +87,12 @@ jobs:
         fi
 
         # Move updated files over
+        git fetch --all
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        git checkout developer_branch
+        git pull 
+
         for item in $files; do
           git checkout ${{ github.event.pull_request.head.ref }} -- $item
           git add $item
