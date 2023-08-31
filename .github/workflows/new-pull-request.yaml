@@ -88,8 +88,6 @@ jobs:
         fi
 
         # Move updated files over
-        # git checkout ${{ github.event.pull_request.head.ref }} -- ./$subdirectory/$config_map_file
-        # git add ./$subdirectory/$config_map_file
         for item in $files; do
           git checkout ${{ github.event.pull_request.head.ref }} -- $item
           git add $item
