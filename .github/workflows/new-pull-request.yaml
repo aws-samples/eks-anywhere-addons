@@ -70,16 +70,6 @@ jobs:
             echo $subdirectory
             echo $config_map_file
             mv $config_map_file ./$subdirectory/
-            git fetch --all
-            git config --local user.email "dev@null"
-            git config --local user.name "Conformitron Bot"
-            git stash 
-            git checkout developer_branch
-            git pull 
-            git stash pop
-            git add .
-            git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
-            git push
           else 
             echo "No Namespace found"
             exit 100
@@ -96,6 +86,8 @@ jobs:
         git checkout developer_branch
         git pull 
 
+        git checkout ${{ github.event.pull_request.head.ref }} -- ./$subdirectory/$config_map_file
+        git add ./$subdirectory/$config_map_file
         for item in $files; do
           git checkout ${{ github.event.pull_request.head.ref }} -- $item
           git add $item
