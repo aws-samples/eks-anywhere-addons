@@ -70,6 +70,7 @@ jobs:
             echo $subdirectory
             echo $config_map_file
             mv $config_map_file ./$subdirectory/
+            git fetch --all
             git config --local user.email "dev@null"
             git config --local user.name "Conformitron Bot"
             git checkout developer_branch
