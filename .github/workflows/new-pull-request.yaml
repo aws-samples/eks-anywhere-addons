@@ -73,8 +73,10 @@ jobs:
             git fetch --all
             git config --local user.email "dev@null"
             git config --local user.name "Conformitron Bot"
+            git stash 
             git checkout developer_branch
             git pull 
+            git stash pop
             git add .
             git commit -m "Add config map for ${namespace}_PR_${{ github.event.pull_request.number }}"
             git push
