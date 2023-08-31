@@ -75,7 +75,7 @@ jobs:
             echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
             echo $subdirectory
             echo $config_map_file
-            mkdir ./$subdirectory/
+            mkdir -p ./$subdirectory/
             mv $config_map_file ./$subdirectory/
             git add .
           else 
