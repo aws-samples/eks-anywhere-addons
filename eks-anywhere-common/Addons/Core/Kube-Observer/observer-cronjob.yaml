@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: observer
+  namespace: observer
+spec:
+  # Run at the top of every hour
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: observer-sa
+          containers:
+          - name: observer-pod
+            image: 771830474512.dkr.ecr.us-east-2.amazonaws.com/observer-bot:latest
+            imagePullPolicy: Always
+            env:
+              - name: GITHUB_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: observer-key
+                    key: observer-key
+              - name: REPO
+                value: eks-anywhere-addons
+              - name: OWNER
+                value: 5herlocked
+          restartPolicy: Never
