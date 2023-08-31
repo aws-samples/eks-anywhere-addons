@@ -60,7 +60,7 @@ jobs:
             echo "$namespace_name"
             namespace=$(echo $namespace_name | xargs echo -n)
             echo $namespace
-            config_map_file="config-map-$namespace-${{ github.event.pull_request.number }}.yml"
+            config_map_file="./$subdirectory/config-map-$namespace-${{ github.event.pull_request.number }}.yml"
             echo $config_map_file
             echo "apiVersion: v1" >> $config_map_file
             echo "kind: ConfigMap" >> $config_map_file
@@ -75,7 +75,7 @@ jobs:
             echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
             echo $subdirectory
             echo $config_map_file
-            mv $config_map_file ./$subdirectory/
+            # mv $config_map_file ./$subdirectory/
             git add .
           else 
             echo "No Namespace found"
