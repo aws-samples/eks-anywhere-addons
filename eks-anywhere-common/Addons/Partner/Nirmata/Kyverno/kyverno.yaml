@@ -1,0 +1,24 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: kyverno
+  namespace: kyverno
+spec:
+  chart:
+    spec:
+      chart: kyverno
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: nirmata
+        namespace: flux-system
+      version: "1.6.10"
+  interval: 1m0s
+  releaseName: kyverno
+  targetNamespace: kyverno
+  valuesFrom:
+  - kind: Secret
+    name: nirmata-secret
+    valuesKey: nirmata-license-key
+    targetPath: licenseManager.licenseKey
