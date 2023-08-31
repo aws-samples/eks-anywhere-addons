@@ -70,6 +70,8 @@ jobs:
             echo $subdirectory
             echo $config_map_file
             mv $config_map_file ./$subdirectory/
+            git add .
+            git commit -m "Adding ConfigMap to PR Branch"
           else 
             echo "No Namespace found"
             exit 100
