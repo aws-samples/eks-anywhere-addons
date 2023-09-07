@@ -13,7 +13,7 @@ spec:
           serviceAccountName: observer-sa
           containers:
           - name: observer-pod
-            image: 771830474512.dkr.ecr.us-east-2.amazonaws.com/observer-bot:latest
+            image: public.ecr.aws/n5p5f4n3/conformitron-observer-bot:latest
             imagePullPolicy: Always
             env:
               - name: GITHUB_TOKEN
@@ -24,5 +24,5 @@ spec:
               - name: REPO
                 value: eks-anywhere-addons
               - name: OWNER
-                value: 5herlocked
+                value: aws-samples
           restartPolicy: Never
