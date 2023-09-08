@@ -73,7 +73,7 @@ export class CiInfraStack extends cdk.Stack {
       },
       environmentVariables: {
         ECR_REPO_NAME: {
-          value: ''
+          value: 'public.ecr.aws/n5p5f4n3/conformitron-observer-bot'
         }
       },
       source: codebuild.Source.gitHub({
