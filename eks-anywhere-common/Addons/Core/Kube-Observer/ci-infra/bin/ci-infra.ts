@@ -16,5 +16,4 @@ new CiInfraStack(app, 'CiInfraStack', {
   /* Uncomment the next line if you know exactly what Account and Region you
    * want to deploy the stack to. */
   env: { account: '867286930927', region: 'us-west-2' },
-
 });
