@@ -300,21 +300,24 @@ def build_report(risk_info):
 
     for risk in risk_info:
         if risk['deployment'] == "raw_pod":
-            deployment = "raw_pod"
+            report = f"Looks like you're using a raw pod: `{risk['pod'].metadata.name}`. Please stop doing that. \n"
+
+            namespace_report["reports"].append(report)
         else:
             deployment = risk['deployment'].metadata.name
-        report = f"Looks like your deployment `{deployment}` is failing.\n" \
-                 f"Specifically, it looks like these pods are failing: \n"
-        for pod_risk in risk["risks"]:
-            report += f"* Pod: `{pod_risk['pod'].metadata.name}` with the error listed below.\n"
 
-        report += '---- \n'
+            report = f"Looks like your deployment `{deployment}` is failing.\n" \
+                     f"Specifically, it looks like these pods are failing: \n"
+            for pod_risk in risk["risks"]:
+                report += f"* Pod: `{pod_risk['pod'].metadata.name}` with the error listed below.\n"
 
-        for pod_risk in risk["risks"]:
-            pod_logs = f"{get_pod_logs(pod_risk['pod'])['logs']} ---- \n"
-            report += f"Logs for pod `{pod_risk['pod'].metadata.name}`: \n {pod_logs}"
+            report += '---- \n'
 
-        namespace_report["reports"].append(report)
+            for pod_risk in risk["risks"]:
+                pod_logs = f"{get_pod_logs(pod_risk['pod'])['logs']} ---- \n"
+                report += f"Logs for pod `{pod_risk['pod'].metadata.name}`: \n {pod_logs}"
+
+            namespace_report["reports"].append(report)
 
     return namespace_report
 
