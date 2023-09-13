@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kong
+  labels:
+    aws.conformance.vendor: kong
+    aws.conformance.vendor-solution: kong-enterprise
