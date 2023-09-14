@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-configmap
+  namespace: kong
+data:
+  test.sh: |-
+    #!/bin/bash
+    kubectl apply -f https://bit.ly/echo-service
+    echo "
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: demo
+    spec:
+      ingressClassName: kong
+      rules:
+      - http:
+          paths:
+          - path: /foo
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: echo
+                port:
+                  number: 80
+    " | kubectl apply -f - -n kong
+    
+    kubectl wait pods -n kong -l app=echo --for condition=Ready --timeout=90s
+
+    response=$(curl --silent -i --header "Host: kong.example" http://eks-anywhere-kong-proxy.kong.svc.cluster.local:80/echo)
+    response_status=$(echo $response | awk '/^HTTP/{print $2}')
+
+    echo $response_status
+    echo $response
+    if [[ $response_status == "200" && $response == *"In namespace kong."* ]]; then 
+      echo -e "\n Kong Gateway is running, test service passed \n"
+      exit 0
+    else
+      echo -e "\n Kong Gateway is running, test service failed \n"
+      exit 1
+    fi
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kong-gateway-job
+  namespace: kong
+rules:
+  - apiGroups: [ "" ]
+    resources: ["pods","services"]
+    verbs: [ "get","list","create", "update", "patch", "watch" ]
+  - apiGroups: [ "apps" ]
+    resources: ["deployments"]
+    verbs: [ "get", "create", "update", "patch" ]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: [ "get", "create", "update", "patch" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kong-test
+  namespace: kong
+subjects:
+  - kind: User
+    name: system:serviceaccount:kong:default
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: kong-gateway-job
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kong-enterprise-testjob
+  namespace: kong
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+        - name: job
+          image: 'alpine/k8s:1.26.2'
+          imagePullPolicy: Always
+          command:
+            - /bin/test.sh
+          volumeMounts:
+            - name: test-configmap-volume
+              mountPath: /bin/test.sh
+              readOnly: true
+              subPath: test.sh
+      volumes:
+        - name: test-configmap-volume
+          configMap:
+            defaultMode: 0700
+            name: test-configmap
+      restartPolicy: Never
