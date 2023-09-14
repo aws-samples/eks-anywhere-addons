@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-configmap
+  namespace: kong
+data:
+  test.sh: |-
+    #!/bin/bash
+    kubectl apply -f https://bit.ly/echo-service
+    echo "
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: demo
+    spec:
+      ingressClassName: kong
+      rules:
+      - http:
+          paths:
+          - path: /foo
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: echo
+                port:
+                  number: 80
+    " | kubectl apply -f - -n kong
+    
+    sleep 300
+
+    response=$(curl --silent -i http://eks-anywhere-kong-proxy.kong.svc.cluster.local:80/foo)
+    response_status=$(echo $response | awk '/^HTTP/{print $2}')
+
+    echo $response_status
+    echo $response
+    if [[ $response_status == "200" && $response == *"pod namespace"* ]]; then 
+      echo -e "\n Kong Gateway is running, test service passed \n"
+      exit 0
+    else
+      echo -e "\n Kong Gateway is running, test service failed \n"
+      exit 1
+    fi
