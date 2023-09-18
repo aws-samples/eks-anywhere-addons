@@ -84,7 +84,6 @@ jobs:
             echo $subdirectory
             echo $config_map_file
         
-            # move to main
             mkdir -p ./$subdirectory/
             mv "$config_map_file" ./$subdirectory/
             git add .
@@ -97,9 +96,7 @@ jobs:
           echo "No namespace.yaml file found"
           exit 200
         fi
-
-    - name: Copy PR files and push
-      run: |
+        
         # Move updated files over
         for item in $files; do
           git checkout pr -- $item
