@@ -2,7 +2,7 @@ name: PR Opened - moving new ISV addon to developer_branch for E2E testing
 
 on:
   pull_request:
-    branches: [main]
+    branches: [feature/e2e-feedback-testing]
     types: [opened, reopened, synchronize]
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
             echo "No Namespace file found in existing subdirectory"
             exit 200
           fi
-        elif [ -n $namespace_file ]; then
+        elif [[ -n $namespace_file ]]; then
           echo "Namespace File: $namespace_file"
         else
           echo "No Namespace file found in commit or subdirectory"
