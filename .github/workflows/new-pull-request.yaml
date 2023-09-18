@@ -23,6 +23,8 @@ jobs:
         echo $files
         filearr=($files)
         
+        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
+        
         # Find Namespace File in uploads list or in modified file subdirectory
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         subdirectory=$(dirname ${filearr[0]})
@@ -49,6 +51,9 @@ jobs:
         if [ -n "$namespace_file" ]; then
           subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
+        
+          git checkout pr
+        
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           git fetch --all
           git config --local user.email "dev@null"
