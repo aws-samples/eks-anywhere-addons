@@ -1,7 +1,7 @@
 name: PR Closed - purging developer_branch
 on: 
   pull_request:
-    branches: [main]
+    branches: [feature/e2e-feedback-testing]
     types: [closed]
 jobs:
   merge-master-back-to-dev:
