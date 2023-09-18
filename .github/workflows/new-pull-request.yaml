@@ -10,19 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Base Code
-      uses: actions/checkout@v2
+    - name: Checkout Base and PR Code
+      uses: actions/checkout@v4
 
-    - name: Parse Namespace data, Create ConfigMap and Copy over committed files
+    - name: Checkout PR Code
+      uses: actions/checkout@v4
+      run:
+        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
+
+    - name: Parse Namespace data, Create ConfigMap
       id: find-namespace-yaml
       run: |
         # Pull files down into a filename array
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
         filearr=($files)
-             
-        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
-
+        
         # Find Namespace File in uploads list or in modified file subdirectory
         namespace_file=$(echo "$files" | grep "namespace.yaml")
         subdirectory=$(dirname ${filearr[0]})
@@ -96,6 +99,9 @@ jobs:
           exit 200
         fi
 
+    - name: Copy PR files and push
+      uses: actions/checkout@v4
+      run: |
         # Move updated files over
         for item in $files; do
           git checkout pr -- $item
@@ -104,4 +110,5 @@ jobs:
         done
         git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
         git push
+        
       
