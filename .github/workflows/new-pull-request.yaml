@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout Base Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
 
     - name: Parse Namespace data, Create ConfigMap and Copy over committed files
       id: find-namespace-yaml
