@@ -1,4 +1,4 @@
-name: Run CI for ISV Addons
+name: PR Opened - moving workloads to developer_branch
 
 on:
   pull_request:
