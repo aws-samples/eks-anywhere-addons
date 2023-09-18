@@ -2,7 +2,7 @@ name: Run CI for ISV Addons
 
 on:
   pull_request:
-    branches: [feature/e2e-feedback-testing]
+    branches: [main]
     types: [opened, reopened, synchronize]
 
 jobs:
