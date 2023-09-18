@@ -10,18 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout PR Code
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ github.event.pull_request.head.repo.full_name }}
-        ref: ${{ github.event.pull_request.head.ref }}
-        path: incoming
-
     - name: Checkout Base Code
       uses: actions/checkout@v4
-      with:
-        path: main
-        
+
     - name: Parse Namespace data, Create ConfigMap and Copy over committed files
       id: find-namespace-yaml
       run: |
@@ -29,6 +20,8 @@ jobs:
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
         filearr=($files)
+             
+        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
 
         # Find Namespace File in uploads list or in modified file subdirectory
         namespace_file=$(echo "$files" | grep "namespace.yaml")
@@ -39,8 +32,8 @@ jobs:
           git config --local user.name "Conformitron Bot"
           git checkout developer_branch
           git pull
-          if [ -f "./incoming/${subdirectory}/namespace.yaml" ]; then
-            namespace_file="./incoming/${subdirectory}/namespace.yaml"
+          if [ -f "${subdirectory}/namespace.yaml" ]; then
+            namespace_file="${subdirectory}/namespace.yaml"
             echo "namespace file = $namespace_file"
           else
             echo "No Namespace file found in existing subdirectory"
@@ -59,14 +52,12 @@ jobs:
           echo "Sub Directory = $subdirectory"
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           
-          cd main
           git fetch --all
           git config --local user.email "dev@null"
           git config --local user.name "Conformitron Bot"
           # fetch most recent update to dev
           git checkout developer_branch
           git pull
-          cd ..
         
           if [[ ! -z $namespace_name ]]; then
             echo "$namespace_name"
@@ -89,9 +80,8 @@ jobs:
             echo $config_map_file
         
             # move to main
-            cd ./main/
             mkdir -p ./$subdirectory/
-            mv "../$config_map_file" ./$subdirectory/
+            mv "$config_map_file" ./$subdirectory/
             git add .
         
           else
@@ -105,8 +95,7 @@ jobs:
 
         # Move updated files over
         for item in $files; do
-          cp ../incoming/$item ./$item
-#          git checkout ${{ github.event.pull_request.head.ref }} -- $item
+          git checkout pr -- $item
           git add $item
           echo $item
         done
