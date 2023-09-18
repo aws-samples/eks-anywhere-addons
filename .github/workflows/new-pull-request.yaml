@@ -23,6 +23,8 @@ jobs:
         echo $files
         filearr=($files)
 
+        git show --name-status --oneline
+
         tree
         
         # Find Namespace File in uploads list or in modified file subdirectory
