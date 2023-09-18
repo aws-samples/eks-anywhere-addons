@@ -53,6 +53,7 @@ jobs:
         fi
 
         # Parse namespace data
+        namespace_file="./incoming/${namespace_file}"
         if [ -n "$namespace_file" ]; then
           subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
