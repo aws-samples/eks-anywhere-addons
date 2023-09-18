@@ -50,6 +50,8 @@ jobs:
         if [ -n "$namespace_file" ]; then
           subdirectory=$(dirname $namespace_file)
           echo "Sub Directory = $subdirectory"
+          # get namespace from pr
+          git checkout pr
           namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           
           git fetch --all
