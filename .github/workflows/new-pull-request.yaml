@@ -90,7 +90,7 @@ jobs:
             # move to main
             cd ./main/
             mkdir -p ./$subdirectory/
-            mv $config_map_file ./$subdirectory/
+            mv ../$config_map_file ./$subdirectory/
             git add .
           else
             echo "No Namespace found"
