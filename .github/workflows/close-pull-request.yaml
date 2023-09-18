@@ -1,7 +1,7 @@
 name: PRs to Main
 on: 
   pull_request:
-    branches: [feature/e2e-feedback-testing]
+    branches: [main]
     types: [closed]
 jobs:
   merge-master-back-to-dev:
