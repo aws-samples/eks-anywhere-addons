@@ -10,11 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Base and PR Code
+    - name: Checkout Base
       uses: actions/checkout@v4
 
     - name: Checkout PR Code
-      uses: actions/checkout@v4
       run:
         git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
 
@@ -100,7 +99,6 @@ jobs:
         fi
 
     - name: Copy PR files and push
-      uses: actions/checkout@v4
       run: |
         # Move updated files over
         for item in $files; do
