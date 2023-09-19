@@ -11,6 +11,8 @@ data:
     apiVersion: networking.k8s.io/v1
     kind: Ingress
     metadata:
+      labels:
+        app: echo
       name: demo
     spec:
       ingressClassName: kong
@@ -31,8 +33,8 @@ data:
     response=$(curl --silent -i http://eks-anywhere-kong-proxy.kong.svc.cluster.local:80/foo)
     response_status=$(echo $response | awk '/^HTTP/{print $2}')
 
-    echo $response_status
-    echo $response
+    kubectl delete deployment,service,ingress -l app=echo -n kong
+
     if [[ $response_status == "200" && $response == *"pod namespace"* ]]; then 
       echo -e "\n Kong Gateway is running, test service passed \n"
       exit 0
