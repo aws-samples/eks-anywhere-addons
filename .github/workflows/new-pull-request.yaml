@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout Base
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.CI_TOKEN }}
 
     - name: Checkout PR Code
       run:
@@ -96,21 +98,6 @@ jobs:
           exit 200
         fi
         
-#        # Move updated files over
-#        for item in $files; do
-#          git checkout pr -- $item
-#          git add $item
-#          echo $item
-#        done
-#        git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
-#        git push
-
-    - uses: actions/checkout@v4
-    - name: Commit workloads
-      run: |
-        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-        filearr=($files)
-        
         # Move updated files over
         for item in $files; do
           git checkout pr -- $item
@@ -119,3 +106,18 @@ jobs:
         done
         git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
         git push
+
+#    - uses: actions/checkout@v4
+#    - name: Commit workloads
+#      run: |
+#        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+#        filearr=($files)
+#
+#        # Move updated files over
+#        for item in $files; do
+#          git checkout pr -- $item
+#          git add $item
+#          echo $item
+#        done
+#        git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
+#        git push
