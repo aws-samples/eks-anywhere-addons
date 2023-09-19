@@ -4,23 +4,27 @@ metadata:
   name: kong-enterprise-testjob
   namespace: kong
 spec:
-  backoffLimit: 1
-  template:
-    spec:
-      containers:
-        - name: job
-          image: 'alpine/k8s:1.26.2'
-          imagePullPolicy: Always
-          command:
-            - /bin/test.sh
-          volumeMounts:
+  schedule: "10 10 * * *"
+  jobTemplate:
+    spec: 
+      template:
+        spec:
+          containers:
+            - name: job
+              image: 'alpine/k8s:1.26.2'
+              imagePullPolicy: Always
+              command:
+                - /bin/test.sh
+              volumeMounts:
+                - name: test-configmap-volume
+                  mountPath: /bin/test.sh
+                  readOnly: true
+                  subPath: test.sh
+          volumes:
             - name: test-configmap-volume
-              mountPath: /bin/test.sh
-              readOnly: true
-              subPath: test.sh
-      volumes:
-        - name: test-configmap-volume
-          configMap:
-            defaultMode: 0700
-            name: test-configmap
-      restartPolicy: Never
+              configMap:
+                defaultMode: 0700
+                name: test-configmap
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
