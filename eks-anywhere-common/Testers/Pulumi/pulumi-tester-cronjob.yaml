@@ -128,42 +128,43 @@ data:
     rm ${MANIFEST_FILENAME}
 ---
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
-  # labels:
-  #   app: script-job
   name: pulumi-k8s-operator-test
   namespace: pulumi
 spec:
-  backoffLimit: 1
-  template:
+  schedule: "9 9 * * *"
+  jobTemplate:
     spec:
-      serviceAccountName: pulumi-tester
-      containers:
-        - command:
-            - bash
-            - /scripts/pulumi-k8s-operator-test.sh
-          image: "bitnami/minideb:bookworm"
-          name: script
-          env:
-            - name: PULUMI_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: pulumi-access-token
-                  key: value
-            - name: PULUMI_ORG
-              valueFrom:
-                configMapKeyRef:
-                  name: pulumi-tester
-                  key: pulumi-org
-          volumeMounts:
+      activeDeadlineSeconds: 900
+      template:
+        spec:
+          serviceAccountName: pulumi-tester
+          containers:
+            - command:
+                - bash
+                - /scripts/pulumi-k8s-operator-test.sh
+              image: "bitnami/minideb:bookworm"
+              name: script
+              env:
+                - name: PULUMI_ACCESS_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: pulumi-access-token
+                      key: value
+                - name: PULUMI_ORG
+                  valueFrom:
+                    configMapKeyRef:
+                      name: pulumi-tester
+                      key: pulumi-org
+              volumeMounts:
+                - name: pulumi-tester-configmap
+                  mountPath: /scripts/pulumi-k8s-operator-test.sh
+                  subPath: pulumi-k8s-operator-test.sh
+                  readOnly: false
+          restartPolicy: Never
+          volumes:
             - name: pulumi-tester-configmap
-              mountPath: /scripts/pulumi-k8s-operator-test.sh
-              subPath: pulumi-k8s-operator-test.sh
-              readOnly: false
-      restartPolicy: Never
-      volumes:
-        - name: pulumi-tester-configmap
-          configMap:
-            name: pulumi-tester-configmap
-            defaultMode: 0777
+              configMap:
+                name: pulumi-tester-configmap
+                defaultMode: 0777
