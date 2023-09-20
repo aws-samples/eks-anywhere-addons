@@ -10,10 +10,10 @@ rules:
     verbs: [ "get","list","create", "update", "patch", "watch", "delete" ]
   - apiGroups: [ "apps" ]
     resources: ["deployments"]
-    verbs: [ "get", "create", "update", "patch", "delete" ]
+    verbs: [ "get", "create", "update", "list", "patch", "delete" ]
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses"]
-    verbs: [ "get", "create", "update", "patch", "delete" ]
+    verbs: [ "get", "create", "update", "list", "patch", "delete" ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
