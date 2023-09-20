@@ -16,7 +16,4 @@ spec:
       version: "3.3.0"
   interval: 60s
   targetNamespace: openebs
-  values: 
-    cstor:
-      enabled: true
   
