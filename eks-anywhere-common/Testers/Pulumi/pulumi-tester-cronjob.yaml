@@ -1,28 +1,45 @@
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pulumi-tester
+  namespace: pulumi
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pulumi-tester
+  namespace: pulumi
+rules:
+  - apiGroups: ["pulumi.com"]
+    resources: ["stacks", "programs"]
+    verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pulumi-tester
+  namespace: pulumi
+subjects:
+  - kind: ServiceAccount
+    name: pulumi-tester
+roleRef:
+  kind: Role
+  name: pulumi-tester
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: pulumi-tester-configmap
+  name: pulumi-tester
   namespace: pulumi
 data:
+  pulumi-org: aws-partnership
   pulumi-k8s-operator-test.sh: |-
     #!/bin/bash
     set -e
-
-    if ! which curl ; then
-      echo "curl not found. Installing curl."
-      install_packages curl
-    fi
-
-    if ! which kubectl ; then
-      echo "kubectl not found. Installing kubectl"
-      apt-get update && \
-        apt-get install -y --no-install-recommends ca-certificates && \
-        update-ca-certificates
-      apt-get update && \
-        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
-        chmod +x kubectl && \
-        mv kubectl /usr/local/bin/
-    fi
 
     RANDOM_SUFFIX=$(date +%s)-$RANDOM
     MANIFEST_FILENAME=/tmp/pulumi-test-stack-${RANDOM_SUFFIX}.yaml
@@ -74,9 +91,8 @@ data:
           type: Secret
           secret:
             name: pulumi-access-token
-            key: value
+            key: accessToken
     EOF
-
 
     echo ""
     echo "Deploying sample stack and program."
@@ -84,11 +100,12 @@ data:
 
     echo ""
     echo "Waiting for the operator to deploy the stack."
-    sleep 10
+    kubectl wait -n pulumi stack/eks-pulumi-operator-test --for=condition=Ready --timeout=180s
 
     echo ""
     echo "Verifying that the stack exists."
     curl \
+      -s \
       --fail \
       -H "Accept: application/vnd.pulumi+8" \
       -H "Content-Type: application/json" \
@@ -101,7 +118,7 @@ data:
 
     echo ""
     echo "Waiting for the operator to remove the stack"
-    sleep 10
+    kubectl wait -n pulumi stack/eks-pulumi-operator-test --for=delete --timeout=180s
 
     echo ""
     echo "Verifying the stack no longer exists"
@@ -133,7 +150,7 @@ metadata:
   name: pulumi-k8s-operator-test
   namespace: pulumi
 spec:
-  schedule: "9 9 * * *"
+  schedule: "10 10 * * *"
   jobTemplate:
     spec:
       activeDeadlineSeconds: 900
@@ -144,14 +161,14 @@ spec:
             - command:
                 - bash
                 - /scripts/pulumi-k8s-operator-test.sh
-              image: "bitnami/minideb:bookworm"
+              image: "alpine/k8s:1.26.2"
               name: script
               env:
                 - name: PULUMI_ACCESS_TOKEN
                   valueFrom:
                     secretKeyRef:
                       name: pulumi-access-token
-                      key: value
+                      key: accessToken
                 - name: PULUMI_ORG
                   valueFrom:
                     configMapKeyRef:
@@ -166,5 +183,5 @@ spec:
           volumes:
             - name: pulumi-tester-configmap
               configMap:
-                name: pulumi-tester-configmap
+                name: pulumi-tester
                 defaultMode: 0777

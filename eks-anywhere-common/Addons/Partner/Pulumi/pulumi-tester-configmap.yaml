@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: pulumi-tester
-  namespace: pulumi
-data:
-  pulumi-org: aws-partnership
