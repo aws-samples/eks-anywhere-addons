@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pulumi
+  labels:
+    aws.conformance.vendor: pulumi
+    aws.conformance.vendor-solution: pulumi-kubernetes-operator
