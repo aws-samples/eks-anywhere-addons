@@ -1,7 +1,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: pulumi-kubernetes-operator
+  name: pulumi
   namespace: pulumi
 spec:
   interval: 10m
