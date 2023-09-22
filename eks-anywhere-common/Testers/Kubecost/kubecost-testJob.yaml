@@ -18,6 +18,14 @@ spec:
                 - -c
                 - >-
                   echo Getting current Kubecost state.;
-                  curl -sL http://kubecost-cost-analyzer:9090/model/getConfigs | jq .code | grep -q '200' && echo Success && exit 0 || echo Failure && exit 1
+                  response=$(curl -sL http://kubecost-cost-analyzer:9090/model/getConfigs);
+                  code=$(echo ${response} | jq .code);
+                  if [ "$code" -eq 200 ]; then
+                    echo "Got Kubecost working configuration. Successful."
+                    exit 0
+                  else 
+                    echo "Failed to fetch Kubecost configuration. Response was $response"
+                    exit 1
+                  fi
           restartPolicy: Never
       backoffLimit: 1
