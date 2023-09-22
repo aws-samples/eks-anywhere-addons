@@ -9,16 +9,18 @@ spec:
     spec:
       template:
         spec:
+          serviceAccountName: tester
           containers:
             - name: test-kubecost
-              image: alpine/k8s:1.25.14
+              image: alpine/k8s:1.26.9
               command:
                 - /bin/sh
               args:
                 - -c
                 - >-
+                  svc=$(kubectl -n kubecost get svc -l app.kubernetes.io/name=cost-analyzer -o json | jq -r .items[0].metadata.name);
                   echo Getting current Kubecost state.;
-                  response=$(curl -sL http://kubecost-cost-analyzer:9090/model/getConfigs);
+                  response=$(curl -sL http://${svc}:9090/model/getConfigs);
                   code=$(echo ${response} | jq .code);
                   if [ "$code" -eq 200 ]; then
                     echo "Got Kubecost working configuration. Successful."
@@ -29,3 +31,33 @@ spec:
                   fi
           restartPolicy: Never
       backoffLimit: 1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: test-role
+  namespace: kubecost
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: test-rolebinding
+  namespace: kubecost
+subjects:
+- kind: ServiceAccount
+  name: tester
+  namespace: kubecost
+roleRef:
+  kind: Role
+  name: test-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tester
+  namespace: kubecost
