@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kubecost-healthtest
+  namespace: kubecost
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: test-kubecost
+              image: alpine/k8s:1.25.14
+              command:
+                - /bin/sh
+              args:
+                - -c
+                - >-
+                  echo Checking Kubecost health.;
+                  curl -sL http://kubecost-cost-analyzer:9090/model/getConfigs | jq .code | grep -q '200' && echo Success && exit 0 || echo Failure && exit 1
+          restartPolicy: Never
+      backoffLimit: 1
