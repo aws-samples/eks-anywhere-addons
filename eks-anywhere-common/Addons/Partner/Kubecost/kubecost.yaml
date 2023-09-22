@@ -13,16 +13,11 @@ spec:
         kind: HelmRepository
         name: kubecost-charts
         namespace: flux-system
-      version: 1.92.0
+      version: 1.106.0
   interval: 1m0s
   targetNamespace: kubecost
-  values:
-    global:
-      thanos:
-        enabled: false
   valuesFrom:
   - kind: Secret
     name: kubecost-secret
     valuesKey: kubecost-token
     targetPath: kubecostToken
-   
