@@ -18,8 +18,6 @@ jobs:
 
     - name: Parse Namespace data, Create ConfigMap
       id: find-namespace-yaml
-      with:
-        token: ${{ secrets.CI_TOKEN }}
       run: |
         # Pull files down into a filename array
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
