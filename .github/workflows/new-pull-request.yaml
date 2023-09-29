@@ -18,94 +18,109 @@ jobs:
       run:
         git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
 
-    - name: Parse Namespace data, Create ConfigMap
-      id: find-namespace-yaml
-      run: |
-        # Pull files down into a filename array
-        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-        echo $files
-        filearr=($files)
-        
-        # Find Namespace File in uploads list or in modified file subdirectory
-        namespace_file=$(echo "$files" | grep "namespace.yaml")
-        subdirectory=$(dirname ${filearr[0]})
-        if [ -z $namespace_file ]; then
-          git fetch --all
-          git config --local user.email "dev@null"
-          git config --local user.name "Conformitron Bot"
-          git checkout developer_branch
-          git pull
-          if [ -f "${subdirectory}/namespace.yaml" ]; then
-            namespace_file="${subdirectory}/namespace.yaml"
-            echo "namespace file = $namespace_file"
-          else
-            echo "No Namespace file found in existing subdirectory"
-            exit 200
-          fi
-        elif [[ -n $namespace_file ]]; then
-          echo "Namespace File: $namespace_file"
-        else
-          echo "No Namespace file found in commit or subdirectory"
-        fi
+    - name: Run CodeBuild
+      uses: aws-actions/aws-codebuild-run-build@v1
+      with:
+        project-name: new-pull-request-builder
+        env-vars-for-codebuild: |
+          PR_NUMBER,
+          COMMIT_ID,
+          REPOSITORY
+      env:
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        COMMIT_ID: ${{ github.event.pull_request.head.sha }}
+        REPOSITORY: ${{ github.repository }}
 
-        # Parse namespace data
-        namespace_file="${namespace_file}"
-        if [ -n "$namespace_file" ]; then
-          subdirectory=$(dirname $namespace_file)
-          echo "Sub Directory = $subdirectory"
+
+
+    # - name: Parse Namespace data, Create ConfigMap
+    #   id: find-namespace-yaml
+    #   run: |
+    #     # Pull files down into a filename array
+    #     files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+    #     echo $files
+    #     filearr=($files)
+        
+    #     # Find Namespace File in uploads list or in modified file subdirectory
+    #     namespace_file=$(echo "$files" | grep "namespace.yaml")
+    #     subdirectory=$(dirname ${filearr[0]})
+    #     if [ -z $namespace_file ]; then
+    #       git fetch --all
+    #       git config --local user.email "dev@null"
+    #       git config --local user.name "Conformitron Bot"
+    #       git checkout developer_branch
+    #       git pull
+    #       if [ -f "${subdirectory}/namespace.yaml" ]; then
+    #         namespace_file="${subdirectory}/namespace.yaml"
+    #         echo "namespace file = $namespace_file"
+    #       else
+    #         echo "No Namespace file found in existing subdirectory"
+    #         exit 200
+    #       fi
+    #     elif [[ -n $namespace_file ]]; then
+    #       echo "Namespace File: $namespace_file"
+    #     else
+    #       echo "No Namespace file found in commit or subdirectory"
+    #     fi
+
+    #     # Parse namespace data
+    #     namespace_file="${namespace_file}"
+    #     if [ -n "$namespace_file" ]; then
+    #       subdirectory=$(dirname $namespace_file)
+    #       echo "Sub Directory = $subdirectory"
           
-          # get namespace from pr
-          git checkout pr
-          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+    #       # get namespace from pr
+    #       git checkout pr
+    #       namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
           
-          git fetch --all
-          git config --local user.email "dev@null"
-          git config --local user.name "Conformitron Bot"
-          # fetch most recent update to dev
-          git checkout developer_branch
-          git pull
+    #       git fetch --all
+    #       git config --local user.email "dev@null"
+    #       git config --local user.name "Conformitron Bot"
+    #       # fetch most recent update to dev
+    #       git checkout developer_branch
+    #       git pull
         
-          if [[ ! -z $namespace_name ]]; then
-            echo "$namespace_name"
-            namespace=$(echo $namespace_name | xargs echo -n)
-            echo $namespace
-            config_map_file="config-map-${{ github.event.pull_request.number }}.yml"
-            echo $config_map_file
-            echo "apiVersion: v1" >> $config_map_file
-            echo "kind: ConfigMap" >> $config_map_file
-            echo "metadata:" >> $config_map_file
-            echo "  name: $namespace-configmap" >> $config_map_file
-            echo "  namespace: $namespace" >> $config_map_file
-            echo "  labels:" >> $config_map_file
-            echo "    bot: conformitron" >> $config_map_file
-            echo "data:" >> $config_map_file
-            echo "  Namespace: ${namespace}" >> $config_map_file
-            echo "  prNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
-            echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
-            echo $subdirectory
-            echo $config_map_file
+    #       if [[ ! -z $namespace_name ]]; then
+    #         echo "$namespace_name"
+    #         namespace=$(echo $namespace_name | xargs echo -n)
+    #         echo $namespace
+    #         config_map_file="config-map-${{ github.event.pull_request.number }}.yml"
+    #         echo $config_map_file
+    #         echo "apiVersion: v1" >> $config_map_file
+    #         echo "kind: ConfigMap" >> $config_map_file
+    #         echo "metadata:" >> $config_map_file
+    #         echo "  name: $namespace-configmap" >> $config_map_file
+    #         echo "  namespace: $namespace" >> $config_map_file
+    #         echo "  labels:" >> $config_map_file
+    #         echo "    bot: conformitron" >> $config_map_file
+    #         echo "data:" >> $config_map_file
+    #         echo "  Namespace: ${namespace}" >> $config_map_file
+    #         echo "  prNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
+    #         echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
+    #         echo $subdirectory
+    #         echo $config_map_file
         
-            mkdir -p ./$subdirectory/
-            mv "$config_map_file" ./$subdirectory/
-            git add .
+    #         mkdir -p ./$subdirectory/
+    #         mv "$config_map_file" ./$subdirectory/
+    #         git add .
         
-          else
-            echo "No Namespace found"
-            exit 100
-          fi
-        else
-          echo "No namespace.yaml file found"
-          exit 200
-        fi
+    #       else
+    #         echo "No Namespace found"
+    #         exit 100
+    #       fi
+    #     else
+    #       echo "No namespace.yaml file found"
+    #       exit 200
+    #     fi
         
-        # Move updated files over
-        for item in $files; do
-          git checkout pr -- $item
-          git add $item
-          echo $item
-        done
-        git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
-        git push
+        # # Move updated files over
+        # for item in $files; do
+        #   git checkout pr -- $item
+        #   git add $item
+        #   echo $item
+        # done
+        # git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
+        # git push
 
 #    - uses: actions/checkout@v4
 #    - name: Commit workloads
