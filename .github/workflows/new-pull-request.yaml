@@ -1,7 +1,7 @@
 name: PR Opened - moving new ISV addon to developer_branch for E2E testing
 
 on:
-  pull_request:
+  pull_request_target:
     branches: [feature/e2e-feedback-testing]
     types: [opened, reopened, synchronize]
 
