@@ -1,14 +1,12 @@
 name: PR Opened - moving new ISV addon to developer_branch for E2E testing
 
 on:
-  pull_request:
-    branches: [feature/e2e-feedback-testing]
+  pull_request_target:
+    branches: [feature/e2e-w-prtarget]
     types: [opened, reopened, synchronize]
 
 jobs:
   build:
-    permissions:
-      contents: write
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Base
