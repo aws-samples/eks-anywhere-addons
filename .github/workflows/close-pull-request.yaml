@@ -23,10 +23,12 @@ jobs:
         # Revert Commits or Log that no change was made
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
+        
+        git revert ${commit[0]} --no-edit || echo "Commit ${commit[0]} not reverted"
     
-        for commit in $commits; do
-          echo $commit 
-          git revert $commit --no-edit || echo "Commit $commit not reverted" 
-        done
+#        for commit in $commits; do
+#          echo $commit
+#          git revert $commit --no-edit || echo "Commit $commit not reverted"
+#        done
         git push
         
