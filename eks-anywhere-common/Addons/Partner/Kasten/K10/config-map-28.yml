@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kasten-io-configmap
+  namespace: kasten-io
+  labels:
+    bot: conformitron
+data:
+  Namespace: kasten-io
+  prNumber: "28"
+  commitHash: 375953b65a2622b2ba5346b7467331920a342eef
