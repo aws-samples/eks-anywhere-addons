@@ -101,5 +101,6 @@ jobs:
           git checkout pr -- $item
           git add $item
           echo $item
+        done
         git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
         git push
