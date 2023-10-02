@@ -29,7 +29,7 @@ jobs:
     - name: Run CodeBuild
       uses: aws-actions/aws-codebuild-run-build@v1
       with:
-        project-name: new-pull-request-builder
+        project-name: newpullrequestbuilder1D9B89-PaEgR5TAl6HS
         env-vars-for-codebuild: |
           PR_NUMBER,
           COMMIT_ID,
