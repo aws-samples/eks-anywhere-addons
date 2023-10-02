@@ -97,7 +97,7 @@ jobs:
         fi
         
         # Move updated files over
-        git merge -s theirs --squash pr
+        git merge -X theirs --squash pr
         git log
         git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
         git push
