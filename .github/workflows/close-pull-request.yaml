@@ -25,10 +25,6 @@ jobs:
         git config --local user.name "Conformitron Bot"
         
         git revert $commits --no-edit || echo "Commit $commits not reverted"
-    
-#        for commit in $commits; do
-#          echo $commit
-#          git revert $commit --no-edit || echo "Commit $commit not reverted"
-#        done
+
         git push
         
