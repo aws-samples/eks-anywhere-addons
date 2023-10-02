@@ -82,7 +82,7 @@ jobs:
             echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
             echo $subdirectory
             echo $config_map_file
-        
+            
             mkdir -p ./$subdirectory/
             mv "$config_map_file" ./$subdirectory/
             git add .
@@ -103,18 +103,3 @@ jobs:
           echo $item
         git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
         git push
-
-#    - uses: actions/checkout@v4
-#    - name: Commit workloads
-#      run: |
-#        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-#        filearr=($files)
-#
-#        # Move updated files over
-#        for item in $files; do
-#          git checkout pr -- $item
-#          git add $item
-#          echo $item
-#        done
-#        git commit -m "Adding new and changed files for ${namespace}_PR_${{ github.event.pull_request.number }}"
-#        git push
