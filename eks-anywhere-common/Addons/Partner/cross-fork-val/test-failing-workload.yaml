@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: ee-failing
+  namespace: cross-fork-val
   name: liveliness-check
   labels:
     app: liveliness-app
