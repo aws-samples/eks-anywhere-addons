@@ -17,14 +17,14 @@ jobs:
       run: |
         # Get Commits from this PR
         TAG=PR_${{ github.event.pull_request.number }}
-        commits=$(git rev-list HEAD --grep=$TAG)
+        commits=$(git rev-list HEAD --grep=153 --max-count=1)     
         echo "commits: $commits"
     
         # Revert Commits or Log that no change was made
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
         
-        git revert ${commit[0]} --no-edit || echo "Commit ${commit[0]} not reverted"
+        git revert $commits --no-edit || echo "Commit ${commit[0]} not reverted"
     
 #        for commit in $commits; do
 #          echo $commit
