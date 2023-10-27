@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ee-failing
+  labels:
+      aws.conformance.vendor: ee
+      aws.conformance.vendor-solution: ee-failing
