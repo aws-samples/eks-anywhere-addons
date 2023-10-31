@@ -37,12 +37,13 @@ spec:
     nri-metadata-injection:
       enabled: false
   valuesFrom:
-  - kind: Secret
-    name: newrelic-secret
-    valuesKey: newrelic-licensekey
-    targetPath: global.licenseKey
-  # - kind: ConfigMap
-  #   name: aws-env-metadata
-  #   namespace: kube-system
-  #   valuesKey: clusterName
-  #   targetPath: global.cluster
+    - kind: Secret
+      name: newrelic-secret
+      valuesKey: newrelic-licensekey
+      targetPath: global.licenseKey
+      # - kind: ConfigMap
+      #   name: aws-env-metadata
+      #   namespace: kube-system
+      #   valuesKey: clusterName
+      #   targetPath: global.cluster
+version: 5.0.43
