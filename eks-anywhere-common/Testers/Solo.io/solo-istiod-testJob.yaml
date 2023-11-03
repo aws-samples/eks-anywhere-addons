@@ -8,23 +8,19 @@ spec:
   template:
     spec:
       containers:
-      - name: solo-istiod-healthtest
-        image: curlimages/curl:latest
-        command:
-        - /bin/sh
-        - -c
-        - >-
-            # Make a request to the Istiod service and store the HTTP status code
-            HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" --location --insecure "https://istiod.istio-system.svc.cluster.local:15012")
-            
-            echo "Checking HTTP status code from Istiod service."
-            
-            # Check if the HTTP status code is 200 (OK)
-            if [ "$HTTP_STATUS" -eq 200 ]; then
-              echo "Received 200 OK from Istiod service. Successful."
-              exit 0
-            else
-              echo "Istiod service check failed with status code: $HTTP_STATUS"
-              exit 1
-            fi        
+        - name: solo-istiod-healthtest
+          image: 'alpine/k8s:1.26.2'
+          imagePullPolicy: Always
+          command:
+            - /bin/run-functional-tests.sh
+          volumeMounts:
+            - name: functional-tests-volume
+              mountPath: /bin/run-functional-tests.sh
+              readOnly: true
+              subPath: run-functional-tests.sh
+      volumes:
+        - name: functional-tests-volume
+          configMap:
+            defaultMode: 0700
+            name: tetsjob-script
       restartPolicy: Never
