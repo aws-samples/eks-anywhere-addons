@@ -18,15 +18,15 @@ spec:
               args:
                 - -c
                 - >-
-                  istio_pod_state=$(kubectl get pods -n istio-system -l app=istiod -o json | jq -r .items[].status.containerStatuses[].ready);
+                  istiod_pod_state=$(kubectl get pods -n istio-system -l app=istiod -o json | jq -r .items[].status.containerStatuses[].ready);
                   echo Getting current istiod state.;                  
-                  if [ "$istio_pod_state" -eq "true" ]; then
+                  if [ "$istiod_pod_state" = "true" ]; then
                     echo "Got Solo Istiod working configuration. Successful."
                     exit 0
                   else 
-                    echo "Solo Istiod is failing The status was $istio_pod_state"
+                    echo "Solo Istiod is failing The status was $istiod_pod_state"
                     echo "Additional logging info:"
-                    kubectl describe pods -n istio-system
+                    kubectl describe pods -n istio-system -l app=istiod
                     exit 1
                   fi
           restartPolicy: Never
@@ -39,8 +39,11 @@ metadata:
   namespace: istio-system
 rules:
 - apiGroups: [""]
-  resources: ["services"]
-  verbs: ["list"]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["get", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

@@ -15,5 +15,6 @@ suse             neuvector
 newrelic         newrelic-bundle
 perfectscale     perfectscale
 pulumi           pulumi-kubernetes-operator
+solo.io          solo-istiod
 sysdig           sysdig-agent
 hashicorp        vault
