@@ -11,6 +11,7 @@ accuknox         kubearmor
 kubecost         cost-analyzer
 nirmata          enterprise-kyverno
 lacework         polygraph
+solo.io          solo-istiod
 suse             neuvector
 newrelic         newrelic-bundle
 perfectscale     perfectscale
