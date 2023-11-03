@@ -1,66 +1,30 @@
 apiVersion: batch/v1
-kind: CronJob
+kind: Job
 metadata:
   name: solo-istiod-healthtest
-  namespace: istio-system
+  namespace: istio-system  
 spec:
-  schedule: "*/10 * * * *"
-  jobTemplate:
+  backoffLimit: 1
+  template:
     spec:
-      template:
-        spec:
-          serviceAccountName: tester
-          containers:
-            - name: test-solo-istiod
-              image: alpine/k8s:1.26.9
-              command:
-                - /bin/sh
-              args:
-                - -c
-                - >-
-                  istiod_pod_state=$(kubectl get pods -n istio-system -l app=istiod -o json | jq -r .items[].status.containerStatuses[].ready);
-                  echo Getting current istiod state.;                  
-                  if [ "$istiod_pod_state" = "true" ]; then
-                    echo "Got Solo Istiod working configuration. Successful."
-                    exit 0
-                  else 
-                    echo "Solo Istiod is failing The status was $istiod_pod_state"
-                    echo "Additional logging info:"
-                    kubectl describe pods -n istio-system -l app=istiod
-                    exit 1
-                  fi
-          restartPolicy: Never
-      backoffLimit: 1
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: test-role
-  namespace: istio-system
-rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "watch", "list"]
-- apiGroups: [""]
-  resources: ["events"]
-  verbs: ["get", "list"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: test-rolebinding
-  namespace: istio-system
-subjects:
-- kind: ServiceAccount
-  name: tester
-  namespace: istio-system
-roleRef:
-  kind: Role
-  name: test-role
-  apiGroup: rbac.authorization.k8s.io
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: tester
-  namespace: istio-system
+      containers:
+      - name: solo-istiod-healthtest
+        image: curlimages/curl:latest
+        command:
+        - /bin/sh
+        - -c
+        - >-
+            # Make a request to the Istiod service and store the HTTP status code
+            HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" --location --insecure "https://istiod.istio-system.svc.cluster.local:15012")
+            
+            echo "Checking HTTP status code from Istiod service."
+            
+            # Check if the HTTP status code is 200 (OK)
+            if [ "$HTTP_STATUS" -eq 200 ]; then
+              echo "Received 200 OK from Istiod service. Successful."
+              exit 0
+            else
+              echo "Istiod service check failed with status code: $HTTP_STATUS"
+              exit 1
+            fi        
+      restartPolicy: Never
