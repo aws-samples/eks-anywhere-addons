@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: solo-istiod-healthtest
+  namespace: istio-system
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: tester
+          containers:
+            - name: test-solo-istiod
+              image: alpine/k8s:1.26.9
+              command:
+                - /bin/sh
+              args:
+                - -c
+                - >-
+                  istio_pod_state=$(kubectl get pods -n istio-system -l app=istiod -o json | jq -r .items[].status.containerStatuses[].ready);
+                  echo Getting current istiod state.;                  
+                  if [ "$istio_pod_state" -eq "true" ]; then
+                    echo "Got Solo Istiod working configuration. Successful."
+                    exit 0
+                  else 
+                    echo "Solo Istiod is failing The status was $istio_pod_state"
+                    echo "Additional logging info:"
+                    kubectl describe pods -n istio-system
+                    exit 1
+                  fi
+          restartPolicy: Never
+      backoffLimit: 1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: test-role
+  namespace: istio-system
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: test-rolebinding
+  namespace: istio-system
+subjects:
+- kind: ServiceAccount
+  name: tester
+  namespace: istio-system
+roleRef:
+  kind: Role
+  name: test-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tester
+  namespace: istio-system
