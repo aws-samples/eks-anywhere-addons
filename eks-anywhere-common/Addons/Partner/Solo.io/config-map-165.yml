@@ -8,4 +8,4 @@ metadata:
 data:
   Namespace: istio-system
   prNumber: "165"
-  commitHash: 9ef0411b19b6dd8f1972f915c9bdf5b69be144fe
+  commitHash: d24cbd4b1b53ce7422de58ba599cbdeced9915a0
