@@ -4,4 +4,4 @@ metadata:
   name: istio-system
   labels:
     aws.conformance.vendor: solo.io
-    aws.conformance.vendor-solution: solo-istio
+    aws.conformance.vendor-solution: solo-istiod
