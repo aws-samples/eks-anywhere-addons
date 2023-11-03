@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: solo-istiod-job-role
+  namespace: istio-system
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/exec", "services"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["networking.istio.io"]
+    resources: ["gateways", "virtualservices", "destinationrules", "serviceentries", "envoyfilters"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: solo-istiod-job-rolebinding
+  namespace: istio-system
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: istio-system
+roleRef:
+  kind: Role
+  name: solo-istiod-job-role
+  apiGroup: rbac.authorization.k8s.io
