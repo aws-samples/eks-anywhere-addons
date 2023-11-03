@@ -13,5 +13,5 @@ spec:
         kind: HelmRepository
         name: solo-istiod-charts
         namespace: flux-system
-      version: 1.18.3
+      version: 1.18.3-dev6
   interval: 1m0s
