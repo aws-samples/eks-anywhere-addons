@@ -1,5 +1,5 @@
-Kubernetes Version :  
-Date of Conformance Test : 2023-11-06
+Kubernetes Version :  1.27 
+Date of Conformance Test : 2023-09-21
  
 Following ISV Partners have Validated their Conformance : 
  
