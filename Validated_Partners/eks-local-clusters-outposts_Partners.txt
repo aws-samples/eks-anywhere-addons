@@ -6,7 +6,6 @@ Following ISV Partners have Validated their Conformance :
 VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE
 dynatrace        dynatrace
 solo.io          solo-istiod
-kasten           k10
 komodor          k8s-watcher
 kong             kong-enterprise
 accuknox         kubearmor
