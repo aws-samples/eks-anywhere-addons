@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: newrelic-charts
         namespace: flux-system
-      version: 5.0.42
+      version: 5.0.44
   interval: 1m0s
   targetNamespace: newrelic
   values:
@@ -37,12 +37,12 @@ spec:
     nri-metadata-injection:
       enabled: false
   valuesFrom:
-  - kind: Secret
-    name: newrelic-secret
-    valuesKey: newrelic-licensekey
-    targetPath: global.licenseKey
-  # - kind: ConfigMap
-  #   name: aws-env-metadata
-  #   namespace: kube-system
-  #   valuesKey: clusterName
-  #   targetPath: global.cluster
+    - kind: Secret
+      name: newrelic-secret
+      valuesKey: newrelic-licensekey
+      targetPath: global.licenseKey
+      # - kind: ConfigMap
+      #   name: aws-env-metadata
+      #   namespace: kube-system
+      #   valuesKey: clusterName
+      #   targetPath: global.cluster
