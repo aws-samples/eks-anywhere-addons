@@ -138,9 +138,5 @@ data:
     echo "Checking Istio Ingress Gateway configuration..."
     check_istio_gateway_config || error_exit "Ingress Gateway configuration check failed."
     
-    echo "Cleaning up test resources..."
-    kubectl delete virtualservice httpbin-virtualservice -n istio-system || error_exit "Failed to clean up test VirtualService."
-    kubectl delete gateway httpbin-gateway -n istio-system || error_exit "Failed to clean up test gateway."
-    
     echo "Istio functional test completed successfully."
     exit 0
