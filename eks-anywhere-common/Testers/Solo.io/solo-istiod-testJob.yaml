@@ -1,26 +1,29 @@
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
-  name: solo-istiod-healthtest
+  name: solo-istiod-health-test
   namespace: istio-system  
 spec:
-  backoffLimit: 1
-  template:
+  schedule: "10 10 * * *"
+  jobTemplate:
     spec:
-      containers:
-        - name: solo-istiod-healthtest
-          image: 'alpine/k8s:1.26.2'
-          imagePullPolicy: Always
-          command:
-            - /bin/run-functional-tests.sh
-          volumeMounts:
+      template:
+        spec:
+          containers:
+            - name: solo-istiod-healthtest
+              image: 'alpine/k8s:1.26.2'
+              imagePullPolicy: Always
+              command:
+                - /bin/run-functional-tests.sh
+              volumeMounts:
+                - name: functional-tests-volume
+                  mountPath: /bin/run-functional-tests.sh
+                  readOnly: true
+                  subPath: run-functional-tests.sh
+          volumes:
             - name: functional-tests-volume
-              mountPath: /bin/run-functional-tests.sh
-              readOnly: true
-              subPath: run-functional-tests.sh
-      volumes:
-        - name: functional-tests-volume
-          configMap:
-            defaultMode: 0700
-            name: tetsjob-script
-      restartPolicy: Never
+              configMap:
+                defaultMode: 0700
+                name: tetsjob-script
+          restartPolicy: Never
+    
