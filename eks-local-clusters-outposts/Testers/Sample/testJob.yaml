@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: sample-outposts-daily-test-cronjob
+  name: sample-local-daily-test-cronjob
   namespace: default
 spec:
   schedule: "10 10 * * *"
