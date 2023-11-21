@@ -25,6 +25,7 @@ jobs:
         # Pull files down into a filename array
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
         echo $files
+        filearr=($files)
         
         # Checkout developer_branch 
         git fetch --all
@@ -34,7 +35,7 @@ jobs:
         git pull
         
         # Find Namespace File(s) in uploads list and generate/update configmap for each
-        echo $files | while read -r filename ; do 
+        echo $filearr | while read -r filename ; do 
           echo "Filename = $filename"
           namespace_file=$(echo $filename | grep "namespace.yaml")
           
