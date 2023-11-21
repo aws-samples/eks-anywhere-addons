@@ -27,13 +27,6 @@ jobs:
         echo $files
         filearr=($files)
         
-        # Checkout developer_branch 
-        git fetch --all
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        git checkout developer_branch
-        git pull
-        
         # Find Namespace File(s) in uploads list and generate/update configmap for each
         echo $filearr | while read -r filename ; do 
           echo "Filename = $filename"
@@ -44,9 +37,17 @@ jobs:
             subdirectory=$(dirname $namespace_file)
             echo "Sub Directory = $subdirectory"
             
-            # get namespace variable
+            # get namespace from pr
+            git checkout pr
             namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-          
+            
+            git fetch --all
+            git config --local user.email "dev@null"
+            git config --local user.name "Conformitron Bot"
+            # fetch most recent update to dev
+            git checkout developer_branch
+            git pull
+            
             if [[ ! -z $namespace_name ]]; then
               echo "$namespace_name"
               namespace=$(echo $namespace_name | xargs echo -n)
