@@ -1,7 +1,7 @@
 name: PR Closed - purging developer_branch
 on: 
   pull_request_target:
-    branches: [main]
+    branches: [githubActions]
     types: [closed]
     paths-ignore: 
      - 'Validated_Partners/**'
