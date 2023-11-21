@@ -1,8 +1,11 @@
-name: PRs to Main
+name: PR Closed - purging developer_branch
 on: 
-  pull_request:
-    branches: [main]
+  pull_request_target:
+    branches: [githubActions]
     types: [closed]
+    paths-ignore: 
+     - 'Validated_Partners/**'
+     - '.github/**'
 jobs:
   merge-master-back-to-dev:
     if: github.event.pull_request.merged == false
@@ -12,39 +15,19 @@ jobs:
     - uses: actions/checkout@v2
       with:
         ref: developer_branch
-    - name: Set Git config
+        fetch-depth: 0
+    - name: Remove Updates from this PR
       run: |
-          git config --local user.email "dev@null"
-          git config --local user.name "CI Bot"
-    - name: Remove new ConfigMap
-      run: |
-        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-        echo $files
-        namespace_file=$(echo "$files" | grep "namespace.yaml")
-        if [ -n "$namespace_file" ]; then
-          subdirectory=$(dirname $namespace_file)
-          namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-          namespace=$(echo $namespace_name | xargs echo -n)
-          echo "Sub Directory = $subdirectory"
-          git config --local user.email "dev@null"
-          git config --local user.name "Conformitron Bot"
-          
-          # revert Git commits 
-          echo "Commits from ${namespace}_PR_${{ github.event.pull_request.number }}"
-          commits=$(echo "${namespace}_PR_${{ github.event.pull_request.number }}")
-          echo "commits: $(git log --format=format:"%H" --grep="${commits}" --all)"
-          rm -rf ./$subdirectory
-          git add .
-          git commit -m "Remove attempted PR files for ${namespace}_PR_${{ github.event.pull_request.number }}"
-        else 
-          echo "No ConfigMap found"
-          exit 200
-        fi
-          
-    - name: Merge main back to dev
-      run: |
-          git fetch origin main:main
-          git checkout developer_branch
-          git merge main --no-edit --allow-unrelated-histories --strategy-option=theirs
-          git checkout --force main .
-          git push origin developer_branch
+        # Get Commits from this PR
+        TAG=PR_${{ github.event.pull_request.number }}
+        commits=$(git rev-list HEAD --grep=$TAG --max-count=1)     
+        echo "commits: $commits"
+    
+        # Revert Commits or Log that no change was made
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        
+        git revert $commits --no-edit || echo "Commit $commits not reverted"
+
+        git push
+        
