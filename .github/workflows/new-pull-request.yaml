@@ -35,6 +35,7 @@ jobs:
         
         # Find Namespace File(s) in uploads list and generate/update configmap for each
         echo $files | while read -r filename ; do 
+          echo "Filename = $filename"
           namespace_file=$(echo $filename | grep "namespace.yaml")
           
           # Parse namespace data
@@ -42,16 +43,8 @@ jobs:
             subdirectory=$(dirname $namespace_file)
             echo "Sub Directory = $subdirectory"
             
-            # get namespace from pr
-            git checkout pr
+            # get namespace variable
             namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
-            
-            git fetch --all
-            git config --local user.email "dev@null"
-            git config --local user.name "Conformitron Bot"
-            # fetch most recent update to dev
-            git checkout developer_branch
-            git pull
           
             if [[ ! -z $namespace_name ]]; then
               echo "$namespace_name"
