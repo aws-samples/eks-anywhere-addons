@@ -28,7 +28,7 @@ jobs:
         filearr=($files)
         
         # Find Namespace File(s) in uploads list and generate/update configmap for each
-        for filename in filearr
+        for filename in $filearr
         do
           echo "Filename = $filename"
           namespace_file=$(echo $filename | grep "namespace.yaml")
