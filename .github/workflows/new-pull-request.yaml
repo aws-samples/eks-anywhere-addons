@@ -33,7 +33,7 @@ jobs:
           echo "Filename = $filename"
           
           # Parse namespace data
-          if [ echo $filename | grep -c "namespace.yaml" ]; then
+          if [ $(echo "$filename" | grep -c "namespace.yaml") ]; then
             subdirectory=$(dirname $filename)
             echo "Sub Directory = $subdirectory"
             
@@ -82,6 +82,13 @@ jobs:
         done
         
         # Move updated files over
+        git fetch --all
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        # fetch most recent update to dev
+        git checkout developer_branch
+        git pull
+            
         for item in $files; do
           git checkout pr -- $item
           git add $item
