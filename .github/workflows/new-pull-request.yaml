@@ -31,16 +31,15 @@ jobs:
         for filename in $files
         do
           echo "Filename = $filename"
-          namespace_file=$(echo $filename | grep "namespace.yaml")
           
           # Parse namespace data
-          if [ -n $namespace_file ]; then
-            subdirectory=$(dirname $namespace_file)
+          if [ echo $filename | grep -c "namespace.yaml" ]; then
+            subdirectory=$(dirname $filename)
             echo "Sub Directory = $subdirectory"
             
             # get namespace from pr
             git checkout pr
-            namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+            namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$filename" | awk -F':' '{gsub(/ /, "", $2); print $2}')
             
             git fetch --all
             git config --local user.email "dev@null"
