@@ -34,7 +34,7 @@ jobs:
           namespace_file=$(echo $filename | grep "namespace.yaml")
           
           # Parse namespace data
-          if [ -n "$namespace_file" ]; then
+          if [ -n $namespace_file ]; then
             subdirectory=$(dirname $namespace_file)
             echo "Sub Directory = $subdirectory"
             
@@ -49,7 +49,7 @@ jobs:
             git checkout developer_branch
             git pull
             
-            if [[ ! -z $namespace_name ]]; then
+            if [[ -n $namespace_name ]]; then
               echo "$namespace_name"
               namespace=$(echo $namespace_name | xargs echo -n)
               echo $namespace
