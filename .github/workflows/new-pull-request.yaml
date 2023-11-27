@@ -24,8 +24,21 @@ jobs:
       run: |
         # Pull files down into a filename array
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
-        # echo $files
-        # filearr=($files)
+        
+        # Move updated files over to dev branch
+        git fetch --all
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        # fetch most recent update to dev
+        git checkout developer_branch
+        git pull
+            
+        for item in $files; do
+          git checkout pr -- $item
+          git add $item
+          echo "Moving $item"
+        done
+        
         
         # Find Namespace File(s) in uploads list and generate/update configmap for each
         for filename in $files
@@ -37,16 +50,18 @@ jobs:
             subdirectory=$(dirname $filename)
             echo "Sub Directory = $subdirectory"
             
-            # get namespace from pr
-            git checkout pr
-            namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$filename" | awk -F':' '{gsub(/ /, "", $2); print $2}')
             
-            git fetch --all
-            git config --local user.email "dev@null"
-            git config --local user.name "Conformitron Bot"
-            # fetch most recent update to dev
-            git checkout developer_branch
-            git pull
+            
+            # get namespace from dev branch directory where the updated file is being placed
+            if [ -f "${subdirectory}/namespace.yaml" ]; then
+              namespace_file="${subdirectory}/namespace.yaml"
+              echo "namespace file = $namespace_file"
+              namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+            else
+              echo "No Namespace file found in existing subdirectory"
+              exit 200
+            fi
+            
             
             if [[ -n $namespace_name ]]; then
               echo "$namespace_name"
@@ -73,7 +88,7 @@ jobs:
               git add .
           
             else
-              echo "No Namespace found"
+              echo "No Namespace found, Invalid namespace file"
               exit 100
             fi
           else
@@ -81,18 +96,5 @@ jobs:
           fi
         done
         
-        # Move updated files over
-        git fetch --all
-        git config --local user.email "dev@null"
-        git config --local user.name "Conformitron Bot"
-        # fetch most recent update to dev
-        git checkout developer_branch
-        git pull
-            
-        for item in $files; do
-          git checkout pr -- $item
-          git add $item
-          echo "Moving $item"
-        done
-        git commit -m "Adding new and changed files for ${namespace}PR_${{ github.event.pull_request.number }}"
+        git commit -m "Adding new and changed files for PR_${{ github.event.pull_request.number }}"
         git push
