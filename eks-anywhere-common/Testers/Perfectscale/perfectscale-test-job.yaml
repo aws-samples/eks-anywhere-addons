@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: perfectscale-test-job
+  namespace: perfectscale
+spec:
+  template:
+    spec:
+      containers:
+      - name: perfectscale-test-job
+        image: badouralix/curl-jq:ubuntu
+        command: ["sh", "-c"]
+        args:
+        - |
+          url="http://perfectscale-perfectscale-exporter:80/status/auth"
+
+          while true; do
+            response=$(curl -s "$url")
+            policy=$(echo "$response" | jq -r '.data.policy')
+
+            if [ "$policy" = "ok" ]; then
+              echo "Perfectscale Exporter was successfully connected to the backend"
+              break
+            else
+              echo "Waiting for connection..."
+              sleep 10
+            fi
+          done
+      restartPolicy: Never

@@ -1,0 +1,42 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: kong
+  namespace: kong
+spec:
+  chart:
+    spec:
+      chart: kong
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: kong-charts
+        namespace: flux-system
+      version: 2.27.0
+  interval: 1m0s
+  targetNamespace: kong
+  releaseName: eks-anywhere
+  values:
+    enterprise:
+      enabled: true
+      vitals:
+        enabled: false
+      portal:
+        enabled: false
+      rbac:
+        enabled: false
+    manager:
+      enabled: false
+    portal:
+      enabled: false
+    portalapi:
+      enabled: false
+    env:
+      database: "off"
+    ingressController:
+      enabled: true
+      installCRDs: false
+    proxy:
+      enabled: true
+      type: ClusterIP
