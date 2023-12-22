@@ -79,7 +79,7 @@ jobs:
               echo "  prNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
               echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
               echo "  deployed: \"$(date +%s)\"" >> $config_map_file
-              echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"
+              echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
               echo $subdirectory
               echo $config_map_file
               
