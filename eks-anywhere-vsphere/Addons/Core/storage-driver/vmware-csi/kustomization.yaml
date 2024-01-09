@@ -5,5 +5,4 @@ resources:
   - vsphere-cloud-controller-manager.yaml
   - vsphere-csi-externalsecrets.yaml
   - vsphere-csi-driver.yaml
-  - vmware-pvc.yaml
   - vmware-sc.yaml
