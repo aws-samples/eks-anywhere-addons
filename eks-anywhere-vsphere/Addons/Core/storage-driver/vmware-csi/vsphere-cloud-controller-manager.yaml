@@ -8,43 +8,6 @@ metadata:
     component: cloud-controller-manager
   namespace: kube-system
 ---
-# apiVersion: v1
-# kind: Secret
-# metadata:
-#   name: vsphere-cloud-secret
-#   labels:
-#     vsphere-cpi-infra: secret
-#     component: cloud-controller-manager
-#   namespace: kube-system
-# stringData:
-#   $VSPHERE_IP_ADDRESS.username: $VSPHERE_USERNAME
-#   $VSPHERE_IP_ADDRESS.password: $VSPHERE_PASSWORD
----
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: vsphere-cloud-config
-#   labels:
-#     vsphere-cpi-infra: config
-#     component: cloud-controller-manager
-#   namespace: kube-system
-# data:
-#   vsphere.conf: |
-#     global:
-#       port: 443
-#       insecureFlag: true
-#       secretName: vsphere-cloud-secret
-#       secretNamespace: kube-system
-
-#     # vcenter section
-#     vcenter: 
-#       $VCENTER_NAME:
-#           server: $VSPHERE_IP_ADDRESS
-#           user: $VSPHERE_USERNAME
-#           password: $VSPHERE_PASSWORD
-#           datacenters:
-#           - $VSPHERE_DATACENTER
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
