@@ -38,8 +38,8 @@ jobs:
         git pull
             
         for item in $files; do
-          status= $(echo $item | jq -r '.[].status')
-          filename=status= $(echo $item | jq -r '.[].filename')
+          status=$(echo $item | jq -r '.[].status')
+          filename=$(echo $item | jq -r '.[].filename')
           echo "Filename: $filename is Status: $status"
           
           
