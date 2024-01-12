@@ -43,7 +43,6 @@ jobs:
           status=$(echo "$item" | jq -r '.status')
           filename=$(echo "$item" | jq -r '.filename')
           echo "Filename: $filename is Status: $status"
-        done  
           
           if [ "$status" != removed ]; then
             git checkout pr -- $filename
