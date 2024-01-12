@@ -48,8 +48,18 @@ jobs:
             git checkout pr -- $filename
             git add $filename
             echo "Moving $filename"
-          
+          else
+            echo "Deleting $filename"
+            rm $filename
+          fi
+        done
+        
+        
         # Create ConfigMap for each file's partner folder
+        for item in "${files[@]}"; do
+          status=$(echo "$item" | jq -r '.status')
+          filename=$(echo "$item" | jq -r '.filename')
+          if [ "$status" != removed ]; then
             # Parse namespace data
             subdirectory=$(dirname $filename)
             echo "Sub Directory = $subdirectory"
@@ -95,12 +105,7 @@ jobs:
               echo "No Namespace found, Invalid namespace file"
               exit 100
             fi
-          else
-            echo "Deleting $filename"
-            rm $filename
-          fi
-        
-        
+          fi        
         done
         
         git commit -m "Adding new and changed files for PR_${{ github.event.pull_request.number }}"
