@@ -27,7 +27,7 @@ jobs:
         # Pull files down into a filename array
         files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r ['.[]'])
         
-        echo "$files"
+        # echo "$files"
         
         # Move updated files over to dev branch
         git fetch --all
@@ -39,8 +39,9 @@ jobs:
         
             
         for item in $files; do
-          status=$(echo "$item" | jq -r '.status')
-          filename=$(echo "$item" | jq -r '.filename')
+          echo $item
+          status=$(echo $item | jq '.status')
+          filename=$(echo "$item" | jq '.filename')
           echo "Filename: $filename is Status: $status"
           
           
