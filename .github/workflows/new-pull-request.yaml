@@ -42,7 +42,7 @@ jobs:
           echo "Filename: $filename is Status: $status"
           
           
-          if [ status != removed ]; then
+          if [ "$status" != removed ]; then
             git checkout pr -- $filename
             git add $filename
             echo "Moving $filename"
@@ -53,8 +53,7 @@ jobs:
         done
         
         # Find Namespace File(s) in uploads list and generate/update configmap for each
-        for file in $files [LEFT OFF HERE]
-        do
+        for file in $files; do
           filename=$file.filename
           echo "Filename = $filename"
           
