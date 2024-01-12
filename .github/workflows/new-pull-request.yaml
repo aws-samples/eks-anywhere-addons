@@ -55,7 +55,7 @@ jobs:
             echo "Sub Directory = $subdirectory"
             
             # get namespace from dev branch directory where the updated file is being placed
-            namespace_file=$(find . -name "*namespace*")
+            namespace_file=$(find $subdirectory -name "*namespace*")
             echo "namespace file = $namespace_file"
             
             if [ -f $namespace_file ]; then
