@@ -24,11 +24,8 @@ jobs:
     - name: Parse Namespace data, Create ConfigMap
       id: find-namespace-yaml
       run: |
-        # Pull files down into a filename array
+        # Pull file information down into a JSON array
         readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -c '.[]')
-        echo "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" 
-        echo "first file: ${files[1]}"
-        echo ""
         
         # Move updated files over to dev branch
         git fetch --all
@@ -42,7 +39,6 @@ jobs:
         for item in "${files[@]}"; do
           status=$(echo "$item" | jq -r '.status')
           filename=$(echo "$item" | jq -r '.filename')
-          echo "Filename: $filename is Status: $status"
           
           if [ "$status" == renamed ]; then
             git checkout pr -- $filename
@@ -67,11 +63,9 @@ jobs:
           if [ "$status" != removed ]; then
             # Parse namespace data
             subdirectory=$(dirname $filename)
-            echo "Sub Directory = $subdirectory"
             
             # get namespace from dev branch directory where the updated file is being placed
             namespace_file=$(find $subdirectory -name "*namespace*")
-            echo "namespace file = $namespace_file"
             namespace_file_subdirectory=$(dirname $namespace_file)
             
             if [ -f $namespace_file ]; then
@@ -82,9 +76,7 @@ jobs:
             fi
             
             if [[ -n $namespace_name ]]; then
-              echo "$namespace_name"
               namespace=$(echo $namespace_name | xargs echo -n)
-              echo $namespace
               config_map_file="config-map-${{ github.event.pull_request.number }}.yml"
               echo $config_map_file
               echo "apiVersion: v1" >> $config_map_file
