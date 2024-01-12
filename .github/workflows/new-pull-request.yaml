@@ -38,8 +38,8 @@ jobs:
         echo "$files"
             
         for item in $files; do
-          status=$item[1]
-          filename=$item[0]
+          status=${item[1]}
+          filename=${item[0]}
           echo "Filename: $filename is Status: $status"
           
           
