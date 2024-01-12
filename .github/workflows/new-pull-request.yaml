@@ -44,7 +44,7 @@ jobs:
           filename=$(echo "$item" | jq -r '.filename')
           echo "Filename: $filename is Status: $status"
           
-          if [ "$status == renamed" ]; then
+          if [ "$status" == renamed ]; then
             git checkout pr -- $filename
             git add $filename
             rm $(echo "$item" | jq -r '.previous_filename')
