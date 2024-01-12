@@ -25,7 +25,7 @@ jobs:
       id: find-namespace-yaml
       run: |
         # Pull files down into a filename array
-        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -c '.[]')
+        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -c -r '.[]')
         
         # Move updated files over to dev branch
         git fetch --all
@@ -35,7 +35,7 @@ jobs:
         git checkout developer_branch
         git pull
             
-        for item in $files; do
+        for item in "$files"; do
           echo "$item"
           status=$(echo "$item" | jq -r '.status')
           filename=$(echo "$item" | jq -r '.filename')
