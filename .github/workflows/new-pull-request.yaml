@@ -38,7 +38,7 @@ jobs:
         git checkout developer_branch
         git pull
         
-            
+        # Remove Deleted Files, copy over added or modified files
         for item in "${files[@]}"; do
           status=$(echo "$item" | jq -r '.status')
           filename=$(echo "$item" | jq -r '.filename')
@@ -48,29 +48,20 @@ jobs:
             git checkout pr -- $filename
             git add $filename
             echo "Moving $filename"
-          else
-            echo "Deleting $filename"
-            rm $filename
-          fi
-        done
-        
-        # Find Namespace File(s) in uploads list and generate/update configmap for each
-        for file in ${files[@]}; do
-          filename=$file.filename
-          echo "Filename = $filename"
           
-          # Parse namespace data
-          if [ $(echo "$filename" | grep -c "namespace.yaml") ]; then
+        # Create ConfigMap for each file's partner folder
+            # Parse namespace data
             subdirectory=$(dirname $filename)
             echo "Sub Directory = $subdirectory"
             
             # get namespace from dev branch directory where the updated file is being placed
-            if [ -f "${subdirectory}/namespace.yaml" ]; then
-              namespace_file="${subdirectory}/namespace.yaml"
-              echo "namespace file = $namespace_file"
+            namespace_file=$(find . -name "*namespace*")
+            echo "namespace file = $namespace_file"
+            
+            if [ -f $namespace_file ]; then
               namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
             else
-              echo "No Namespace file found in existing subdirectory"
+              echo "No Namespace file found"
               exit 200
             fi
             
@@ -105,8 +96,11 @@ jobs:
               exit 100
             fi
           else
-            echo "Not a namespace.yaml file"
+            echo "Deleting $filename"
+            rm $filename
           fi
+        
+        
         done
         
         git commit -m "Adding new and changed files for PR_${{ github.event.pull_request.number }}"
