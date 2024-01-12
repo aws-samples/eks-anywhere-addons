@@ -38,7 +38,6 @@ jobs:
         echo "$files[0]"
             
         for item in $files; do
-          echo "$item"
           status=$(echo "$item" | jq -r '.status')
           filename=$(echo "$item" | jq -r '.filename')
           echo "Filename: $filename is Status: $status"
