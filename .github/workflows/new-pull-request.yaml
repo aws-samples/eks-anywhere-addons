@@ -49,7 +49,7 @@ jobs:
             git add $filename
             rm $(echo "$item" | jq -r '.previous_filename')
             echo "Renaming $filename"
-          else if [ "$status" != removed ]; then
+          elif [ "$status" != removed ]; then
             git checkout pr -- $filename
             git add $filename
             echo "Moving $filename"
