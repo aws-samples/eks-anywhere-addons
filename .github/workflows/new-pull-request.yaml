@@ -78,7 +78,6 @@ jobs:
             if [[ -n $namespace_name ]]; then
               namespace=$(echo $namespace_name | xargs echo -n)
               config_map_file="config-map-${{ github.event.pull_request.number }}.yml"
-              echo $config_map_file
               echo "apiVersion: v1" >> $config_map_file
               echo "kind: ConfigMap" >> $config_map_file
               echo "metadata:" >> $config_map_file
@@ -92,8 +91,6 @@ jobs:
               echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
               echo "  deployed: \"$(date +%s)\"" >> $config_map_file
               echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
-              echo $subdirectory
-              echo $config_map_file
               
               mkdir -p ./$namespace_file_subdirectory/
               mv "$config_map_file" ./$namespace_file_subdirectory/
