@@ -72,6 +72,7 @@ jobs:
             # get namespace from dev branch directory where the updated file is being placed
             namespace_file=$(find $subdirectory -name "*namespace*")
             echo "namespace file = $namespace_file"
+            namespace_file_subdirectory=$(dirname $namespace_file)
             
             if [ -f $namespace_file ]; then
               namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
@@ -102,8 +103,8 @@ jobs:
               echo $subdirectory
               echo $config_map_file
               
-              mkdir -p ./$subdirectory/
-              mv "$config_map_file" ./$subdirectory/
+              mkdir -p ./$namespace_file_subdirectory/
+              mv "$config_map_file" ./$namespace_file_subdirectory/
               git add .
           
             else
