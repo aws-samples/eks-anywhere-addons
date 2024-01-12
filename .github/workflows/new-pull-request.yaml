@@ -37,8 +37,8 @@ jobs:
             
         for item in $files; do
           echo "$item"
-          status=$(echo $item | jq -c '.status')
-          filename=$(echo $item | jq -c '.filename')
+          status=$(echo "$item" | jq -r '.status')
+          filename=$(echo "$item" | jq -r '.filename')
           echo "Filename: $filename is Status: $status"
           
           
