@@ -98,7 +98,7 @@ jobs:
               echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
               echo "  deployed: \"$(date +%s)\"" >> $config_map_file
               echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
-              
+              echo "$config_map_file"
               mkdir -p ./$namespace_file_subdirectory/
               mv "$config_map_file" ./$namespace_file_subdirectory/
               git add ./$namespace_file_subdirectory/
