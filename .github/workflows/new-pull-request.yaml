@@ -63,7 +63,7 @@ jobs:
           if [ "$status" != removed ]; then
             # Parse namespace data
             subdirectory=$(dirname $filename)
-            namespace_file_subdirectory=$(dirname filename)
+            namespace_file_subdirectory=$(dirname $filename)
             echo $namespace_file_subdirectory
             
             # get namespace from dev branch directory where the updated file is being placed
