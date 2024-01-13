@@ -74,6 +74,7 @@ jobs:
             done
             
             if [ -f $namespace_file ]; then
+              echo "Namespace File found: $namespace_file"
               namespace_file_subdirectory=$(dirname $namespace_file)
               namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
             else
