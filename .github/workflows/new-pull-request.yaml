@@ -60,7 +60,11 @@ jobs:
         for item in "${files[@]}"; do
           status=$(echo "$item" | jq -r '.status')
           filename=$(echo "$item" | jq -r '.filename')
+          
+
           if [ "$status" != removed ]; then
+            echo "File: $filename" 
+
             # Parse namespace data
             subdirectory=$(dirname $filename)
             namespace_file_subdirectory=$(dirname $filename)
