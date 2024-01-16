@@ -74,13 +74,14 @@ jobs:
             
             # get namespace from dev branch directory where the updated file is being placed
             while [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ]; do
+              namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
               echo "$(basename $namespace_file_subdirectory)"
               if [ $(basename $namespace_file_subdirectory) == "Partner" ] || [ $(basename $namespace_file_subdirectory) == "Core" ]; then
                 echo "No Namespace File Found"
                 exit 200
               fi
               
-              namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
+
               namespace_file=$(find $namespace_file_subdirectory -name "*namespace*")
               # echo "SubDir: $namespace_file_subdirectory"
               # echo "Namespace File: $namespace_file"
