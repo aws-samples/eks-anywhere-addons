@@ -72,7 +72,7 @@ jobs:
             namespace_file_found=0
             
             # get namespace from dev branch directory where the updated file is being placed
-            while [ $(basename $namespace_file_subdirectory) != "Partner" ] && [ $(basename $namespace_file_subdirectory) != "Core" ] && [ ! $namespace_file_found ]; do
+            while [ $(basename $namespace_file_subdirectory) != "Partner" ] && [ $(basename $namespace_file_subdirectory) != "Core" ] && (( $namespace_file_found==0 )); do
               echo "SubDir: $namespace_file_subdirectory"
               namespace_file_found=$(find $namespace_file_subdirectory -name "*namespace*" | wc -l)
               namespace_file=$(find $namespace_file_subdirectory -name "*namespace*")
