@@ -69,10 +69,12 @@ jobs:
             subdirectory=$(dirname $filename)
             namespace_file_subdirectory=$(dirname $filename)
             namespace_file=""
+            namespace_file_found=0
             
             # get namespace from dev branch directory where the updated file is being placed
-            while [ $(basename $namespace_file_subdirectory) != "Partner" ] && [ $(basename $namespace_file_subdirectory) != "Core" ] && [[ -z $namespace_file ]]; do
+            while [ $(basename $namespace_file_subdirectory) != "Partner" ] && [ $(basename $namespace_file_subdirectory) != "Core" ] && [ ! $namespace_file_found ]; do
               echo "SubDir: $namespace_file_subdirectory"
+              namespace_file_found=$(find $namespace_file_subdirectory -name "*namespace*" | wc -l)
               namespace_file=$(find $namespace_file_subdirectory -name "*namespace*")
               echo "Namespace File: $namespace_file"
               namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
@@ -102,7 +104,6 @@ jobs:
               echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
               echo "  deployed: \"$(date +%s)\"" >> $config_map_file
               echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
-              echo "$config_map_file"
               mkdir -p ./$namespace_file_subdirectory/
               mv "$config_map_file" ./$namespace_file_subdirectory/
               git add ./$namespace_file_subdirectory/
