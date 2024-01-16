@@ -69,13 +69,11 @@ jobs:
             subdirectory=$(dirname $filename)
             namespace_file_subdirectory=$(dirname $filename)
             namespace_file=""
-            namespace_file_found=0
             
             # get namespace from dev branch directory where the updated file is being placed
-            while [ $(basename $namespace_file_subdirectory) != "Partner" ] && [ $(basename $namespace_file_subdirectory) != "Core" ] && (( $namespace_file_found==0 )); do
+            while [ $(basename $namespace_file_subdirectory) != "Partner" ] && [ $(basename $namespace_file_subdirectory) != "Core" ] && [ -z $(find $namespace_file_subdirectory -name *namespace*) ]; do
               echo "SubDir: $namespace_file_subdirectory"
               namespace_file_found=$(find $namespace_file_subdirectory -name "*namespace*" | wc -l)
-              namespace_file=$(find $namespace_file_subdirectory -name "*namespace*")
               echo "Namespace File: $namespace_file"
               namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
             done
