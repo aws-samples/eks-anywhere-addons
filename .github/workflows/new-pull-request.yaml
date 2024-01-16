@@ -64,11 +64,10 @@ jobs:
             # Parse namespace data
             subdirectory=$(dirname $filename)
             namespace_file_subdirectory=$(dirname $filename)
-            echo $namespace_file_subdirectory
             namespace_file=""
             
             # get namespace from dev branch directory where the updated file is being placed
-            while [ $(basename $namespace_file_subdirectory) != "Partner" ] && [ $(basename $namespace_file_subdirectory) != "Core" ] && [ -z $namespace_file ]; do
+            while [ $(basename $namespace_file_subdirectory) != "Partner" ] && [ $(basename $namespace_file_subdirectory) != "Core" ] && [ ! -f $namespace_file ]; do
               echo "SubDir: $namespace_file_subdirectory"
               namespace_file=$(find $namespace_file_subdirectory -name "*namespace*")
               echo "Namespace File: $namespace_file"
