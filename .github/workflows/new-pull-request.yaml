@@ -74,7 +74,7 @@ jobs:
             
             # get namespace from dev branch directory where the updated file is being placed
             while [ $(basename $namespace_file_subdirectory) != "Partner" ] && [ $(basename $namespace_file_subdirectory) != "Core" ] && [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ]; do
-              if [ $(basename $namespace_file_subdirectory) != "Partner" ] || [ $(basename $namespace_file_subdirectory) != "Core" ]
+              if [ $(basename $namespace_file_subdirectory) != "Partner" ] || [ $(basename $namespace_file_subdirectory) != "Core" ]; then
                 echo "No Namespace File Found"
                 exit 200
               fi
