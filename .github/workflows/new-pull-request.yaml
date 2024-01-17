@@ -43,8 +43,7 @@ jobs:
           if [ "$status" == renamed ]; then
             git checkout pr -- $filename
             git add $filename
-            git add $(echo "$item" | jq -r '.previous_filename')
-            rm $(echo "$item" | jq -r '.previous_filename')
+            git rm $(echo "$item" | jq -r '.previous_filename')
             echo "Renaming $filename"
           elif [ "$status" != removed ]; then
             git checkout pr -- $filename
@@ -52,8 +51,7 @@ jobs:
             echo "Moving $filename"
           else
             echo "Deleting $filename"
-            git add $filename
-            rm $filename
+            git rm $filename
           fi
         done
         
