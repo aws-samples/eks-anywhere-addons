@@ -51,6 +51,7 @@ jobs:
             echo "Moving $filename"
           else
             echo "Deleting $filename"
+            git add $filename
             rm $filename
           fi
         done
