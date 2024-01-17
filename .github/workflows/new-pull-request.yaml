@@ -105,7 +105,6 @@ jobs:
               mkdir -p ./$namespace_file_subdirectory/
               mv "$config_map_file" ./$namespace_file_subdirectory/
               git add ./$namespace_file_subdirectory/
-              echo  "./$namespace_file_subdirectory/$config_map_file"
           
             else
               echo "No Namespace found, Invalid namespace file"
