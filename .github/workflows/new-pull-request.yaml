@@ -21,6 +21,10 @@ jobs:
       run:
         git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
 
+    - if: ${{github.event.action == 'synchronize' }}
+      name: Sync Pause
+      run: sleep 120
+
     - name: Parse Namespace data, Create ConfigMap
       id: find-namespace-yaml
       run: |
