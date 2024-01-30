@@ -21,11 +21,15 @@ jobs:
       run:
         git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
 
+    - if: ${{github.event.action == 'synchronize' }}
+      name: Sync Pause
+      run: sleep 120
+
     - name: Parse Namespace data, Create ConfigMap
       id: find-namespace-yaml
       run: |
-        # Pull files down into a filename array
-        files=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -r '.[].filename')
+        # Pull file information down into a JSON array
+        readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -c '.[]')
         
         # Move updated files over to dev branch
         git fetch --all
@@ -34,39 +38,65 @@ jobs:
         # fetch most recent update to dev
         git checkout developer_branch
         git pull
-            
-        for item in $files; do
-          git checkout pr -- $item
-          git add $item
-          echo "Moving $item"
+        
+        # Remove Deleted Files, copy over added or modified files
+        for item in "${files[@]}"; do
+          status=$(echo "$item" | jq -r '.status')
+          filename=$(echo "$item" | jq -r '.filename')
+          
+          if [ "$status" == renamed ]; then
+            git checkout pr -- $filename
+            git add $filename
+            if [ -f $(echo "$item" | jq -r '.previous_filename') ]; then
+              git rm $(echo "$item" | jq -r '.previous_filename')
+            fi
+            echo "Renaming $filename"
+          elif [ "$status" != removed ]; then
+            git checkout pr -- $filename
+            git add $filename
+            echo "Moving $filename"
+          else
+            if [ -f $filename ]; then
+              echo "Deleting $filename"
+              git rm $filename
+            fi
+          fi
         done
         
-        # Find Namespace File(s) in uploads list and generate/update configmap for each
-        for filename in $files
-        do
-          echo "Filename = $filename"
+        
+        # Create ConfigMap for each file's partner folder
+        for item in "${files[@]}"; do
+          status=$(echo "$item" | jq -r '.status')
+          filename=$(echo "$item" | jq -r '.filename')
           
-          # Parse namespace data
-          if [ $(echo "$filename" | grep -c "namespace.yaml") ]; then
+
+          if [ "$status" != removed ]; then
+            # Parse namespace data
             subdirectory=$(dirname $filename)
-            echo "Sub Directory = $subdirectory"
+            namespace_file_subdirectory=$(dirname $filename)
+            namespace_file=$(find $namespace_file_subdirectory -name *namespace*)
             
-            # get namespace from dev branch directory where the updated file is being placed
-            if [ -f "${subdirectory}/namespace.yaml" ]; then
-              namespace_file="${subdirectory}/namespace.yaml"
-              echo "namespace file = $namespace_file"
+            # get namespace from dev branch partner directory 
+            while [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ]; do
+              namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
+              if [ $(basename $namespace_file_subdirectory) == "Partner" ] || [ $(basename $namespace_file_subdirectory) == "Core" ]; then
+                echo "No Namespace File Found in Partner Directory"
+                exit 200
+              fi
+              namespace_file=$(find $namespace_file_subdirectory -name "*namespace*")
+            done
+            
+            if [ -f $namespace_file ]; then
+              namespace_file_subdirectory=$(dirname $namespace_file)
               namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
             else
-              echo "No Namespace file found in existing subdirectory"
+              echo "No Namespace file found"
               exit 200
             fi
             
             if [[ -n $namespace_name ]]; then
-              echo "$namespace_name"
               namespace=$(echo $namespace_name | xargs echo -n)
-              echo $namespace
               config_map_file="config-map-${{ github.event.pull_request.number }}.yml"
-              echo $config_map_file
               echo "apiVersion: v1" >> $config_map_file
               echo "kind: ConfigMap" >> $config_map_file
               echo "metadata:" >> $config_map_file
@@ -80,20 +110,15 @@ jobs:
               echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
               echo "  deployed: \"$(date +%s)\"" >> $config_map_file
               echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
-              echo $subdirectory
-              echo $config_map_file
-              
-              mkdir -p ./$subdirectory/
-              mv "$config_map_file" ./$subdirectory/
-              git add .
+              mkdir -p ./$namespace_file_subdirectory/
+              mv "$config_map_file" ./$namespace_file_subdirectory/
+              git add ./$namespace_file_subdirectory/
           
             else
               echo "No Namespace found, Invalid namespace file"
               exit 100
             fi
-          else
-            echo "Not a namespace.yaml file"
-          fi
+          fi        
         done
         
         git commit -m "Adding new and changed files for PR_${{ github.event.pull_request.number }}"
