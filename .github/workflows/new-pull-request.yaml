@@ -75,6 +75,7 @@ jobs:
             subdirectory=$(dirname $filename)
             namespace_file_subdirectory=$(dirname $filename)
             namespace_file=$(find $namespace_file_subdirectory -name *namespace*)
+            namespace_name=""
             
             # get namespace from dev branch partner directory 
             while [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ] && [[ -z $namespace_name ]]; do
