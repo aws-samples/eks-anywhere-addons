@@ -70,7 +70,7 @@ jobs:
           filename=$(echo "$item" | jq -r '.filename')
           
 
-          if [ "$status" != removed ]; then
+          if [ "$status" != removed ] && [ "$filename" != *"README.md" ]; then
             # Parse namespace data
             subdirectory=$(dirname $filename)
             namespace_file_subdirectory=$(dirname $filename)
