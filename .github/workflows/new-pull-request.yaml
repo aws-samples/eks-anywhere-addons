@@ -82,7 +82,7 @@ jobs:
             while [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ] && [[ -z $namespace_name ]]; do
               namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
               if [ $(basename $namespace_file_subdirectory) == "Testers" ]; then
-                namespace_name=$(yq e '.metadata.namespace' $filename)
+                namespace_name=$(yq e 'select(document_index==0).metadata.namespace' $filename)
               elif [ $(basename $namespace_file_subdirectory) == "Partner" ] || [ $(basename $namespace_file_subdirectory) == "Core" ]; then
                 echo "No Namespace File Found in Partner Directory"
                 exit 200
