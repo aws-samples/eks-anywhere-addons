@@ -9,10 +9,24 @@ spec:
     spec:
       template:
         spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 3000
+            fsGroup: 2000
           serviceAccountName: tester
           containers:
             - name: test-kubecost
               image: alpine/k8s:1.26.9
+              securityContext:
+                privileged: false
+                capabilities:
+                  drop: 
+                  - ALL
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
               command:
                 - /bin/sh
               args:
