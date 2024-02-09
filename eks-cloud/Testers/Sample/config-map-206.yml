@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: default-configmap
+  namespace: default
+  labels:
+    bot: conformitron
+data:
+  Namespace: default
+  prNumber: "206"
+  commitHash: e69cdbdbdfabb4035a95f5676b1f301548e71837
+  deployed: "1707507266"
+  env: cloud
