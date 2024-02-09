@@ -68,25 +68,31 @@ jobs:
         for item in "${files[@]}"; do
           status=$(echo "$item" | jq -r '.status')
           filename=$(echo "$item" | jq -r '.filename')
+          echo $filename
           
 
-          if [ "$status" != removed ]; then
+          if [ "$status" != removed ] && [[ $filename != *README.md ]]; then
             # Parse namespace data
             subdirectory=$(dirname $filename)
             namespace_file_subdirectory=$(dirname $filename)
             namespace_file=$(find $namespace_file_subdirectory -name *namespace*)
+            namespace_name=""
             
             # get namespace from dev branch partner directory 
-            while [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ]; do
+            while [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ] && [[ -z $namespace_name ]]; do
               namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
-              if [ $(basename $namespace_file_subdirectory) == "Partner" ] || [ $(basename $namespace_file_subdirectory) == "Core" ]; then
+              if [ $(basename $namespace_file_subdirectory) == "Testers" ]; then
+                namespace_name=$(yq e 'select(document_index==0).metadata.namespace' $filename)
+              elif [ $(basename $namespace_file_subdirectory) == "Partner" ] || [ $(basename $namespace_file_subdirectory) == "Core" ]; then
                 echo "No Namespace File Found in Partner Directory"
                 exit 200
               fi
               namespace_file=$(find $namespace_file_subdirectory -name "*namespace*")
             done
             
-            if [ -f $namespace_file ]; then
+            if [[ -n $namespace_name ]]; then
+              namespace_file_subdirectory=$(dirname $filename)
+            elif [ -f $namespace_file ]; then
               namespace_file_subdirectory=$(dirname $namespace_file)
               namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
             else
