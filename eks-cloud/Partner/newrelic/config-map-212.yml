@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: newrelic
   prNumber: "212"
-  commitHash: d501118beb2cd8897ed9197eb846eb51f1aacca1
-  deployed: "1707771067"
+  commitHash: c96ebaf8f8bbb188ed8217639eae25a341e1eabb
+  deployed: "1707771256"
   env: cloud
