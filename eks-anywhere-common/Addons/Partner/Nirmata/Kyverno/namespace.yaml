@@ -6,3 +6,4 @@ metadata:
   labels:
       aws.conformance.vendor: nirmata
       aws.conformance.vendor-solution: enterprise-kyverno
+      aws.conformance.vendor-solution-version: "1.6.10"

@@ -5,3 +5,4 @@ metadata:
   labels:
     aws.conformance.vendor: perfectscale
     aws.conformance.vendor-solution: perfectscale
+    aws.conformance.vendor-solution-version: v0.0.38
