@@ -28,6 +28,7 @@ metadata:
     labels:
         aws.conformance.vendor: kubecost
         aws.conformance.vendor-solution: cost-analyzer
+        aws.conformance.vendor-solution-version: 2.0.2
 ```
 
 🚀	You can deploy Helm via FluxCD HelmRelease custom resource. Here is a [Helm example](https:/github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-common/Addons/Partner/Kubecost). In particular the example covers specification of [Helm repository](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost-source.yaml) and [Helm release](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost.yaml). 

@@ -6,3 +6,4 @@ metadata:
   labels:
       aws.conformance.vendor: accuknox
       aws.conformance.vendor-solution: kubearmor
+      aws.conformance.vendor-solution-version: "v0.10.2"

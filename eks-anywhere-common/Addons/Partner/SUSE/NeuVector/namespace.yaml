@@ -5,3 +5,4 @@ metadata:
   labels:
     aws.conformance.vendor: suse
     aws.conformance.vendor-solution: neuvector
+    aws.conformance.vendor-solution-version: 2.4.1
