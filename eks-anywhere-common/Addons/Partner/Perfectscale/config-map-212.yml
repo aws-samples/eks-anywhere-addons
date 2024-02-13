@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: perfectscale
   prNumber: "212"
-  commitHash: c96ebaf8f8bbb188ed8217639eae25a341e1eabb
-  deployed: "1707771256"
+  commitHash: 6ee6c337fb1e8cb036584696d7018d833e871246
+  deployed: "1707840163"
   env: common
