@@ -145,6 +145,7 @@ metadata:
   labels:
     component: cloud-controller-manager
     tier: control-plane
+    kustomize.toolkit.fluxcd.io/force: enabled
   namespace: kube-system
 spec:
   selector:
