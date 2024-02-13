@@ -1,0 +1,62 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: vmware-csi-namespace-kustomization
+  namespace: flux-system
+  labels:
+    app: vmware-csi-driver
+spec:
+  interval: 1m0s
+  path: ./eks-anywhere-vsphere/Addons/Core/storage-driver/vmware-csi-namespace
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: addons
+  healthChecks:
+    - apiVersion: v1
+      kind: Namespace
+      name: vmware-system-csi
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: vmware-csi-secrets-kustomization
+  namespace: flux-system
+  labels:
+    app: vmware-csi-driver
+spec:
+  dependsOn:
+    - name: vmware-csi-namespace-kustomization
+  interval: 1m0s
+  path: ./eks-anywhere-vsphere/Addons/Core/storage-driver/vmware-csi-secrets
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: addons
+  healthChecks:
+    - apiVersion: v1
+      kind: Secret
+      name: vsphere.conf
+      namespace: kube-system   
+    - apiVersion: v1
+      kind: Secret
+      name: vsphere-config-secret
+      namespace: vmware-system-csi
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: vmware-csi-driver-kustomization
+  namespace: flux-system
+  labels:
+    app: vmware-csi-driver
+spec:
+  dependsOn:
+    - name: vmware-csi-secrets-kustomization
+  interval: 1m0s
+  path: ./eks-anywhere-vsphere/Addons/Core/storage-driver/vmware-csi-manifests
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: addons
