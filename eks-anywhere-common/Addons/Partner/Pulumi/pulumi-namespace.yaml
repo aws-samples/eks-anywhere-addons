@@ -5,3 +5,4 @@ metadata:
   labels:
     aws.conformance.vendor: pulumi
     aws.conformance.vendor-solution: pulumi-kubernetes-operator
+    aws.conformance.vendor-solution-version: "0.3.0"

@@ -5,3 +5,4 @@ metadata:
   labels:
     aws.conformance.vendor: kong
     aws.conformance.vendor-solution: kong-enterprise
+    aws.conformance.vendor-solution-version: 2.27.0
