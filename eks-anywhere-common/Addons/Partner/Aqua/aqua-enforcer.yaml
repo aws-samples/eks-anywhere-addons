@@ -1,0 +1,54 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: aqua-enforcer
+  namespace: aqua
+spec:
+  chart:
+    spec:
+      chart: enforcer
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: aqua-helm
+        namespace: flux-system
+      version: "2022.4.20"
+  interval: 30s
+  values:
+    global:
+      platform: eks
+      gateway:
+        port: 443
+      imageCredentials:
+        create: true
+        name:
+        repositoryUriPrefix: "registry.aquasec.com"
+        registry: "registry.aquasec.com"
+    serviceAccount:
+      create: true
+    nodeSelector: {}
+    tolerations: []
+    podAnnotations: {}
+    podLabels: {}
+    podSecurityContext: {}
+    affinity: {}
+    extraEnvironmentVars: {}
+  valuesFrom:
+  - kind: Secret
+    name: aqua-secrets-from-ps
+    valuesKey: aqua-geteway-address
+    targetPath: global.gateway.address
+  - kind: Secret
+    name: aqua-secrets-from-ps
+    valuesKey: aqua-enforcer-token
+    targetPath: enforcerToken
+  - kind: Secret
+    name: aqua-secrets-from-ps
+    valuesKey: aqua-image-username
+    targetPath: global.imageCredentials.username
+  - kind: Secret
+    name: aqua-secrets-from-ps
+    valuesKey: aqua-image-password
+    targetPath: global.imageCredentials.password
+
