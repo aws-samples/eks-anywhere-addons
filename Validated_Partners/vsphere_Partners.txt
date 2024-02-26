@@ -1,5 +1,5 @@
 Kubernetes Version :  1.28 
-Date of Conformance Test : 2024-02-13
+Date of Conformance Test : 2024-02-26
  
 Following ISV Partners have Validated their Conformance : 
  
@@ -9,11 +9,11 @@ solo.io          solo-istiod                  1.18.3-eks-a
 komodor          k8s-watcher                  1.15.5
 kong             kong-enterprise              2.27.0
 accuknox         kubearmor                    v0.10.2
-kubecost         cost-analyzer                2.0.2
+kubecost         cost-analyzer                2.1.0
 nirmata          enterprise-kyverno           1.6.10
 lacework         polygraph                    6.11.0
 suse             neuvector                    2.4.1
-newrelic         newrelic-bundle              5.0.64
+newrelic         nri-bundle                   5.0.64
 perfectscale     perfectscale                 v0.0.38
 pulumi           pulumi-kubernetes-operator   0.3.0
 sysdig           sysdig-agent                 1.6.3
