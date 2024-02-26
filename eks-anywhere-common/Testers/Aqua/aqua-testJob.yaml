@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: aqua-enforcer-tester
+  namespace: aqua
+spec:
+  template:
+    spec:
+      serviceAccountName: 'aqua-enforcer-sa'
+      containers:
+        - name: test-aqua-enforcer
+          image: 'alpine/k8s:1.26.2'
+          imagePullPolicy: Always
+          command:
+            - /bin/bash
+          args:
+            - '-c'
+            - >-
+              echo "1. Checking readiness probe"
+              aqua_enforcer_pod="";
+              while true;
+              do
+                aqua_enforcer_pod=$(kubectl get pod -n aqua -l app=aqua-enforcer-ds --field-selector=status.phase==Running -o jsonpath="{.items[0].metadata.name}{range .items[0].status.conditions[?(@.type=='Ready')]}");
+                aqua_enforcer_pod_status=$(kubectl get pod $aqua_enforcer_pod -n aqua -o jsonpath="{.status.phase}");
+
+                if [[ $aqua_enforcer_pod_status != "Running" ]]; then
+                  echo "LOG: Pod $aqua_enforcer_pod, $aqua_enforcer_pod_status";
+                  sleep 15;
+                else
+                  echo "LOG: Pod $aqua_enforcer_pod, Running";
+                  exit 0;
+                fi;
+              done;
+      restartPolicy: Never
+  backoffLimit: 1
