@@ -25,6 +25,14 @@ spec:
         name:
         repositoryUriPrefix: "registry.aquasec.com"
         registry: "registry.aquasec.com"
+    image:
+      tag: "2022.4.460"
+    securityContext:
+      seLinuxOptions:
+        user: system_u
+        role: system_r
+        type: super_t
+        level: s0
     serviceAccount:
       create: true
     nodeSelector: {}

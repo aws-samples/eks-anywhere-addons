@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: aqua
   prNumber: "216"
-  commitHash: 787398bff8675add2f5117d8ba2fe9620afd72af
-  deployed: "1710162879"
+  commitHash: c438f8ea564d5dfcd0de7992a5e59b482321b3b3
+  deployed: "1710235854"
   env: common
