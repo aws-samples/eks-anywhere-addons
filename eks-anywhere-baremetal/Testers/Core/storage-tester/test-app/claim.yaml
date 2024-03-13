@@ -6,7 +6,6 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: openebs-csi-cstor-sparse
   resources:
     requests:
       storage: 4Gi
