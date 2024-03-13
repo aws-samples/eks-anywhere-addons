@@ -7,7 +7,7 @@ spec:
   path: "./eks-anywhere-baremetal/Testers/Core/storage-tester/test-app"
   sourceRef:
     kind: GitRepository
-    name: addons
+    name: testers
     namespace: flux-system
   interval: 5m0s
   prune: true
