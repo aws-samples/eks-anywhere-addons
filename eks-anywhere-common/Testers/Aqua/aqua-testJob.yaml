@@ -4,7 +4,7 @@ metadata:
   name: aqua-enforcer-tester
   namespace: aqua
 spec:
-  schedule: "* * * * *"
+  schedule: "0 */12 * * *"
   jobTemplate:
     spec:
       template:
