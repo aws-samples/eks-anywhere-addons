@@ -4,6 +4,5 @@ metadata:
   name: vmware-csi-volume-snapshot
   namespace: default
 spec:
-  volumeSnapshotClassName: vmware-csi-snapshotclass
   source:
     persistentVolumeClaimName: vmware-csi-claim
