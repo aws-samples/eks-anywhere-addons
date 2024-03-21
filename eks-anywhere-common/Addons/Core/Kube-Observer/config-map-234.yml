@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: observer-configmap
+  namespace: observer
+  labels:
+    bot: conformitron
+data:
+  Namespace: observer
+  prNumber: "234"
+  commitHash: 29e3b48be0d79436499b1f006c99c7c47fe0f96b
+  deployed: "1710983213"
+  env: common
