@@ -1,9 +1,10 @@
 Kubernetes Version :  1.28 
-Date of Conformance Test : 2024-02-26
+Date of Conformance Test : 2024-03-26
  
 Following ISV Partners have Validated their Conformance : 
  
 VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE          VENDOR_PRODUCT_VERSION
+aqua             aqua-enforcer                2022.4.20
 dynatrace        dynatrace                    0.10.1
 solo.io          solo-istiod                  1.18.3-eks-a
 komodor          k8s-watcher                  1.15.5
