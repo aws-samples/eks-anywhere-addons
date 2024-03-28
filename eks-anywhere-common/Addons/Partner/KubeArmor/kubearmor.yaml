@@ -2,18 +2,35 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: kubearmor
+  name: kubearmor-operator
   namespace: kubearmor
 spec:
   chart:
     spec:
-      chart: kubearmor
+      chart: kubearmor-operator
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
-        name: kubearmor
+        name: kubearmor-operator
         namespace: flux-system
       version: "v1.3.2"
+  values:
+    autoDeploy: true
+    kubearmorOperator:
+      name: kubearmor-operator
+      image:
+        repository: kubearmor/kubearmor-operator
+        tag: "v1.3.2"
+      imagePullPolicy: Always
+    kubearmorConfig:
+      defaultCapabilitiesPosture: audit
+      defaultFilePosture: audit
+      defaultNetworkPosture: audit
+      defaultVisibility: process,network
+      enableStdOutLogs: false
+      enableStdOutAlerts: false
+      enableStdOutMsgs: false
+      seccompEnabled: false
   interval: 1m0s
-  releaseName: kubearmor
+  releaseName: kubearmor-operator
   targetNamespace: kubearmor

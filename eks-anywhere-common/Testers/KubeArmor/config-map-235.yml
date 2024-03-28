@@ -9,5 +9,5 @@ data:
   Namespace: kubearmor
   prNumber: "235"
   commitHash: ccd5ea3fda9fc1e00d271888ddfeb5caf22ddf2a
-  deployed: "1711597261"
+  deployed: "1711597262"
   env: common

@@ -1,28 +1,148 @@
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
-  name: kubearmor-tester
+  name: kubearmor-tester-cron
   namespace: kubearmor
 spec:
-  template:
+  schedule: "10 10 * * *"
+  jobTemplate:
     spec:
-      containers:
-        - name: job
-          image: 'alpine/k8s:1.26.2'
-          imagePullPolicy: Always
-          command:
-            - /bin/sh
-          args:
-            - -c
-            - >-
-              echo 1. Checking readiness probe
-              kubectl wait --for=condition=ready --timeout=5m -n kubearmor pod -l kubearmor-app
-              echo 2. Checking audit port
-              kubearmor_audit="...";
-              while [[ "$kubearmor_audit" != *"Connected"* ]];
-              do kubearmor_audit=`curl -ksv --connect-timeout 4 telnet://kubearmor.kubearmor.svc.cluster.local:32767 2>&1` && echo Connecting;
-              sleep 2;
-              done;
-              echo Success;
-      restartPolicy: Never
-  backoffLimit: 1
+      template:
+        spec:
+          containers:
+            - name: job
+              image: 'alpine/k8s:1.26.2'
+              imagePullPolicy: Always
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  #!/bin/bash
+                  echo 1. Checking if kubearmor pods are running
+                  kubectl wait -n kubearmor --timeout=5m --for=jsonpath='{.status.phase}'=Running kubearmorconfigs/kubearmor-default
+                  
+                  timeout 7m bash -c -- '
+                  while true; do
+                  all_running=true
+                  echo "Checking pod status..."
+                  for pod_status in $(kubectl get pod -n kubearmor -l kubearmor-app,kubearmor-app!=kubearmor-snitch --output=jsonpath="{.items[*].status.phase}" 2>/dev/null); do
+                  if [ "$pod_status" != "Running" ]; then
+                  all_running=false
+                  echo "Waiting for pods to be Running..."
+                  break
+                  fi
+                  done
+                  
+                  if $all_running; then
+                  echo "All pods are Running."
+                  break
+                  fi
+                  
+                  if kubectl get pod -n kubearmor -l kubearmor-app,kubearmor-app!=kubearmor-snitch | grep CrashLoopBackOff; then
+                  echo "Error: Pod in CrashLoopBackOff state"
+                  exit 1
+                  fi
+
+                  done
+                  '
+
+                  echo 2. Checking readiness probe for kubearmor
+                  kubearmor_audit="...";
+                  while [[ "$kubearmor_audit" != *"Connected"* ]];
+                  do kubearmor_audit=`curl -ksv --connect-timeout 4 telnet://kubearmor.kubearmor.svc.cluster.local:32767 2>&1` && echo Connecting;
+                  sleep 2;
+                  echo Connected
+                  done;
+
+                  echo 3. Creating nginx deployment
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: apps/v1
+                  kind: Deployment
+                  metadata:
+                    labels:
+                      app: nginx
+                    name: nginx
+                    namespace: default
+                  spec:
+                    selector:
+                      matchLabels:
+                        app: nginx
+                    template:
+                      metadata:
+                        labels:
+                          app: nginx
+                      spec:
+                        containers:
+                        - image: nginx
+                          imagePullPolicy: Always
+                          name: nginx
+                  EOF
+                  kubectl wait --timeout=5m --for=condition=Ready pod -l app=nginx
+
+                  echo 4. Creating security policy to block ls execution
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: security.kubearmor.com/v1
+                  kind: KubeArmorPolicy
+                  metadata:
+                    name: block-ls-binary-exec
+                  spec:
+                    selector:
+                      matchLabels:
+                        app: nginx
+                    process:
+                      matchPaths:
+                      - path: /bin/ls
+                      - path: /usr/bin/ls
+                    action:
+                      Block
+                  EOF
+                  sleep 1
+
+                  echo 5. Execution of ls should be blocked
+                  POD=$(kubectl get pod -l app=nginx -o name)
+                  kubectl exec -i $POD -- bash -c "ls"
+                  if [ $? -ne 0 ]; then
+                      echo "Execution Blocked"
+                  else
+                      echo "Failed: Command executed successfully"
+                      echo "Failed: Policy is not being enforced"
+                      exit 1
+                  fi
+                  echo Success;
+          restartPolicy: Never
+          serviceAccountName: test-kubearmor 
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: test-role
+rules:
+- apiGroups: ["*"]
+  resources: ["pods", "pods/exec", "deployments"]
+  verbs: ["get","list","create", "delete", "watch", "update", "patch"]
+- apiGroups: ["security.kubearmor.com"]
+  resources: ["kubearmorpolicies"]
+  verbs: ["create", "get", "list", "update", "delete", "watch", "patch"]
+- apiGroups: ["operator.kubearmor.com"]
+  resources: ["kubearmorconfigs", "kubearmorconfigs/status"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: test-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: test-kubearmor
+  namespace: kubearmor
+roleRef:
+  kind: ClusterRole
+  name: test-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: test-kubearmor
+  namespace: kubearmor  
