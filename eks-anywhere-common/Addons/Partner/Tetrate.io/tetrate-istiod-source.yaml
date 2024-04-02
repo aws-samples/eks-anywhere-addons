@@ -1,8 +1,0 @@
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: tetrate-istio-charts
-  namespace: flux-system
-spec:
-  interval: 30s
-  url: https://tetratelabs.github.io/helm-charts
