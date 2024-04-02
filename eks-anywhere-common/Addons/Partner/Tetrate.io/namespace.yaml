@@ -5,3 +5,4 @@ metadata:
   labels:
     aws.conformance.vendor: tetrate.io
     aws.conformance.vendor-solution: tetrate-istio-distribution
+    aws.conformance.vendor-solution-version: 1.18.1
