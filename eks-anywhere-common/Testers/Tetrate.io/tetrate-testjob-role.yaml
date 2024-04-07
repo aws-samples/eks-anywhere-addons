@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: tetrate-istiod-job-role
-  namespace: istio-system
+  namespace: tetrate-istio
 rules:
   - apiGroups: [""]
     resources: ["pods", "pods/exec", "services"]
@@ -18,11 +18,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: tetrate-istiod-job-rolebinding
-  namespace: istio-system
+  namespace: tetrate-istio
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: istio-system
+    namespace: tetrate-istio
 roleRef:
   kind: Role
   name: tetrate-istiod-job-role

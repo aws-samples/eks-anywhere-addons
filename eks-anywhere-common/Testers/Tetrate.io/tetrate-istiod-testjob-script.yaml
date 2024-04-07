@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: tetrate-tetsjob-script
-  namespace: istio-system
+  namespace: tetrate-istio
 data:
   run-functional-tests.sh: |-
     #!/bin/sh
@@ -11,8 +11,8 @@ data:
     # Cleanup function to remove resources
     cleanup() {
         echo "Cleaning up resources..."
-        kubectl delete gateway httpbin-gateway -n istio-system
-        kubectl delete deployment custom-ingressgateway -n istio-system
+        kubectl delete gateway httpbin-gateway -n tetrate-istio
+        kubectl delete deployment custom-ingressgateway -n tetrate-istio
         # Any additional cleanup commands go here
         echo "Cleanup completed."
     }
@@ -34,7 +34,7 @@ data:
     kind: Deployment
     metadata:
       name: custom-ingressgateway
-      namespace: istio-system
+      namespace: tetrate-istio
     spec:
       replicas: 1
       selector:
@@ -54,7 +54,7 @@ data:
     EOF
     
         # Verify the custom gateway has been deployed
-        kubectl get deployment custom-ingressgateway -n istio-system
+        kubectl get deployment custom-ingressgateway -n tetrate-istio
     }
     
     deploy_test_gateway() {
@@ -64,7 +64,7 @@ data:
     kind: Gateway
     metadata:
       name: httpbin-gateway
-      namespace: istio-system
+      namespace: tetrate-istio
     spec:
       selector:
         istio: custom-ingress-gw # this should match the label of your Istio ingress gateway deployment
@@ -78,7 +78,7 @@ data:
     EOF
     
         # Verify the Gateway has been created
-        kubectl get gateway httpbin-gateway -n istio-system
+        kubectl get gateway httpbin-gateway -n tetrate-istio
     }
     
     deploy_test_virtualservice() {
@@ -88,7 +88,7 @@ data:
     kind: VirtualService
     metadata:
       name: httpbin-virtualservice
-      namespace: istio-system
+      namespace: tetrate-istio
     spec:
       hosts:
       - "httpbin.example.com"
@@ -106,15 +106,15 @@ data:
     EOF
     
         # Verify the VirtualService has been created
-        kubectl get virtualservice httpbin-virtualservice -n istio-system
+        kubectl get virtualservice httpbin-virtualservice -n tetrate-istio
     }
     
     check_istio_gateway_config() {
        # Get the name of the Istio ingressgateway pod
-       local ingress_gateway_pod=$(kubectl get pod -l istio=custom-ingress-gw -n istio-system -o jsonpath='{.items[0].metadata.name}')
+       local ingress_gateway_pod=$(kubectl get pod -l istio=custom-ingress-gw -n tetrate-istio -o jsonpath='{.items[0].metadata.name}')
        
        # Check if the ingress gateway has received configuration from Istiod
-       local gateway_status=$(kubectl exec "$ingress_gateway_pod" -n istio-system -- curl -s 'http://localhost:15000/config_dump')
+       local gateway_status=$(kubectl exec "$ingress_gateway_pod" -n tetrate-istio -- curl -s 'http://localhost:15000/config_dump')
        
        if echo "$gateway_status" | grep 'httpbin.example.com'; then
            echo "Istio Ingress Gateway has received correct configuration from Istiod."
@@ -128,7 +128,7 @@ data:
 
     # Wait for the custom ingress gateway deployment to be ready
     echo "Waiting for the custom ingress gateway deployment to be ready..."
-    kubectl rollout status deployment/custom-ingressgateway -n istio-system || error_exit "Custom Istio Ingress Gateway deployment is not ready."
+    kubectl rollout status deployment/custom-ingressgateway -n tetrate-istio || error_exit "Custom Istio Ingress Gateway deployment is not ready."
 
     echo "Deploying test gateway..."
     deploy_test_gateway || error_exit "Failed to deploy test gateway."
