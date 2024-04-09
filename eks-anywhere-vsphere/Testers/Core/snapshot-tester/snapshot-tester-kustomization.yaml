@@ -1,0 +1,29 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: test-app
+  namespace: flux-system
+spec:
+  path: "./eks-anywhere-vsphere/Testers/Core/snapshot-tester/test-app"
+  sourceRef:
+    kind: GitRepository
+    name: addons
+    namespace: flux-system
+  interval: 1m0s
+  prune: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: snapshot
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: test-app
+  path: "./eks-anywhere-vsphere/Testers/Core/snapshot-tester/snapshot"
+  sourceRef:
+    kind: GitRepository
+    name: addons
+    namespace: flux-system
+  interval: 1m0s
+  prune: true
