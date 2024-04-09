@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: tetrate-istiod-health-test
-  namespace: tetrate-istio  
+  namespace: tetrate-istio-system
 spec:
   schedule: "10 10 * * *"
   jobTemplate:

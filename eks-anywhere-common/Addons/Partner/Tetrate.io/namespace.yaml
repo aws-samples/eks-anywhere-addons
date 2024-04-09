@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: tetrate-istio
+  name: tetrate-istio-system
   labels:
     aws.conformance.vendor: tetrate.io
     aws.conformance.vendor-solution: tetrate-istio-distribution
