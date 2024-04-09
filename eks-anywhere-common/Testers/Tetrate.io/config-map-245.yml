@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: istio-system-configmap
-  namespace: istio-system
+  name: tetrate-istio-system-configmap
+  namespace: tetrate-istio-system
   labels:
     bot: conformitron
 data:
-  Namespace: istio-system
+  Namespace: tetrate-istio-system
   prNumber: "245"
-  commitHash: 4e540bf48830f5b864f6ccb564e45c4ef92ac597
-  deployed: "1712068166"
+  commitHash: 5b320337892302624049d378f2d934e2a922fea3
+  deployed: "1712625102"
   env: common
