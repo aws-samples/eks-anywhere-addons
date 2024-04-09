@@ -4,7 +4,7 @@ In order to sucessfully install the VMware CSI Driver, the following items must 
 1. Creation of the `ClusterSecretStore` Kubernetes resource detailed in the eks-anywhere-addons/README.md file 
 
 2. Creation of config secrets in AWS Secrets Manager that External secrets will reference in the 
-vsphere-csi-externalsecrets.yaml file.
+vsphere-external-secrets.yaml file.
 
 # Creation of the Config Secrets 
 
