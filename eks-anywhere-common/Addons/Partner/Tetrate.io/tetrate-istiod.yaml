@@ -6,7 +6,7 @@ metadata:
 spec:
   chart:
     spec:
-      chart: istiod
+      chart: tetrate-istioit
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
