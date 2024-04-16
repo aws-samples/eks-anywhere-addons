@@ -6,4 +6,4 @@ metadata:
 spec:
   interval: 30s
   timeout: 60s
-  url: https://tetratelabs.github.io/helm-charts
+  url: https://tetratelabs.github.io/istio-helm

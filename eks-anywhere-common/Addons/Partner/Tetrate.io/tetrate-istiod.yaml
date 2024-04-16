@@ -13,4 +13,7 @@ spec:
         name: tetrate-istio-charts
         namespace: flux-system
       version: 1.18.1
+  values:
+    global:
+      istioNamespace: tetrate-istio-system
   interval: 1m0s
