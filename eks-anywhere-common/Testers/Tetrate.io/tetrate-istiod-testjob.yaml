@@ -8,10 +8,13 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            sidecar.istio.io/inject: "false"
         spec:
           containers:
             - name: tetrate-istiod-healthtest
-              image: 'alpine/k8s:1.26.2'
+              image: "alpine/k8s:1.26.2"
               imagePullPolicy: Always
               command:
                 - /bin/run-functional-tests.sh

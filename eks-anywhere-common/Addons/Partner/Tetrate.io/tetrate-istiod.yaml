@@ -14,6 +14,11 @@ spec:
         namespace: flux-system
       version: 1.18.1
   values:
+    tid-base:
+      defaultRevision: ""
+    revision: 1-18-1
+    tid-cni:
+      revision: 1-18-1
     global:
       istioNamespace: tetrate-istio-system
   interval: 1m0s
