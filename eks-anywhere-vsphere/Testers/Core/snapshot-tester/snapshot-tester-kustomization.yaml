@@ -27,19 +27,4 @@ spec:
     namespace: flux-system
   interval: 1m0s
   prune: true
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: snapshot-restore
-  namespace: flux-system
-spec:
-  dependsOn:
-    - name: snapshot
-  path: "./eks-anywhere-vsphere/Testers/Core/snapshot-tester/snapshot-restore"
-  sourceRef:
-    kind: GitRepository
-    name: addons
-    namespace: flux-system
-  interval: 1m0s
-  prune: true
+
