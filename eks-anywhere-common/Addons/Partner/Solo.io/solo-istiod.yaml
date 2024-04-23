@@ -18,3 +18,4 @@ spec:
     global:
       istioNamespace: solo-istio-system         
   interval: 1m0s
+  
