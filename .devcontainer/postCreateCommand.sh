@@ -17,9 +17,6 @@ rm -rf ./install.sh
 
 # Step 3 Setup Minikube
 minikube start
-minikube addons enable ingress
-# Run this to forward to localhost in the background
-nohup kubectl port-forward --pod-running-timeout=24h -n ingress-nginx service/ingress-nginx-controller :80 &
 
 # Step 4 - Installs Flux Controller on your Kubernetes Cluster.
 flux install \
