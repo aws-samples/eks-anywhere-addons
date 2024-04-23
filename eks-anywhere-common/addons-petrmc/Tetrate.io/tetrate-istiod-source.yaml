@@ -1,9 +1,9 @@
-
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: solo-istiod-charts
+  name: tetrate-istio-charts
   namespace: flux-system
 spec:
   interval: 30s
-  url: https://solo-io.github.io/eks-anywhere-istio-charts
+  timeout: 60s
+  url: https://tetratelabs.github.io/istio-helm

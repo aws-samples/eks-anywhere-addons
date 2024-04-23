@@ -411,7 +411,7 @@ spec:
           volumeMounts:
             - mountPath: /csi
               name: socket-dir
-      volumes:
+      volumes:  
         - name: vsphere-config-volume
           secret:
             secretName: vsphere-config-secret

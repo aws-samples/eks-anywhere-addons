@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: solo-istiod-health-test
-  namespace: istio-system  
+  namespace: solo-istio-system  
 spec:
   schedule: "10 10 * * *"
   jobTemplate:
