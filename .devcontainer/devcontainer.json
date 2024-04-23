@@ -9,7 +9,7 @@
   "workspaceFolder": "/home/vscode/conformitron",
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/conformitron,type=bind",
   "hostRequirements": {
-    "cpus": 2
+    "cpus": 4
   },
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/home/vscode/conformitron"
