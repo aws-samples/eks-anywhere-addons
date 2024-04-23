@@ -1,0 +1,17 @@
+{
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
+    "ghcr.io/devcontainers/features/aws-cli:1": {}
+  },
+  "postCreateCommand": ".devcontainer/postCreateCommand.sh",
+  "workspaceFolder": "/home/vscode/conformitron",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/conformitron,type=bind",
+  "hostRequirements": {
+    "cpus": 2
+  },
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/home/vscode/conformitron"
+  }
+}
