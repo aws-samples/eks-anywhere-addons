@@ -21,4 +21,4 @@ spec:
       volumes:
       - name: persistent-storage
         persistentVolumeClaim:
-          claimName: openebs-claim
+          claimName: vmware-csi-claim

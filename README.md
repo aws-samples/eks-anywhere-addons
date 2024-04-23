@@ -28,6 +28,7 @@ metadata:
     labels:
         aws.conformance.vendor: kubecost
         aws.conformance.vendor-solution: cost-analyzer
+        aws.conformance.vendor-solution-version: 2.0.2
 ```
 
 🚀	You can deploy Helm via FluxCD HelmRelease custom resource. Here is a [Helm example](https:/github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-common/Addons/Partner/Kubecost). In particular the example covers specification of [Helm repository](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost-source.yaml) and [Helm release](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Addons/Partner/Kubecost/kubecost.yaml). 
@@ -42,12 +43,12 @@ metadata:
 2. Functional test should validate the functionality of the ISV product and describe what the ISV product does
 3. Healthchecks, service endpoints checks or any other technical checks do not represent sufficient coverage required for the functional test
 4. Functional test should be wrapped as a container, container image should be published on ECR, and/or provide evidence of successful recent vulnerability scan
-5. Functional test must be implemented as a Kubernetes Job and any non-zero exit status of the job execution will be considered a failure
-6. Functional test must be repeatable. That means that if the job has executed before successfully and no changes were applied, we expect to run it continuously and mark the product as failure if the test job starts producing failures even if previous executions against the same environment were successful
+5. Functional test must be implemented as a Kubernetes CronJob and any non-zero exit status of the job execution will be considered a failure
+6. Functional test must be repeatable. That means that if the job has executed before successfully and no changes were applied, we expect to run it continuously and mark the product as failure if the test job starts producing failures even if previous executions against the same environment were successful. Functional test CronJobs should be configured to run at least once daily 
 7. Functional test should not require elevated security permissions, such as cluster roles, privileged mode, non-ephemeral storage
 8. Functional test should be submitted under `eks-anywhere-common/testers` (runs on all platforms) or under your respective environment folder such as `eks-anywhere-snow/testers` (e.g. `eks-anywhere-snow/testers/<orgname>/<productname>`)
 
-Refer the example [here](https://github.com/aws-samples/eks-anywhere-addons/tree/main/eks-anywhere-common/Testers/Hashicorp/Vault/kvJob.yaml) for functional test job.
+Refer the example [here](https://github.com/aws-samples/eks-anywhere-addons/blob/main/eks-anywhere-common/Testers/Komodor/komodor-testjob.yaml) for functional test cronjob.
 
 
 ## Contribution Flow

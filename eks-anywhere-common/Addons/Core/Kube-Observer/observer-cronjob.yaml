@@ -13,8 +13,8 @@ spec:
           serviceAccountName: observer-sa
           containers:
           - name: observer-pod
-            image: public.ecr.aws/n5p5f4n3/conformitron-observer-bot:latest
-            imagePullPolicy: Always
+            image: public.ecr.aws/n5p5f4n3/conformitron-observer-bot:0.2
+            imagePullPolicy: IfNotPresent
             env:
               - name: GITHUB_TOKEN
                 valueFrom:

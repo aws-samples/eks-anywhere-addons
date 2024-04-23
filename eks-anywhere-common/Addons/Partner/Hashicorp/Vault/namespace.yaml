@@ -6,3 +6,4 @@ metadata:
   labels:
       aws.conformance.vendor: hashicorp
       aws.conformance.vendor-solution: vault
+      aws.conformance.vendor-solution-version: 0.25.0

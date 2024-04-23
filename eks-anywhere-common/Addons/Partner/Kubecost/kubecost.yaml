@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: kubecost-charts
         namespace: flux-system
-      version: 1.106.0
+      version: 2.1.0
   interval: 1m0s
   targetNamespace: kubecost
   valuesFrom:

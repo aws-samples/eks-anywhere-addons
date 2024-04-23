@@ -1,18 +1,20 @@
 Kubernetes Version :  1.27 
-Date of Conformance Test : 2023-09-21
+Date of Conformance Test : 2024-03-26
  
 Following ISV Partners have Validated their Conformance : 
  
-VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE
-dynatrace        dynatrace
-komodor          k8s-watcher
-kong             kong-enterprise
-accuknox         kubearmor
-kubecost         cost-analyzer
-nirmata          enterprise-kyverno
-lacework         polygraph
-suse             neuvector
-perfectscale     perfectscale
-pulumi           pulumi-kubernetes-operator
-sysdig           sysdig-agent
-hashicorp        vault
+VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE          VENDOR_PRODUCT_VERSION
+aqua             aqua-enforcer                2022.4.20
+dynatrace        dynatrace                    0.10.1
+solo.io          solo-istiod                  1.18.3-eks-a
+komodor          k8s-watcher                  1.15.5
+kong             kong-enterprise              2.27.0
+accuknox         kubearmor                    v0.10.2
+kubecost         cost-analyzer                2.1.0
+nirmata          enterprise-kyverno           1.6.10
+lacework         polygraph                    6.11.0
+suse             neuvector                    2.4.1
+perfectscale     perfectscale                 v0.0.38
+pulumi           pulumi-kubernetes-operator   0.3.0
+sysdig           sysdig-agent                 1.6.3
+hashicorp        vault                        0.25.0

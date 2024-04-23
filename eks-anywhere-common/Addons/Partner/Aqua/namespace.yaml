@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aqua
+  labels:
+    aws.conformance.vendor: aqua
+    aws.conformance.vendor-solution: aqua-enforcer
+    aws.conformance.vendor-solution-version: "2022.4.20"

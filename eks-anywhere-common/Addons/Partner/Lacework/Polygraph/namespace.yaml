@@ -6,3 +6,4 @@ metadata:
   labels:
       aws.conformance.vendor: lacework
       aws.conformance.vendor-solution: polygraph
+      aws.conformance.vendor-solution-version: 6.11.0

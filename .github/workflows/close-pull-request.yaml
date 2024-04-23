@@ -3,6 +3,12 @@ on:
   pull_request_target:
     branches: [main]
     types: [closed]
+    paths-ignore: 
+     - 'Validated_Partners/**'
+     - '.github/**'
+     - 'docs'
+     - '.git'
+     
 jobs:
   merge-master-back-to-dev:
     if: github.event.pull_request.merged == false
