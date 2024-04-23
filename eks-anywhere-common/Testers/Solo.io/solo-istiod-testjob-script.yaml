@@ -9,7 +9,7 @@ data:
 
     # Cleanup function to remove resources
     cleanup() {
-        echo "Cleaning up resources..."
+        echo "Cleaning up resources...Test"
         # kubectl delete gateway httpbin-gateway -n solo-istio-system
         # kubectl delete deployment custom-ingressgateway -n solo-istio-system
         # Any additional cleanup commands go here
