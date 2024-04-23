@@ -2,7 +2,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: solo-istiod-job-role
+<<<<<<< HEAD
   namespace: istio-system
+=======
+  namespace: solo-istio-system
+>>>>>>> 9937293 (Solo.io adding revision support)
 rules:
   - apiGroups: [""]
     resources: ["pods", "pods/exec", "services"]
@@ -18,11 +22,19 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: solo-istiod-job-rolebinding
+<<<<<<< HEAD
   namespace: istio-system
 subjects:
   - kind: ServiceAccount
     name: default
     namespace: istio-system
+=======
+  namespace: solo-istio-system
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: solo-istio-system
+>>>>>>> 9937293 (Solo.io adding revision support)
 roleRef:
   kind: Role
   name: solo-istiod-job-role
