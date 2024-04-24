@@ -21,4 +21,12 @@ spec:
       revision: 1-18-1
     global:
       istioNamespace: tetrate-istio-system
+    pilot:
+      env:
+        ENABLE_ENHANCED_RESOURCE_SCOPING: "true" # need this before v1.22
+    meshConfig:
+      discoverySelectors:
+        - matchLabels:
+            aws.conformance.vendor: tetrate.io
+            aws.conformance.vendor-solution: tetrate-istio-distribution
   interval: 1m0s
