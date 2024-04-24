@@ -2,22 +2,15 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: solo-istiod-health-test
-<<<<<<< HEAD
-  namespace: istio-system  
-=======
   namespace: solo-istio-system  
->>>>>>> 9937293 (Solo.io adding revision support)
 spec:
   schedule: "10 10 * * *"
   jobTemplate:
     spec:
       template:
-<<<<<<< HEAD
-=======
         metadata:
           annotations:
             sidecar.istio.io/inject: "false"       
->>>>>>> 9937293 (Solo.io adding revision support)
         spec:
           containers:
             - name: solo-istiod-healthtest
