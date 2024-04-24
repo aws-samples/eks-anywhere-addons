@@ -1,8 +1,3 @@
-<<<<<<< HEAD
----
-=======
-
->>>>>>> 9937293 (Solo.io adding revision support)
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
