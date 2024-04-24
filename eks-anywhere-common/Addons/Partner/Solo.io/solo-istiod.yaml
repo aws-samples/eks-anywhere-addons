@@ -1,16 +1,8 @@
-<<<<<<< HEAD
----
-=======
->>>>>>> 9937293 (Solo.io adding revision support)
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: solo-istiod
-<<<<<<< HEAD
-  namespace: istio-system
-=======
   namespace: solo-istio-system
->>>>>>> 9937293 (Solo.io adding revision support)
 spec:
   chart:
     spec:
@@ -21,13 +13,9 @@ spec:
         name: solo-istiod-charts
         namespace: flux-system
       version: 1.18.3-eks-a
-<<<<<<< HEAD
-  interval: 1m0s
-=======
   values:
     revision: 1-18-3-solo
     global:
       istioNamespace: solo-istio-system         
   interval: 1m0s
   
->>>>>>> 9937293 (Solo.io adding revision support)
