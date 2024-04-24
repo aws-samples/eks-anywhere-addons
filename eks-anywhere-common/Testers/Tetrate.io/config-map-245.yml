@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: tetrate-istio-system
   prNumber: "245"
-  commitHash: 9ccaafa3ed45b7139b12f1c208c222ab919752c8
-  deployed: "1713360406"
+  commitHash: 2d3025491be327fe73c6769ba1dbc6d5fc422da9
+  deployed: "1713927450"
   env: common
