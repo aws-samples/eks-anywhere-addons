@@ -1,9 +1,9 @@
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
 metadata:
-  name: openebs-volume-snapshot
+  name: vmware-csi-volume-snapshot
   namespace: default
 spec:
-  volumeSnapshotClassName: csi-cstor-snapshotclass
+  volumeSnapshotClassName: vmware-csi-snapshotclass
   source:
-    persistentVolumeClaimName: openebs-claim
+    persistentVolumeClaimName: vmware-csi-claim

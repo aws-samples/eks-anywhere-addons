@@ -1,6 +1,5 @@
  dynatrace
  kubecost
- solo
  suse
  sysdig
  hashicorp
