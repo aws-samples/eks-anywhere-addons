@@ -23,4 +23,3 @@ spec:
             aws.conformance.vendor: solo.io
             aws.conformance.vendor-solution: solo-istiod
   interval: 1m0s
-  
