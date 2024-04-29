@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: istio-system
   prNumber: "261"
-  commitHash: 4a96ec189d64306449107f5c63bcae0f5687518e
-  deployed: "1714410338"
+  commitHash: 01214926692cb8c0dd5243699ff8a888225dc48b
+  deployed: "1714410583"
   env: common
