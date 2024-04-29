@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: solo-istiod-job-role
-  namespace: istio-system
+  namespace: solo-istio-system
 rules:
   - apiGroups: [""]
     resources: ["pods", "pods/exec", "services"]
@@ -18,11 +18,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: solo-istiod-job-rolebinding
-  namespace: istio-system
+  namespace: solo-istio-system
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: istio-system
+    namespace: solo-istio-system
 roleRef:
   kind: Role
   name: solo-istiod-job-role
