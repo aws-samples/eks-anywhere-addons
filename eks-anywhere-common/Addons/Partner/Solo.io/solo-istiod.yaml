@@ -1,8 +1,9 @@
+---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: solo-istiod
-  namespace: solo-istio-system
+  namespace: istio-system
 spec:
   chart:
     spec:
@@ -13,9 +14,4 @@ spec:
         name: solo-istiod-charts
         namespace: flux-system
       version: 1.18.3-eks-a
-  values:
-    revision: 1-18-3-solo
-    global:
-      istioNamespace: solo-istio-system         
   interval: 1m0s
-  
