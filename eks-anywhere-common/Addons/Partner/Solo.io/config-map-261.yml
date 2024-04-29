@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: istio-system-configmap
+  namespace: istio-system
+  labels:
+    bot: conformitron
+data:
+  Namespace: istio-system
+  prNumber: "261"
+  commitHash: 4a96ec189d64306449107f5c63bcae0f5687518e
+  deployed: "1714410338"
+  env: common

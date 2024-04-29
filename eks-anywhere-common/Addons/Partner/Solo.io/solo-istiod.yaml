@@ -1,9 +1,8 @@
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: solo-istiod
-  namespace: istio-system
+  namespace: solo-istio-system
 spec:
   chart:
     spec:
@@ -14,4 +13,14 @@ spec:
         name: solo-istiod-charts
         namespace: flux-system
       version: 1.18.3-eks-a
+  values:
+    revision: 1-18-3-solo
+    global:
+      istioNamespace: solo-istio-system       
+    meshConfig:
+      discoverySelectors:
+        - matchLabels:
+            aws.conformance.vendor: solo.io
+            aws.conformance.vendor-solution: solo-istiod            
   interval: 1m0s
+  
