@@ -45,7 +45,7 @@ jobs:
       run:
         git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
         
-    - name: Parse Namespace data, Create ConfigMap
+    - name: Remove Deleted Files, copy over added or modified files in accepted PR
       id: find-namespace-yaml
       run: |
         # Pull file information down into a JSON array
