@@ -127,5 +127,5 @@ jobs:
           fi        
         done
         
-        git commit -m "Adding new and changed files for PR_${{ github.event.pull_request.number }}"
+        git commit -m "Adding new and changed files for testing of PR_${{ github.event.pull_request.number }}"
         git push

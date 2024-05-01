@@ -3,15 +3,11 @@ on:
   pull_request_target:
     branches: [main]
     types: [closed]
-    paths-ignore: 
-     - 'Validated_Partners/**'
-     - '.github/**'
-     - 'docs'
-     - '.git'
      
 jobs:
-  merge-master-back-to-dev:
-    if: github.event.pull_request.merged == false
+
+  # All Closed branches reverse commits made by the open/reopen/sync GH Action
+  revert-testing-commit:
     timeout-minutes: 2
     runs-on: ubuntu-latest
     steps:
@@ -23,14 +19,70 @@ jobs:
       run: |
         # Get Commits from this PR
         TAG=PR_${{ github.event.pull_request.number }}
-        commits=$(git rev-list HEAD --grep=$TAG --max-count=1)     
+        commits=$(git rev-list HEAD --grep=$TAG)     
         echo "commits: $commits"
     
         # Revert Commits or Log that no change was made
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
         
-        git revert $commits --no-edit || echo "Commit $commits not reverted"
+        for commit in "{commits[@]}"; do
+          git revert $commit --no-edit || echo "Commit $commit not reverted"
+        done
 
+        git push
+        
+  # Accepted PR's apply merged changes 
+  commit-accepted-pr-files:
+    if: github.event.pull_request.merged == true
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Base
+      uses: actions/checkout@v4
+      
+    - name: Checkout PR Code
+      run:
+        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
+        
+    - name: Parse Namespace data, Create ConfigMap
+      id: find-namespace-yaml
+      run: |
+        # Pull file information down into a JSON array
+        readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -c '.[]')
+        
+        # Checkout and update Developer branch 
+        git fetch --all
+        git config --local user.email "dev@null"
+        git config --local user.name "Conformitron Bot"
+        # fetch most recent update to dev
+        git checkout developer_branch
+        git pull
+        
+        # Remove Deleted Files, copy over added or modified files
+        for item in "${files[@]}"; do
+          status=$(echo "$item" | jq -r '.status')
+          filename=$(echo "$item" | jq -r '.filename')
+          
+          if [ "$status" == renamed ]; then
+            git checkout pr -- $filename
+            git add $filename
+            if [ -f $(echo "$item" | jq -r '.previous_filename') ]; then
+              git rm $(echo "$item" | jq -r '.previous_filename')
+            fi
+            echo "Renaming $filename"
+          elif [ "$status" != removed ]; then
+            git checkout pr -- $filename
+            git add $filename
+            echo "Moving $filename"
+          else
+            if [ -f $filename ]; then
+              echo "Deleting $filename"
+              git rm $filename
+            fi
+          fi
+        done
+        
+        git commit -m "Adding new and changed files for merged PR_${{ github.event.pull_request.number }}"
         git push
         
