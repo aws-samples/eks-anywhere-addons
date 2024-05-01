@@ -16,6 +16,10 @@ spec:
   values:
     revision: 1-18-3-solo
     global:
-      istioNamespace: solo-istio-system         
+      istioNamespace: solo-istio-system       
+    meshConfig:
+      discoverySelectors:
+        - matchLabels:
+            aws.conformance.vendor: solo.io
+            aws.conformance.vendor-solution: solo-istiod
   interval: 1m0s
-  

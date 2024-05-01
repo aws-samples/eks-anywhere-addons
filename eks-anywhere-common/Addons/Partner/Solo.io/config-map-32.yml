@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: solo-istio-system-configmap
+  namespace: solo-istio-system
+  labels:
+    bot: conformitron
+data:
+  Namespace: solo-istio-system
+  prNumber: "32"
+  commitHash: 6e2e72c97cacfd84236892de3377ddf1d4c700db
+  deployed: "1714598357"
+  env: common
