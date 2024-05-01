@@ -19,14 +19,13 @@ jobs:
       run: |
         # Get Commits from this PR
         TAG=PR_${{ github.event.pull_request.number }}
-        commits=$(git rev-list HEAD --grep=$TAG)     
-        echo "commits: $commits"
     
         # Revert Commits or Log that no change was made
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
         
-        for commit in "{commits[@]}"; do
+        for commit in $(git rev-list HEAD --grep=$TAG); do
+          echo $commit
           git revert $commit --no-edit || echo "Commit $commit not reverted"
         done
 
