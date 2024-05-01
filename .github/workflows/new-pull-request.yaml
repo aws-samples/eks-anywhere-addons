@@ -7,8 +7,8 @@ on:
     paths-ignore: 
      - 'Validated_Partners/**'
      - '.github/**'
-     - 'docs'
-     - '.git'
+     - 'docs/**'
+     - '.git/**'
 
 jobs:
   build:
