@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: pulumi
   prNumber: "35"
-  commitHash: f327e0b47eb73a1a0dc3098487ab0ed7200aabfa
-  deployed: "1714605677"
+  commitHash: 12f7d34d701c7f3ec9cda2e1d01f19a53a5ac407
+  deployed: "1714605481"
   env: common
