@@ -34,6 +34,7 @@ jobs:
   # Accepted PR's apply merged changes 
   commit-accepted-pr-files:
     if: github.event.pull_request.merged == true
+    needs: revert-testing-commit
     timeout-minutes: 2
     runs-on: ubuntu-latest
     steps:
