@@ -5,6 +5,8 @@ on:
     types: [closed]
      
 jobs:
+
+  # All Closed branches reverse commits made by the open/reopen/sync GH Action
   revert-testing-commit:
     timeout-minutes: 2
     runs-on: ubuntu-latest
@@ -29,7 +31,8 @@ jobs:
         done
 
         git push
-
+        
+  # Accepted PR's apply merged changes 
   commit-accepted-pr-files:
     if: github.event.pull_request.merged == true
     timeout-minutes: 2
