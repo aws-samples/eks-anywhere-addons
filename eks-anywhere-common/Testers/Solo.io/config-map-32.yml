@@ -9,5 +9,5 @@ data:
   Namespace: solo-istio-system
   prNumber: "32"
   commitHash: ffba98ef2693ca8b684dd9d4b24e565d574f1ff3
-  deployed: "1714599983"
+  deployed: "1714600105"
   env: common
