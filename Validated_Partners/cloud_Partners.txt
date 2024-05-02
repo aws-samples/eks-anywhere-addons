@@ -1,13 +1,8 @@
-<<<<<<< HEAD
 Kubernetes Version :  1.28 
-=======
-Kubernetes Version :  
->>>>>>> 706b7566f59f69b88cd793154cd19e124e2e84bc
 Date of Conformance Test : 2024-05-02
  
 Following ISV Partners have Validated their Conformance : 
  
-<<<<<<< HEAD
 VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE          VENDOR_PRODUCT_VERSION
 aqua             aqua-enforcer                2022.4.20
 komodor          k8s-watcher                  1.15.5
@@ -23,6 +18,3 @@ solo.io          solo-istiod                  1.18.3-eks-a
 sysdig           sysdig-agent                 1.6.3
 tetrate.io       tetrate-istio-distribution   1.18.1
 hashicorp        vault                        0.25.0
-=======
-VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE   VENDOR_PRODUCT_VERSION
->>>>>>> 706b7566f59f69b88cd793154cd19e124e2e84bc
