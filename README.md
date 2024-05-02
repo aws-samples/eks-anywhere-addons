@@ -60,7 +60,7 @@ Refer the example [here](https://github.com/aws-samples/eks-anywhere-addons/blob
 
 ## Pre-requisite (Linux/MacOS)
 
-Please use the dev container configuration in the `.devcontainer` folder with [devpod](devpod.sh) or any other dev container environment to create minikube cluster with all required pre-requisites such helm, kubectl and flux for local testing. You can skip over to local testing section if you use dev container environment.
+Please use the dev container configuration in the `.devcontainer` folder with [devpod](devpod.sh) or any other dev container environment to create minikube cluster with all the required pre-requisites such helm, kubectl and flux for local testing. You can skip over to the local testing section if you use dev container environment.
 
 This solution requires Flux CLI locally and Flux Controller on your Kubernetes cluster. Flux requires access to a source repository via api and access to the kubernetes cluster you want to use for testing. Please follow the below steps for installing these pre-requisites.
 
