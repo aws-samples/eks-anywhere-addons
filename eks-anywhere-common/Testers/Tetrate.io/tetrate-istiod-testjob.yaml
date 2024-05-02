@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: tetrate-istiod-health-test
+  namespace: tetrate-istio-system
+spec:
+  schedule: "10 10 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            sidecar.istio.io/inject: "false"
+        spec:
+          containers:
+            - name: tetrate-istiod-healthtest
+              image: "alpine/k8s:1.26.2"
+              imagePullPolicy: Always
+              command:
+                - /bin/run-functional-tests.sh
+              volumeMounts:
+                - name: functional-tests-volume
+                  mountPath: /bin/run-functional-tests.sh
+                  readOnly: true
+                  subPath: run-functional-tests.sh
+          volumes:
+            - name: functional-tests-volume
+              configMap:
+                defaultMode: 0700
+                name: tetrate-tetsjob-script
+          restartPolicy: Never

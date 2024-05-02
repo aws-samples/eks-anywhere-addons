@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tetrate-istio-systemd-job-role
+  namespace: tetrate-istio-system
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/exec", "services"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["networking.istio.io"]
+    resources: ["gateways", "virtualservices", "destinationrules", "serviceentries", "envoyfilters"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tetrate-istio-systemd-job-rolebinding
+  namespace: tetrate-istio-system
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: tetrate-istio-system
+roleRef:
+  kind: Role
+  name: tetrate-istio-systemd-job-role
+  apiGroup: rbac.authorization.k8s.io
