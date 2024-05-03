@@ -5,5 +5,5 @@ metadata:
   name: solo-istiod-charts
   namespace: flux-system
 spec:
-  interval: 30s
+  interval: 300s
   url: https://solo-io.github.io/eks-anywhere-istio-charts
