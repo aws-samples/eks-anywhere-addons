@@ -23,7 +23,7 @@ jobs:
 
     - if: ${{github.event.action == 'synchronize' }}
       name: Sync Pause
-      run: sleep 120
+      run: sleep 60
 
     - name: Parse Namespace data, Create ConfigMap
       id: find-namespace-yaml
