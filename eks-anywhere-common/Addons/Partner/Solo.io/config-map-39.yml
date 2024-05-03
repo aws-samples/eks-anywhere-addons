@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: solo-istio-system
   prNumber: "39"
-  commitHash: 2b72b26b98a9fe084fc96eaaa5b842b847ef97c0
-  deployed: "1714751572"
+  commitHash: dcd8c588e4363e9f2e13bd3d48bc898399262be8
+  deployed: "1714751215"
   env: common
