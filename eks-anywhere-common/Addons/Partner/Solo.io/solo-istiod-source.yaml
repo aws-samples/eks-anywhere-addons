@@ -1,9 +1,9 @@
----
+
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
   name: solo-istiod-charts
   namespace: flux-system
 spec:
-  interval: 300s
+  interval: 30s
   url: https://solo-io.github.io/eks-anywhere-istio-charts
