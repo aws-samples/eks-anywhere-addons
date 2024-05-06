@@ -7,8 +7,8 @@ on:
     paths-ignore: 
      - 'Validated_Partners/**'
      - '.github/**'
-     - 'docs'
-     - '.git'
+     - 'docs/**'
+     - '.git/**'
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
 
     - if: ${{github.event.action == 'synchronize' }}
       name: Sync Pause
-      run: sleep 120
+      run: sleep 60
 
     - name: Parse Namespace data, Create ConfigMap
       id: find-namespace-yaml
@@ -77,12 +77,15 @@ jobs:
             namespace_file_subdirectory=$(dirname $filename)
             namespace_file=$(find $namespace_file_subdirectory -name *namespace*)
             namespace_name=""
+            partner_name=""
             
-            # get namespace from dev branch partner directory 
+            # get namespace from dev branch partner directory. If in Testers directory, re-align to Addons/Partner/{partner}
             while [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ] && [[ -z $namespace_name ]]; do
+              partner_name=$(basename $namespace_file_subdirectory)
               namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
               if [ $(basename $namespace_file_subdirectory) == "Testers" ]; then
-                namespace_name=$(yq e 'select(document_index==0).metadata.namespace' $filename)
+                namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
+                namespace_file_subdirectory=$namespace_file_subdirectory/Addons/Partner/$partner_name
               elif [ $(basename $namespace_file_subdirectory) == "Partner" ] || [ $(basename $namespace_file_subdirectory) == "Core" ]; then
                 echo "No Namespace File Found in Partner Directory"
                 exit 200
@@ -90,9 +93,7 @@ jobs:
               namespace_file=$(find $namespace_file_subdirectory -name "*namespace*")
             done
             
-            if [[ -n $namespace_name ]]; then
-              namespace_file_subdirectory=$(dirname $filename)
-            elif [ -f $namespace_file ]; then
+            if [ -f $namespace_file ]; then
               namespace_file_subdirectory=$(dirname $namespace_file)
               namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
             else
@@ -127,5 +128,5 @@ jobs:
           fi        
         done
         
-        git commit -m "Adding new and changed files for PR_${{ github.event.pull_request.number }}"
+        git commit -m "Adding new and changed files for testing of PR_${{ github.event.pull_request.number }}"
         git push
