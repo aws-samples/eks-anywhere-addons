@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   name: newrelic
   labels:
-      aws.conformance.vendor: newrelic
-      aws.conformance.vendor-solution: nri-bundle
-      aws.conformance.vendor-solution-version: 5.0.64
-      scrape: "true"
+    aws.conformance.vendor: newrelic
+    aws.conformance.vendor-solution: nri-bundle
+    aws.conformance.vendor-solution-version: 5.0.76
+    scrape: "true"
