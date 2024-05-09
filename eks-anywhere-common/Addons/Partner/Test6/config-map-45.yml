@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubecost-configmap
+  namespace: kubecost
+  labels:
+    bot: conformitron
+data:
+  Namespace: kubecost
+  prNumber: "45"
+  commitHash: c177a2c5b6f0b9887dce9aa17035d905bb218554
+  deployed: "1715296377"
+  env: common

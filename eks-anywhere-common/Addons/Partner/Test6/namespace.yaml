@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubecost
+  labels:
+      aws.conformance.vendor: kubecost
+      aws.conformance.vendor-solution: cost-analyzer
+      aws.conformance.vendor-solution-version: 2.1.0
