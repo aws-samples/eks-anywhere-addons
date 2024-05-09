@@ -135,7 +135,7 @@ jobs:
               echo "  Namespace: ${namespace}" >> $config_map_file
               echo "  lastApprovedPrNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
               echo "  lastPrCommitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
-              echo "  lastPointOfContact: ${{ github.event.pull_request.sender }}" >> $config_map_file
+              echo "  lastPointOfContact: ${{ github.event.pull_request.user.login }}" >> $config_map_file
               echo "  approved: \"$(date +%s)\"" >> $config_map_file
               echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
               mkdir -p ./$namespace_file_subdirectory/
