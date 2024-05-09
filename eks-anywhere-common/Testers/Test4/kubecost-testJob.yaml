@@ -1,0 +1,77 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kubecost-healthtest
+  namespace: kubecost
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 3000
+            fsGroup: 2000
+          serviceAccountName: tester
+          containers:
+            - name: test-kubecost
+              image: alpine/k8s:1.26.9
+              securityContext:
+                privileged: false
+                capabilities:
+                  drop: 
+                  - ALL
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+              command:
+                - /bin/sh
+              args:
+                - -c
+                - >-
+                  svc=$(kubectl get --raw  /api/v1/namespaces/kubecost/services | jq -r '.items[] | select(.metadata.name | test("cost-analyzer$")).metadata.name');
+                  echo Getting current Kubecost state.;
+                  response=$(curl -sL http://${svc}:9090/model/getConfigs);
+                  code=$(echo ${response} | jq .code);
+                  if [ "$code" -eq 200 ]; then
+                    echo "Got Kubecost working configuration. Successful."
+                    exit 0
+                  else 
+                    echo "Failed to fetch Kubecost configuration. Response was $response"
+                    exit 1
+                  fi
+          restartPolicy: Never
+      backoffLimit: 1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: test-role
+  namespace: kubecost
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: test-rolebinding
+  namespace: kubecost
+subjects:
+- kind: ServiceAccount
+  name: tester
+  namespace: kubecost
+roleRef:
+  kind: Role
+  name: test-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tester
+  namespace: kubecost
