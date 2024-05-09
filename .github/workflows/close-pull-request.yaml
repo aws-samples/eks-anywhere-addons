@@ -1,7 +1,7 @@
 name: PR Closed - purging developer_branch
 on: 
   pull_request_target:
-    branches: [main]
+    branches: [githubActions]
     types: [closed]
      
 jobs:
@@ -46,7 +46,7 @@ jobs:
         git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
         
     - name: Remove Deleted Files, copy over added or modified files in accepted PR
-      id: find-namespace-yaml
+      id: update-branch-with-pr-files
       run: |
         # Pull file information down into a JSON array
         readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -c '.[]')
@@ -80,6 +80,44 @@ jobs:
               echo "Deleting $filename"
               git rm $filename
             fi
+          fi
+        done
+        
+        # Get last commit from testing
+        TAG=PR_${{ github.event.pull_request.number }}
+        last_commit=$(git rev-list HEAD --grep=$TAG --max-count=1)
+        
+        echo $TAG
+        echo $last_commit
+        
+        # Identify Configmaps from merged PR, Create/update Monitoring Configmaps
+        for file in $(git show --pretty="" --name-only $last_commit); do
+          if($file == *"config-map-${{ github.event.pull_request.number }}"*); then
+            configmap_file_subdirectory=$(dirname $file)
+            namespace=$(git show --pretty="" --name-only $last_commit:$file | yq -e ".metadata.namespace")
+        
+            echo $configmap_file_subdirectory
+            echo $namespace
+        
+            # Create or update ongoing Observation ConfigMap
+            config_map_file="config-map-${namespace}.yml"
+            echo "apiVersion: v1" >> $config_map_file
+            echo "kind: ConfigMap" >> $config_map_file
+            echo "metadata:" >> $config_map_file
+            echo "  name: $namespace-observation-configmap" >> $config_map_file
+            echo "  namespace: $namespace" >> $config_map_file
+            echo "  labels:" >> $config_map_file
+            echo "    bot: conformitron" >> $config_map_file
+            echo "data:" >> $config_map_file
+            echo "  Namespace: ${namespace}" >> $config_map_file
+            echo "  lastApprovedPrNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
+            echo "  lastPrCommitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
+            echo "  lastPointOfContact: ${{ github.event.pull_request.sender }}
+            echo "  approved: \"$(date +%s)\"" >> $config_map_file
+            echo "  env: $(echo $configmap_file_subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
+            mkdir -p ./$configmap_file_subdirectory/
+            mv "$config_map_file" ./$configmap_file_subdirectory/
+            git add ./$configmap_file_subdirectory/
           fi
         done
         
