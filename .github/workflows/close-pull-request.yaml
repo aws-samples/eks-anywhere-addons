@@ -123,7 +123,7 @@ jobs:
             
             if [[ -n $namespace_name ]]; then
               namespace=$(echo $namespace_name | xargs echo -n)
-              config_map_file="config-map-${{ github.event.pull_request.number }}.yml"
+              config_map_file="config-map-$namespace.yml"
               echo "apiVersion: v1" >> $config_map_file
               echo "kind: ConfigMap" >> $config_map_file
               echo "metadata:" >> $config_map_file
