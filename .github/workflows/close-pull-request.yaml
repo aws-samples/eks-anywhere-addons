@@ -59,11 +59,12 @@ jobs:
         git checkout developer_branch
         git pull
         
-        # Remove Deleted Files, copy over added or modified files
+
         for item in "${files[@]}"; do
           status=$(echo "$item" | jq -r '.status')
           filename=$(echo "$item" | jq -r '.filename')
-          
+
+          # Remove Deleted Files, copy over added or modified files          
           if [ "$status" == renamed ]; then
             git checkout pr -- $filename
             git add $filename
@@ -81,45 +82,61 @@ jobs:
               git rm $filename
             fi
           fi
-        done
         
-        # Get last commit from testing
-        TAG=PR_${{ github.event.pull_request.number }}
-        last_commit=$(git rev-list HEAD --grep=$TAG --max-count=1)
-        
-        echo $TAG
-        echo $last_commit
-        
-        # Identify Configmaps from merged PR, Create/update Monitoring Configmaps
-        for file in $(git show --pretty="" --name-only $last_commit); do
-          if($file == *"config-map-${{ github.event.pull_request.number }}"*); then
-            configmap_file_subdirectory=$(dirname $file)
-            namespace=$(git show --pretty="" --name-only $last_commit:$file | yq -e ".metadata.namespace")
-        
-            echo $configmap_file_subdirectory
-            echo $namespace
-        
-            # Create or update ongoing Observation ConfigMap
-            config_map_file="config-map-${namespace}.yml"
-            echo "apiVersion: v1" >> $config_map_file
-            echo "kind: ConfigMap" >> $config_map_file
-            echo "metadata:" >> $config_map_file
-            echo "  name: $namespace-observation-configmap" >> $config_map_file
-            echo "  namespace: $namespace" >> $config_map_file
-            echo "  labels:" >> $config_map_file
-            echo "    bot: conformitron" >> $config_map_file
-            echo "data:" >> $config_map_file
-            echo "  Namespace: ${namespace}" >> $config_map_file
-            echo "  lastApprovedPrNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
-            echo "  lastPrCommitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
-            echo "  lastPointOfContact: ${{ github.event.pull_request.sender }}" >> $config_map_file
-            echo "  approved: \"$(date +%s)\"" >> $config_map_file
-            echo "  env: $(echo $configmap_file_subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
-            mkdir -p ./$configmap_file_subdirectory/
-            mv "$config_map_file" ./$configmap_file_subdirectory/
-            git add ./$configmap_file_subdirectory/
-          fi
-        done
+          # Generate monitoring ConfigMap for accepted file locations
+          if [ "$status" != removed ] && [[ $filename != *README.md ]]; then
+              # Parse namespace data
+              subdirectory=$(dirname $filename)
+              namespace_file_subdirectory=$(dirname $filename)
+              namespace_file=$(find $namespace_file_subdirectory -name *namespace*)
+              namespace_name=""
+              partner_name=""
+              
+              # get namespace from dev branch partner directory. If in Testers directory, re-align to Addons/Partner/{partner}
+              while [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ] && [[ -z $namespace_name ]]; do
+                partner_name=$(basename $namespace_file_subdirectory)
+                namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
+                if [ $(basename $namespace_file_subdirectory) == "Testers" ]; then
+                  namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
+                  namespace_file_subdirectory=$namespace_file_subdirectory/Addons/Partner/$partner_name
+                elif [ $(basename $namespace_file_subdirectory) == "Partner" ] || [ $(basename $namespace_file_subdirectory) == "Core" ]; then
+                  echo "No Namespace File Found in Partner Directory"
+                  exit 200
+                fi
+                namespace_file=$(find $namespace_file_subdirectory -name "*namespace*")
+              done
+              
+              if [ -f $namespace_file ]; then
+                namespace_file_subdirectory=$(dirname $namespace_file)
+                namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
+              else
+                echo "No Namespace file found"
+                exit 200
+              fi
+              
+              if [[ -n $namespace_name ]]; then
+                namespace=$(echo $namespace_name | xargs echo -n)
+                config_map_file="config-map-${namespace}.yml"
+                echo "apiVersion: v1" >> $config_map_file
+                echo "kind: ConfigMap" >> $config_map_file
+                echo "metadata:" >> $config_map_file
+                echo "  name: $namespace-observation-configmap" >> $config_map_file
+                echo "  namespace: $namespace" >> $config_map_file
+                echo "  labels:" >> $config_map_file
+                echo "    bot: conformitron" >> $config_map_file
+                echo "data:" >> $config_map_file
+                echo "  Namespace: ${namespace}" >> $config_map_file
+                echo "  lastApprovedPrNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
+                echo "  lastPrCommitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
+                echo "  lastPointOfContact: ${{ github.event.pull_request.sender }}" >> $config_map_file
+                echo "  approved: \"$(date +%s)\"" >> $config_map_file
+                echo "  env: $(echo $namespace_file_subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
+                mkdir -p ./$namespace_file_subdirectory/
+                mv "$config_map_file" ./$namespace_file_subdirectory/
+                git add ./$namespace_file_subdirectory/
+              fi
+            fi
+          done
         
         git commit -m "Adding new and changed files for merged PR_${{ github.event.pull_request.number }}"
         git push
