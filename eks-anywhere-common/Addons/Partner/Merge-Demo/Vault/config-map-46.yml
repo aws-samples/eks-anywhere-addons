@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-configmap
+  namespace: vault
+  labels:
+    bot: conformitron
+data:
+  Namespace: vault
+  prNumber: "46"
+  commitHash: 99810700d2079bc948c4e557fc82a8ded6228760
+  deployed: "1715362025"
+  env: common
