@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-observation-configmap
+  namespace: vault
+  labels:
+    bot: conformitron
+data:
+  Namespace: vault
+  lastApprovedPrNumber: "46"
+  lastPrCommitHash: 99810700d2079bc948c4e557fc82a8ded6228760
+  lastPointOfContact: mikemcd3912
+  approved: "1715362128"
+  env: common
