@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kyverno-observation-configmap
+  namespace: kyverno
+  labels:
+    bot: conformitron
+data:
+  Namespace: kyverno
+  lastApprovedPrNumber: "122"
+  lastPrCommitHash: 92035ecbe740c6b3d62c38c7ec3efa521a73e928
+  lastPointOfContact: "patelrit"
+  approved: "1716226456"
+  env: common
+  testJobName: kyverno-test-cronjob

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubecost-observation-configmap
+  namespace: kubecost
+  labels:
+    bot: conformitron
+data:
+  Namespace: kubecost
+  lastApprovedPrNumber: "215"
+  lastPrCommitHash: 00d07c68b3bf26db22f0d63a4c4c5da43cacbb4f
+  lastPointOfContact: "chipzoller"
+  approved: "1716226456"
+  env: common
+  testJobName: kubecost-healthtest

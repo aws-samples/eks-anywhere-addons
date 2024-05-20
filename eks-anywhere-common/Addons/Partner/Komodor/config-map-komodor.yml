@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: komodor-observation-configmap
+  namespace: komodor
+  labels:
+    bot: conformitron
+data:
+  Namespace: komodor
+  lastApprovedPrNumber: "117"
+  lastPrCommitHash: a4687222ff1714aaf226a35c7aaa2a96aca34a7f
+  lastPointOfContact: "nirbenator"
+  approved: "1716226456"
+  env: common
+  testJobName: komodor-tester-cron

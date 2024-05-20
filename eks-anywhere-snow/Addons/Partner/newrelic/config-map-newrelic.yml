@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: newrelic-observation-configmap
+  namespace: newrelic
+  labels:
+    bot: conformitron
+data:
+  Namespace: newrelic
+  lastApprovedPrNumber: "271"
+  lastPrCommitHash: 65e011c8786cb550aee724cd6065f94db8c6d019
+  lastPointOfContact: "NewRelic-K8s-Agents-Bot"
+  approved: "1716226456"
+  env: snow
+  testJobName: newrelic-testjob

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kong-observation-configmap
+  namespace: kong
+  labels:
+    bot: conformitron
+data:
+  Namespace: kong
+  lastApprovedPrNumber: "134"
+  lastPrCommitHash: 2fd767422781e9ed7acc57ff02697dc37e4f3335
+  lastPointOfContact: "DaniellaFreese"
+  approved: "1716226456"
+  env: common
+  testJobName: kong-enterprise-testjob

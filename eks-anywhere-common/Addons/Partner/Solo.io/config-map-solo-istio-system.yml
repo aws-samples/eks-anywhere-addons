@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: solo-istio-system-observation-configmap
+  namespace: solo-istio-system
+  labels:
+    bot: conformitron
+data:
+  Namespace: solo-istio-system
+  lastApprovedPrNumber: "261"
+  lastPrCommitHash: bed0ffba0015f90ea2fb6ffae61336f7f73126e4
+  lastPointOfContact: "PetrMc"
+  approved: "1714660209"
+  env: common
+  testJobName: solo-istiod-health-test

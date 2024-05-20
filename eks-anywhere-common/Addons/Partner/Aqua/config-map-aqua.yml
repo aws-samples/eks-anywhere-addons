@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aqua-observation-configmap
+  namespace: aqua
+  labels:
+    bot: conformitron
+data:
+  Namespace: aqua
+  lastApprovedPrNumber: "216"
+  lastPrCommitHash: ffbe160deb150715b2a8a82aa399f37ceca5c30f
+  lastPointOfContact: "BaruchBilanski"
+  approved: "1716226456"
+  env: common
+  testJobName: aqua-enforcer-tester

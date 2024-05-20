@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubearmor-observation-configmap
+  namespace: kubearmor
+  labels:
+    bot: conformitron
+data:
+  Namespace: kubearmor
+  lastApprovedPrNumber: "235"
+  lastPrCommitHash: ccd5ea3fda9fc1e00d271888ddfeb5caf22ddf2a
+  lastPointOfContact: "rksharma95"
+  approved: "1716226456"
+  env: common
+  testJobName: kubearmor-tester-cron

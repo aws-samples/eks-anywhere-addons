@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynatrace-observation-configmap
+  namespace: dynatrace
+  labels:
+    bot: conformitron
+data:
+  Namespace: dynatrace
+  lastApprovedPrNumber: "31"
+  lastPrCommitHash: 2e40f638b8cad787ef2c35fe9582bd44a105fbbe
+  lastPointOfContact: "akirasoft1"
+  approved: "1716226456"
+  env: common
+  testJobName: ""
