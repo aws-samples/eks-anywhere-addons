@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pulumi-observation-configmap
+  namespace: pulumi
+  labels:
+    bot: conformitron
+data:
+  Namespace: pulumi
+  lastApprovedPrNumber: "141"
+  lastPrCommitHash: 24f124b0e68d5c00d98462c93ba9b32de5ee3d7b
+  lastPointOfContact: "EronWright"
+  approved: "1716226456"
+  env: common
+  testJobName: pulumi-k8s-operator-test

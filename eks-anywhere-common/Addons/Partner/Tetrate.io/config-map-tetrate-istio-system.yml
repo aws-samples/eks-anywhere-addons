@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tetrate-istio-system-observation-configmap
+  namespace: tetrate-istio-system
+  labels:
+    bot: conformitron
+data:
+  Namespace: tetrate-istio-system
+  lastApprovedPrNumber: "245"
+  lastPrCommitHash: 2d3025491be327fe73c6769ba1dbc6d5fc422da9
+  lastPointOfContact: "zirain"
+  approved: "1716226456"
+  env: common
+  testJobName: tetrate-istiod-health-test

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: perfectscale-observation-configmap
+  namespace: perfectscale
+  labels:
+    bot: conformitron
+data:
+  Namespace: perfectscale
+  lastApprovedPrNumber: "104"
+  lastPrCommitHash: 9273cae3384c4299dd3a72c0afb2887c6257519a
+  lastPointOfContact: "aveleten"
+  approved: "1716226456"
+  env: common
+  testJobName: perfectscale-test-job

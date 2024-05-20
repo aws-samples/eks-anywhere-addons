@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sysdig-observation-configmap
+  namespace: sysdig
+  labels:
+    bot: conformitron
+data:
+  Namespace: sysdig
+  lastApprovedPrNumber: "76"
+  lastPrCommitHash: 43540cc9c435061ac61dee546ecb65e1f2f1088e
+  lastPointOfContact: "manuelbcd"
+  approved: "1716226456"
+  env: common
+  testJobName: sysdig-agent-tester
