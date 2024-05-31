@@ -5,5 +5,5 @@ metadata:
   labels:
     aws.conformance.vendor: newrelic
     aws.conformance.vendor-solution: nri-bundle
-    aws.conformance.vendor-solution-version: 5.0.79
+    aws.conformance.vendor-solution-version: 5.0.80
     scrape: "true"
