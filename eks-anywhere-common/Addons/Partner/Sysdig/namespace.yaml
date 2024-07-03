@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sysdig
+  labels:
+      aws.conformance.vendor: sysdig
+      aws.conformance.vendor-solution: sysdig-agent
+      aws.conformance.vendor-solution-version: 1.6.3
