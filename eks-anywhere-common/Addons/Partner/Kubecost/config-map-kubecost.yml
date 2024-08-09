@@ -4,7 +4,7 @@ metadata:
   name: kubecost-observation-configmap
   namespace: kubecost
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: kubecost
   lastApprovedPrNumber: "215"

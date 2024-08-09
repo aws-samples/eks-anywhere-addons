@@ -4,7 +4,7 @@ metadata:
   name: newrelic-observation-configmap
   namespace: newrelic
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: newrelic
   lastApprovedPrNumber: "271"

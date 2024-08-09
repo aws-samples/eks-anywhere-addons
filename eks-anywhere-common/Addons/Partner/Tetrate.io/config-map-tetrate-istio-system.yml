@@ -4,7 +4,7 @@ metadata:
   name: tetrate-istio-system-observation-configmap
   namespace: tetrate-istio-system
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: tetrate-istio-system
   lastApprovedPrNumber: "245"

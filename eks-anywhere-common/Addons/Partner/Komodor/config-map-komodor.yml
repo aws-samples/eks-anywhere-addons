@@ -4,7 +4,7 @@ metadata:
   name: komodor-observation-configmap
   namespace: komodor
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: komodor
   lastApprovedPrNumber: "117"

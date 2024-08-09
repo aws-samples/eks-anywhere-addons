@@ -4,7 +4,7 @@ metadata:
   name: solo-istio-system-observation-configmap
   namespace: solo-istio-system
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: solo-istio-system
   lastApprovedPrNumber: "261"

@@ -4,7 +4,7 @@ metadata:
   name: kyverno-observation-configmap
   namespace: kyverno
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: kyverno
   lastApprovedPrNumber: "122"

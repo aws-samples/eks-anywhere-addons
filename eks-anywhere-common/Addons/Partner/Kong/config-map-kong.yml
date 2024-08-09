@@ -4,7 +4,7 @@ metadata:
   name: kong-observation-configmap
   namespace: kong
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: kong
   lastApprovedPrNumber: "134"

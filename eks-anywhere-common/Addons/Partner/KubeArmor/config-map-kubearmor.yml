@@ -4,7 +4,7 @@ metadata:
   name: kubearmor-observation-configmap
   namespace: kubearmor
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: kubearmor
   lastApprovedPrNumber: "235"

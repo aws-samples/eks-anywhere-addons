@@ -4,7 +4,7 @@ metadata:
   name: aqua-observation-configmap
   namespace: aqua
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: aqua
   lastApprovedPrNumber: "216"
