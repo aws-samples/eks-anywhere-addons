@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sample-hybrid-daily-test-cronjob
+  namespace: default
+spec:
+  schedule: "10 10 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: job
+              image: busybox
+              args:
+                - /bin/sh
+                - -c
+                - date; echo sleeping....; sleep 5s; exit 0;
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
