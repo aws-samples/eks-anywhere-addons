@@ -4,7 +4,7 @@ metadata:
   name: lacework-observation-configmap
   namespace: lacework
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: lacework
   lastApprovedPrNumber: "103"

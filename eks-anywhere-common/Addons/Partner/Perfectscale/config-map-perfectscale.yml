@@ -4,7 +4,7 @@ metadata:
   name: perfectscale-observation-configmap
   namespace: perfectscale
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: perfectscale
   lastApprovedPrNumber: "104"

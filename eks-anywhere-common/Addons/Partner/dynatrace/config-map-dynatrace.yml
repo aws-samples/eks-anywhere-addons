@@ -4,7 +4,7 @@ metadata:
   name: dynatrace-observation-configmap
   namespace: dynatrace
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: dynatrace
   lastApprovedPrNumber: "31"

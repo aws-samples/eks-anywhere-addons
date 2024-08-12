@@ -4,7 +4,7 @@ metadata:
   name: vault-observation-configmap
   namespace: vault
   labels:
-    bot: conformitron
+    bot: conformitron-persistent
 data:
   Namespace: vault
   lastApprovedPrNumber: "150"
