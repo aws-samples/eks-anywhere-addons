@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: openebs
+  namespace: flux-system
+spec:
+  path: "./eks-anywhere-hybrid/Addons/Core/storage-driver/openebs"
+  sourceRef:
+    kind: GitRepository
+    name: addons
+    namespace: flux-system
+  interval: 5m0s
+  prune: true
+---
