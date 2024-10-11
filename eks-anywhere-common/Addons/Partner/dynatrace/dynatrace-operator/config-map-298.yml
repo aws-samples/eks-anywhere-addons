@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dynatrace-configmap
+  namespace: dynatrace
+  labels:
+    bot: conformitron
+data:
+  Namespace: dynatrace
+  prNumber: "298"
+  commitHash: 6c7552f896c039e4f6ae562cb6debee6f675fb6b
+  deployed: "1728606008"
+  env: common
