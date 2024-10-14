@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openebs-configmap
+  namespace: openebs
+  labels:
+    bot: conformitron
+data:
+  Namespace: openebs
+  prNumber: "300"
+  commitHash: aa77e1afa0524e83045144efd1fcefb665292048
+  deployed: "1728949762"
+  env: hybrid
