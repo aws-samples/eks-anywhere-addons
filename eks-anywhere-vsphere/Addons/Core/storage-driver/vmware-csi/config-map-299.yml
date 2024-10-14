@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vmware-system-csi-configmap
+  namespace: vmware-system-csi
+  labels:
+    bot: conformitron
+data:
+  Namespace: vmware-system-csi
+  prNumber: "299"
+  commitHash: b24def610b262b563b51ec58dd47d12e4344d5e1
+  deployed: "1728936580"
+  env: vsphere
