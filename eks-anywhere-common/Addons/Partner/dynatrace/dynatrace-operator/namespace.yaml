@@ -6,4 +6,4 @@ metadata:
   labels:
     aws.conformance.vendor: dynatrace
     aws.conformance.vendor-solution: dynatrace
-    aws.conformance.vendor-solution-version: 0.10.1
+    aws.conformance.vendor-solution-version: 1.3.0
