@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: newrelic
-  labels:
-    aws.conformance.vendor: newrelic
-    aws.conformance.vendor-solution: nri-bundle
-    aws.conformance.vendor-solution-version: 5.0.95
-    scrape: "true"
