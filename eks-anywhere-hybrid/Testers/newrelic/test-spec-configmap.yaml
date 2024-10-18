@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-spec
+  namespace: newrelic
+data:
+  test-spec.yml: |-
+    description: |
+      End-to-end tests for k8s integration
+    custom_test_key: k8s.podName
+    scenarios:
+      - description: |
+          This scenario will verify that metrics from a k8s Cluster are correctly collected without privileges
+        tests:
+          nrqls: 
+            - query: "SELECT latest(k8s.pod.startTime) FROM Metric SINCE 5 MINUTES AGO"
+          entities: []
+            
