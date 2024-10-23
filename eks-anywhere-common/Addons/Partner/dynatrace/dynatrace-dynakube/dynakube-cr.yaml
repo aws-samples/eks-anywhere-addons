@@ -1,18 +1,16 @@
 ---
-apiVersion: dynatrace.com/v1beta1
+apiVersion: dynatrace.com/v1beta2
 kind: DynaKube
 metadata:
   name: "${dynakubename}"
   namespace: dynatrace
   annotations:
-    feature.dynatrace.com/automatic-kubernetes-api-monitoring: "true"
+    feature.dynatrace.com/k8s-app-enabled: "true"
 spec:
-  apiUrl: ${apiurl}
+  apiUrl: "${apiurl}"
   tokens: ${dynatracesecretname}
-  skipCertCheck: false
   oneAgent:
-    classicFullStack:
-      # image: ""
+    cloudNativeFullStack:
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
@@ -20,18 +18,14 @@ spec:
         - effect: NoSchedule
           key: node-role.kubernetes.io/control-plane
           operator: Exists
-      env:
-        - name: ONEAGENT_ENABLE_VOLUME_STORAGE
-          value: "${oneagentvolumestorage}"
   activeGate:
     capabilities:
       - routing
       - kubernetes-monitoring
       - dynatrace-api
-    #image: ""
     resources:
       requests:
-        cpu: 50m
+        cpu: 500m
         memory: 512Mi
       limits:
         cpu: 1000m

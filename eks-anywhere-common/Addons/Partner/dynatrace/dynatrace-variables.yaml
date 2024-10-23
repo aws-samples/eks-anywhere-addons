@@ -6,11 +6,8 @@ metadata:
   namespace: flux-system
 data:
   # api url for dynatrace environment 
-  apiurl: "https://syh360.dynatrace-managed.com/e/29143f4b-2894-450d-a1fc-89a197b68909/api"
+  apiurl: "<replaceme>"
   # name of secret containing tokens
   dynatracesecretname: "dt-secret"
   # name of cluster to be listed in Dynatrace
-  dynakubename: "eks-flux-test-cluster"
-  # ONEAGENT_ENABLE_VOLUME_STORAGE should be false for EKS, the escaped are due to flux being weird
-  # and the value here isn't actually a boolean
-  oneagentvolumestorage: "\"false\""
+  dynakubename: "<replaceme>"
