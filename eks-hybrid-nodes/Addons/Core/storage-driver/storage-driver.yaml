@@ -4,7 +4,7 @@ metadata:
   name: openebs
   namespace: flux-system
 spec:
-  path: "./eks-hybrid-nodes/Addons/Core/storage-driver/openebs"
+  path: "./eks-anywhere-hybrid/Addons/Core/storage-driver/openebs"
   sourceRef:
     kind: GitRepository
     name: addons
