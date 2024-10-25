@@ -1,6 +1,6 @@
 FROM alpine:3.17
 
-ARG VAULT_VERSION=1.17.6
+ARG VAULT_VERSION=1.12.2
 
 RUN apk update \
  && apk add curl jq wget unzip bash \
