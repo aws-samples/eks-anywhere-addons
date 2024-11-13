@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: dynatrace
   prNumber: "298"
-  commitHash: 6c7552f896c039e4f6ae562cb6debee6f675fb6b
-  deployed: "1728606008"
+  commitHash: 36532ef4b24d228c0040a2c18f3f98d31551b5fc
+  deployed: "1731534978"
   env: common
