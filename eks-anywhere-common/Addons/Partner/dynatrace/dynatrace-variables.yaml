@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 data:
   # api url for dynatrace environment 
-  apiurl: "https://fjy55252.sprint.apps.dynatracelabs.com/api"
+  apiUrl: https://fjy55252.sprint.dynatracelabs.com/api
   # name of secret containing tokens
   dynatracesecretname: "dt-secret"
   # name of cluster to be listed in Dynatrace
