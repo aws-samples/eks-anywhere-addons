@@ -1,5 +1,5 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: dynatrace-operator
@@ -9,15 +9,16 @@ spec:
     spec:
       chart: dynatrace-operator
       sourceRef:
-        kind: HelmRepository
+        kind: OCIRepository
         name: dynatrace-operator
         namespace: flux-system
+        url: oci://public.ecr.aws/dynatrace/dynatrace-operator
       version: 1.3.2
-  interval: 1m0s
-  values:
-    installCRD: true
   install:
     crds: CreateReplace
+  interval: 1m0s
+  targetNamespace: dynatrace
   upgrade:
     crds: CreateReplace
-  targetNamespace: dynatrace
+  values:
+    installCRD: true

@@ -1,9 +1,0 @@
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: dynatrace-operator
-  namespace: flux-system
-spec:
-  interval: 1m0s
-  url: https://raw.githubusercontent.com/Dynatrace/dynatrace-operator/master/config/helm/repos/stable
