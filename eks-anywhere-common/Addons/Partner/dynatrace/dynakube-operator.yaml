@@ -31,4 +31,6 @@ spec:
   postBuild:
     substituteFrom:
     - kind: ConfigMap
-      name: dynatrace-variables # Provides apiurl, dynatracesecretname, dynakubename, oneagentvolumestorage
+      name: dynatrace-variables # Provides dynatracesecretname, dynakubename, oneagentvolumestorage
+    - kind: Secret
+      name: dynatrace-apiurl # provides apiurl
