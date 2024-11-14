@@ -1,5 +1,5 @@
 ---
-apiVersion: dynatrace.com/v1beta2
+apiVersion: dynatrace.com/v1beta1
 kind: DynaKube
 metadata:
   name: "${dynakubename}"
