@@ -6,9 +6,15 @@ metadata:
   namespace: dynatrace
   annotations:
     feature.dynatrace.com/k8s-app-enabled: "true"
+    feature.dynatrace.com/no-proxy: "dynakube-activegate.dynatrace.svc.cluster.local,.svc.cluster.local,.dynatrace.svc"
+    feature.dynatrace.com/oneagent-ignore-proxy: "true"
+
 spec:
   apiUrl: "${apiurl}"
   tokens: ${dynatracesecretname}
+  namespaceSelector:
+    matchLabels:
+      dynatrace.com/inject: "true"  
   oneAgent:
     cloudNativeFullStack:
       tolerations:
