@@ -1,0 +1,51 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: sysdig
+  namespace: sysdig-agent
+spec:
+  chart:
+    spec:
+      chart: sysdig-deploy
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: sysdig
+        namespace: sysdig-agent
+      version: 1.67.5
+  interval: 30s
+  values:
+    global:
+      sysdig:
+        region: us2         # us1 | us2 | us3 | us4 | eu1 | au1
+      kspm:
+        deploy: false       # Disabled by default to optimize resources. Activating it without the right cluster sizing could lead to instability
+      clusterConfig:
+        name: myclusterName # Place here a meaningful cluster name to identify it
+    agent:
+      tolerations: []   # Nullifying tolerations disallows the agents from being executed in the Control Plane
+      # resourceProfile: custom
+      # resources:
+      #  requests:
+      #    cpu:600m
+      #    memory: 1G
+      #  limits:
+      #    cpu: 1500m
+      #    memory: 1G
+      sysdig:
+        settings:
+          collector_port: 6443
+    nodeAnalyzer:
+      nodeAnalyzer:
+        tolerations: []  # Nullifying tolerations disallows the nodeAnalyzers from being executed in the Control Plane
+        benchmarkRunner:
+          deploy: false   # Benchmark Runner disabled by default
+      secure:
+        vulnerabilityManagement:
+          newEngineOnly: true
+  valuesFrom:
+  - kind: Secret
+    name: sysdig-access-key
+    valuesKey: secret-sysdig-key
+    targetPath: global.sysdig.accessKey

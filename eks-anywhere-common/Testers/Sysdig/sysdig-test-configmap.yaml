@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sysdig-test-configmap
+  namespace: sysdig-agent
+data:
+  test.sh: |-
+    #!/bin/bash
+    echo -e "\n # Validation process started #"
+    kubectl wait pods -n sysdig-agent -l app=sysdig-agent --for condition=Ready --timeout=150s
+    sleep 30
+    pod=$(kubectl get pod -l app=sysdig-agent -n sysdig-agent -o name)
+    logs=$(kubectl logs -n sysdig-agent $pod --tail -1)
+    if grep "Communication with server successful" <<< "$logs"
+    then 
+      echo -e "\n # Sysdig Agent connection with server was success #"
+      # Let's generate some more events
+      touch /usr/bin/risky-file                   # Write below bin
+      history -c                                  # Try to clear bash history
+      # Check if the above generated event has been successfully captured
+      sleep 30
+      logs=$(kubectl logs -n sysdig-agent $pod --tail -1)
+      if grep "Taking action via policy: Sysdig Runtime Notable Events" <<< "$logs"
+      then
+        echo -e "\n # Sysdig Agent successfully captured the event #"
+        exit 0
+      else
+        echo -e "\n # Error: Sysdig Agent didn't capture any event #"
+        exit 1
+      fi
+    else
+      echo -e "\n # Error: Sysdig Agent couldn't connect with the server. Please check egress, region and token #"
+      exit 1
+    fi

@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sysdig-agent-test
+  namespace: sysdig-agent
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+        - name: job
+          image: 'alpine/k8s:1.26.2'
+          imagePullPolicy: Always
+          command:
+            - /bin/test.sh
+          volumeMounts:
+            - name: sysdig-test-configmap-volume
+              mountPath: /bin/test.sh
+              readOnly: true
+              subPath: test.sh
+      volumes:
+        - name: sysdig-test-configmap-volume
+          configMap:
+            defaultMode: 0700
+            name: sysdig-test-configmap
+      restartPolicy: Never
