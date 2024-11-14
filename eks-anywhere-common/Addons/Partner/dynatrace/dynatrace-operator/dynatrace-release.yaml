@@ -9,7 +9,7 @@ spec:
     spec:
       chart: dynatrace-operator
       sourceRef:
-        kind: OCIRepository
+        kind: HelmRepository
         name: dynatrace-operator
         namespace: flux-system
       version: 1.3.2
