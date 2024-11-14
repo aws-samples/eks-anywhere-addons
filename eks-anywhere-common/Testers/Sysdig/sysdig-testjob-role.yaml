@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sysdig-agent-role
+  namespace: sysdig-agent
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "pods" ]
+    verbs: [ "get", "watch", "list"]
+  - apiGroups: [ "" ]
+    resources: [ "pods/log" ]
+    verbs: [ "get", "watch", "list" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-sysdig-agent
+  namespace: sysdig-agent
+subjects:
+  - kind: User
+    name: system:serviceaccount:sysdig-agent:default
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: sysdig-agent-role
+  apiGroup: rbac.authorization.k8s.io
