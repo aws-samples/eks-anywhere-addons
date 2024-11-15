@@ -12,9 +12,10 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: sysdig
-        namespace: sysdig-agent
+        namespace: flux-system
       version: 1.67.5
   interval: 30s
+  targetNamespace: sysdig-agent
   values:
     global:
       sysdig:

@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: sysdig-configmap
-  namespace: sysdig
+  name: sysdig-agent-configmap
+  namespace: sysdig-agent
   labels:
     bot: conformitron
 data:
-  Namespace: sysdig
+  Namespace: sysdig-agent
   prNumber: "315"
-  commitHash: 001da860493b6cdf75dbfbbdbc1afe3e920afe4d
-  deployed: "1731608894"
+  commitHash: ec7546a7a334b10b2af7b141fc16af079274ea63
+  deployed: "1731678026"
   env: common
