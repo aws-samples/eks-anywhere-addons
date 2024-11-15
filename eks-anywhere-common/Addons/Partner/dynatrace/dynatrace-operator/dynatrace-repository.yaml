@@ -6,4 +6,4 @@ metadata:
 spec:
   interval: 1m0s
   type: "oci"
-  url: oci://public.ecr.aws/dynatrace/dynatrace-operator
+  url: oci://public.ecr.aws/dynatrace
