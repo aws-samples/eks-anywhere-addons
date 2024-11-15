@@ -1,0 +1,118 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: dynatrace-tester-cron
+  namespace: dynatrace
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: job
+              image: 'alpine/k8s:1.26.2'
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  #!/bin/bash
+
+                  PATTERN="Ping received: Healthy("
+                  DAEMONSET_INCLUDE_PATTERN="oneagent"
+                  DAEMONSET_EXCLUDE_PATTERN="csi"
+                  CUSTOM_RESOURCE="dynakubes.dynatrace.com"
+                  EXIT_STATUS=0  # Default to success
+                  echo "Starting search for Dynakubes..."
+                  # Get the list of namespaces
+                  NAMESPACES=$(kubectl get namespaces -o jsonpath='{.items[*].metadata.name}')
+                  echo "NAMESPACES: $NAMESPACES"
+                  # Iterate over each namespace
+                  for NAMESPACE in $NAMESPACES; do
+                    echo "Checking namespace: $NAMESPACE"
+                    # Get the list of custom resources in the current namespace that match the pattern
+                    RESOURCES=$(kubectl get $CUSTOM_RESOURCE -n $NAMESPACE -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n')
+                    echo "RESOURCES: $RESOURCES"
+                    if [[ -z $RESOURCES ]]; then
+                      echo "No matching resources found in namespace: $NAMESPACE"
+                      continue
+                    fi
+                    # Iterate over each matching resource
+                    for RESOURCE in $RESOURCES; do
+                      echo "Found matching resource: $RESOURCE in namespace: $NAMESPACE"
+                      # Get the list of pods in the current namespace created by the custom resource
+                      echo "Checking pods created by the custom resource: $RESOURCE"
+                      PODS=$(kubectl get pods -n $NAMESPACE --selector=app.kubernetes.io/created-by=$RESOURCE,app.kubernetes.io/name=oneagent -o jsonpath='{.items[*].metadata.name}')
+                      echo "Oneagent pods: $PODS"
+                      ALL_PODS_VALID=true  # Assume all pods are valid initially
+                      # Iterate over each pod
+                          for POD in $PODS; do
+                          echo "Checking logs for oneagent pod: $POD in CustomResource: $RESOURCE"
+                          # Get the logs of the current pod
+                          LOGS=$(kubectl logs -n $NAMESPACE $POD)  
+                          # Check the logs for the pattern
+                          if ! echo "$LOGS" | grep -q "$PATTERN"; then
+                              echo "Pattern not found in pod: $POD"
+                              ALL_PODS_VALID=false  # Mark as invalid if the pattern is not found
+                              break
+                          fi
+                          done
+                      # If any pod in the DaemonSet does not have the pattern, set exit status to failure
+                      if ! $ALL_PODS_VALID; then
+                      EXIT_STATUS=1
+                      fi
+                  done
+                  done
+                  if [[ $EXIT_STATUS -eq 0 ]]; then
+                    echo "Search successful: Pattern found in all pods of all matching DaemonSets."
+                  else
+                    echo "Search complete: Pattern not found in all pods of one or more DaemonSets."
+                  fi
+                  exit $EXIT_STATUS
+          restartPolicy: Never
+          serviceAccountName: test-dynatrace
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dynatrace-test-role
+rules:
+# Permissions for listing namespaces
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "list", "watch"]
+# Permissions for listing pods and getting pod logs
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+# Permissions for getting pod logs
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get"]
+# Permissions for listing the custom resource dynakube from the dynatrace.com apigroup
+- apiGroups: ["dynatrace.com"]
+  resources: ["dynakubes"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: test-dynatrace
+  namespace: dynatrace
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: custom-list-pods-logs-dynakube-binding
+subjects:
+- kind: ServiceAccount
+  name: test-dynatrace
+  namespace: dynatrace
+roleRef:
+  kind: ClusterRole
+  name: dynatrace-test-role
+  apiGroup: rbac.authorization.k8s.io
