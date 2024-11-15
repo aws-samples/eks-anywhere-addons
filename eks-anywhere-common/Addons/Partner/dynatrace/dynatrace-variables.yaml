@@ -5,7 +5,9 @@ metadata:
   name: dynatrace-variables
   namespace: flux-system
 data:
-  # name of secret containing tokens created by external-secret
+  # api url for dynatrace environment 
+  apiUrl: https://fjy55252.sprint.dynatracelabs.com/api
+  # name of secret containing tokens
   dynatracesecretname: "dt-secret"
   # name of cluster to be listed in Dynatrace
   dynakubename: "eks-flux-test-cluster"
