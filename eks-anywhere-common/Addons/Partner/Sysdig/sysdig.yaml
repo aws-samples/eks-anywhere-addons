@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: sysdig
-  namespace: sysdig-agent
+  namespace: sysdig
 spec:
   chart:
     spec:
@@ -15,7 +15,7 @@ spec:
         namespace: flux-system
       version: 1.67.5
   interval: 30s
-  targetNamespace: sysdig-agent
+  targetNamespace: sysdig
   values:
     global:
       sysdig:
