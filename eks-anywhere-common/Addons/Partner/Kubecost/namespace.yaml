@@ -3,6 +3,6 @@ kind: Namespace
 metadata:
   name: kubecost
   labels:
-      aws.conformance.vendor: kubecost
-      aws.conformance.vendor-solution: cost-analyzer
-      aws.conformance.vendor-solution-version: 2.1.0
+    aws.conformance.vendor: kubecost
+    aws.conformance.vendor-solution: cost-analyzer
+    aws.conformance.vendor-solution-version: 2.4.2
