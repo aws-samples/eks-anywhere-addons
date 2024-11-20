@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: sysdig-test-configmap
-  namespace: sysdig-agent
+  namespace: sysdig
 data:
   test.sh: |-
     #!/bin/bash

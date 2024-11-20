@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: sysdig-agent-test
-  namespace: sysdig-agent
+  namespace: sysdig
 spec:
   backoffLimit: 1
   template:
