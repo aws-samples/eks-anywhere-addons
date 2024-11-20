@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: sysdig-agent-role
-  namespace: sysdig-agent
+  namespace: sysdig
 rules:
   - apiGroups: [ "" ]
     resources: [ "pods" ]
@@ -15,7 +15,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: read-sysdig-agent
-  namespace: sysdig-agent
+  namespace: sysdig
 subjects:
   - kind: User
     name: system:serviceaccount:sysdig-agent:default
