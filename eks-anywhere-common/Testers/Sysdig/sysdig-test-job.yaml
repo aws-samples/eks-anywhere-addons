@@ -1,26 +1,29 @@
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
   name: sysdig-agent-test
   namespace: sysdig
 spec:
+  schedule: "0 1 * * *"
   backoffLimit: 1
-  template:
+  jobTemplate:
     spec:
-      containers:
-        - name: job
-          image: 'alpine/k8s:1.26.2'
-          imagePullPolicy: Always
-          command:
-            - /bin/test.sh
-          volumeMounts:
-            - name: sysdig-test-configmap-volume
-              mountPath: /bin/test.sh
-              readOnly: true
-              subPath: test.sh
-      volumes:
-        - name: sysdig-test-configmap-volume
-          configMap:
-            defaultMode: 0700
-            name: sysdig-test-configmap
-      restartPolicy: Never
+      template:
+        activeDeadlineSeconds: 1000
+        containers:
+          - name: job
+            image: 'alpine/k8s:1.26.2'
+            imagePullPolicy: Always
+            command:
+              - /bin/test.sh
+            volumeMounts:
+              - name: sysdig-test-configmap-volume
+                mountPath: /bin/test.sh
+                readOnly: true
+                subPath: test.sh
+        volumes:
+          - name: sysdig-test-configmap-volume
+            configMap:
+              defaultMode: 0700
+              name: sysdig-test-configmap
+        restartPolicy: Never
