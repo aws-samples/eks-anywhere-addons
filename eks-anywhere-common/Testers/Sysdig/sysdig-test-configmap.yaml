@@ -8,7 +8,7 @@ data:
     #!/bin/bash
     echo -e "\n # Validation process started #"
     kubectl wait pods -n sysdig -l app=sysdig-agent --for condition=Ready --timeout=150s
-    sleep 180
+    sleep 90
     pod=$(kubectl get pod -l app=sysdig-agent -n sysdig -o name)
     logs=$(kubectl logs -n sysdig $pod --tail -1)
     if grep "Communication with server successful" <<< "$logs"
