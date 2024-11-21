@@ -21,7 +21,7 @@ data:
         # Check if the above generated event has been successfully captured
         sleep 30
         logs=$(kubectl logs -n sysdig $pod --tail -1)
-        if grep "Taking action via policy: Sysdig Runtime Notable Events" <<< "$logs"
+        if grep "Sent msgtype=31" <<< "$logs"
         then
           echo -e "\n # Sysdig Agent successfully captured the event #"
           exit 0
