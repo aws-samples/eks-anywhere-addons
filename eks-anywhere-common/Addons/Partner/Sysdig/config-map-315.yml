@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: sysdig
   prNumber: "315"
-  commitHash: 8e4d6089cebde62ab4b71e5bb2d6aff23811303d
-  deployed: "1732190592"
+  commitHash: 4bce86677f5105910e45ab5f4018f8a4315c70f8
+  deployed: "1732190991"
   env: common
