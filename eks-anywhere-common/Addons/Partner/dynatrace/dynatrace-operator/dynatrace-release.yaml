@@ -10,14 +10,14 @@ spec:
       chart: dynatrace-operator
       sourceRef:
         kind: HelmRepository
-        name: dynatrace-operator-oci
+        name: dynatrace-operator
         namespace: flux-system
-      # version: "1.3.2"
-  install:
-    crds: CreateReplace
+      version: 0.10.1
   interval: 1m0s
-  targetNamespace: dynatrace
-  upgrade:
-    crds: CreateReplace
   values:
     installCRD: true
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  targetNamespace: dynatrace
