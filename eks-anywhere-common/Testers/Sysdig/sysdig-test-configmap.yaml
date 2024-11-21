@@ -15,8 +15,7 @@ data:
       if grep "Communication with server successful" <<< "$logs"
       then 
         echo -e "\n # Sysdig Agent connection with server was success #"
-        # Let's generate some more events
-        touch /usr/bin/risky-file                   # Write below bin
+        # Let's generate events
         history -c                                  # Try to clear bash history
         # Check if the above generated event has been successfully captured
         sleep 30
