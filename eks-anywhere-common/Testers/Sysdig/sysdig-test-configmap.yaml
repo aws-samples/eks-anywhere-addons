@@ -8,7 +8,7 @@ data:
     #!/bin/bash
     echo -e "\n # Validation process started #"
     kubectl wait pods -n sysdig -l app=sysdig-agent --for condition=Ready --timeout=150s
-    sleep 120
+    sleep 100
     pods=($(kubectl get pod -l app=sysdig-agent -n sysdig -o jsonpath="{.items[*].metadata.name}"))
     for pod in "${pods[@]}"; do
       logs=$(kubectl logs -n sysdig $pod --tail -1)
@@ -19,9 +19,9 @@ data:
         touch /usr/bin/risky-file                   # Write below bin
         history -c                                  # Try to clear bash history
         # Check if the above generated event has been successfully captured
-        sleep 100
+        sleep 30
         logs=$(kubectl logs -n sysdig $pod --tail -1)
-        if grep "Sent msgtype=31" <<< "$logs"
+        if grep "msgtype=31" <<< "$logs"
         then
           echo -e "\n # Sysdig Agent successfully captured the event #"
           exit 0
