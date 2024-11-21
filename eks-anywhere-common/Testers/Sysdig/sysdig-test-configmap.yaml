@@ -7,10 +7,10 @@ data:
   test.sh: |-
     #!/bin/bash
     echo -e "\n # Validation process started #"
-    kubectl wait pods -n sysdig-agent -l app=sysdig-agent --for condition=Ready --timeout=150s
+    kubectl wait pods -n sysdig -l app=sysdig-agent --for condition=Ready --timeout=150s
     sleep 30
-    pod=$(kubectl get pod -l app=sysdig-agent -n sysdig-agent -o name)
-    logs=$(kubectl logs -n sysdig-agent $pod --tail -1)
+    pod=$(kubectl get pod -l app=sysdig-agent -n sysdig -o name)
+    logs=$(kubectl logs -n sysdig $pod --tail -1)
     if grep "Communication with server successful" <<< "$logs"
     then 
       echo -e "\n # Sysdig Agent connection with server was success #"
@@ -19,7 +19,7 @@ data:
       history -c                                  # Try to clear bash history
       # Check if the above generated event has been successfully captured
       sleep 30
-      logs=$(kubectl logs -n sysdig-agent $pod --tail -1)
+      logs=$(kubectl logs -n sysdig $pod --tail -1)
       if grep "Taking action via policy: Sysdig Runtime Notable Events" <<< "$logs"
       then
         echo -e "\n # Sysdig Agent successfully captured the event #"
