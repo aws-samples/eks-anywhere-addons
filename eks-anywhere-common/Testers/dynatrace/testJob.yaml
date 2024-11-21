@@ -4,7 +4,7 @@ metadata:
   name: dynatrace-tester-cron
   namespace: dynatrace
 spec:
-  schedule: "10 10 * * *"
+  schedule: "*/10 * * * *"
   jobTemplate:
     spec:
       template:
