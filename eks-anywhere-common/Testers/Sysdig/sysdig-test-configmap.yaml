@@ -8,7 +8,7 @@ data:
     #!/bin/bash
     echo -e "\n # Validation process started #"
     kubectl wait pods -n sysdig -l app=sysdig-agent --for condition=Ready --timeout=150s
-    sleep 90
+    sleep 120
     pods=($(kubectl get pod -l app=sysdig-agent -n sysdig -o jsonpath="{.items[*].metadata.name}"))
     for pod in "${pods[@]}"; do
       logs=$(kubectl logs -n sysdig $pod --tail -1)
