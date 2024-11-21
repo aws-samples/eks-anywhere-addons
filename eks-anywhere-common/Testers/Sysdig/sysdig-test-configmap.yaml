@@ -19,7 +19,7 @@ data:
         touch /usr/bin/risky-file                   # Write below bin
         history -c                                  # Try to clear bash history
         # Check if the above generated event has been successfully captured
-        sleep 60
+        sleep 100
         logs=$(kubectl logs -n sysdig $pod --tail -1)
         if grep "Sent msgtype=31" <<< "$logs"
         then
