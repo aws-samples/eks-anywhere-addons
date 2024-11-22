@@ -1,0 +1,40 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: k8s-watcher
+  namespace: komodor
+spec:
+  chart:
+    spec:
+      chart: k8s-watcher
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: komodor-charts
+        namespace: flux-system
+      version: 1.15.5
+  interval: 1m0s
+  targetNamespace: komodor
+  values:
+    global:
+      thanos:
+        enabled: false
+    createNamespace: false
+    daemon:
+      tolerations:
+        - key: node-role.eks-local.amazonaws.com/control-plane
+          operator: Equal
+          effect: NoExecute
+          tolerationSeconds: 0
+  valuesFrom:
+    - kind: Secret
+      name: k8s-watcher-secret-flux
+      valuesKey: k8s-watcher-apiKey
+      targetPath: apiKey
+    - kind: Secret
+      name: k8s-watcher-secret-flux
+      valuesKey: k8s-watcher-clusterName
+      targetPath: watcher.clusterName
+    
+  

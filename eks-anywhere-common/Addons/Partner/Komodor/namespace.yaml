@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: komodor
+  labels:
+      aws.conformance.vendor: komodor
+      aws.conformance.vendor-solution: k8s-watcher
+      aws.conformance.vendor-solution-version: 1.15.5
