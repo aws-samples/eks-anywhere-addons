@@ -25,8 +25,8 @@ spec:
       clusterConfig:
         name: myclusterName # Place here a meaningful cluster name to identify it
     agent:
-      #ebpf:
-      #  enabled: true    
+      ebpf:
+        enabled: true    
       tolerations: []   # Nullifying tolerations disallows the agents from being executed in the Control Plane
       # resourceProfile: custom
       # resources:
