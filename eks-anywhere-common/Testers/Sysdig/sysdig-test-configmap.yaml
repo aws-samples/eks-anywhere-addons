@@ -12,7 +12,7 @@ data:
     pods=($(kubectl get pod -l app=sysdig-agent -n sysdig -o jsonpath="{.items[*].metadata.name}"))
     for pod in "${pods[@]}"; do
       logs=$(kubectl logs -n sysdig $pod --tail -1)
-      if grep "to collector at host" <<< "$logs"
+      if grep "Communication with server successful" <<< "$logs"
       then 
         echo -e "\n # Sysdig Agent connection with server was success #"
         # Let's generate events
