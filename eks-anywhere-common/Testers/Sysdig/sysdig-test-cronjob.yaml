@@ -5,9 +5,9 @@ metadata:
   namespace: sysdig
 spec:
   schedule: "0 1 * * *"
+  backoffLimit: 1
   jobTemplate:
     spec:
-      backoffLimit: 1
       template:
         activeDeadlineSeconds: 1000
         spec:
