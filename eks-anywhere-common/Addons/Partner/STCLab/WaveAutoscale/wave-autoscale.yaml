@@ -11,7 +11,7 @@ spec:
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
-        name: wave-autoscale-charts
+        name: wave-autoscale-helm
         namespace: flux-system
       version: 1.10.0
   interval: 1m0s

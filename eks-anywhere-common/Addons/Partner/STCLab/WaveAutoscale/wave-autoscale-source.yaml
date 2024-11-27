@@ -2,7 +2,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: wave-autoscale-charts
+  name: wave-autoscale-helm
   namespace: wave-autoscale
 spec:
   interval: 30s
