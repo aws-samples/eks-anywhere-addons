@@ -3,7 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
   name: wave-autoscale-helm
-  namespace: wave-autoscale
+  namespace: flux-system
 spec:
   interval: 30s
   url: https://release.waveautoscale.io/ghcr-helm/wa
