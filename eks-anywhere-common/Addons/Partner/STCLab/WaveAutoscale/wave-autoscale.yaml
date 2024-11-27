@@ -17,6 +17,8 @@ spec:
   interval: 1m0s
   targetNamespace: wave-autoscale
   values:
+    ghcr:
+      enabled: true
     spec:
       core:
         env:
