@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: kubecost
   prNumber: "317"
-  commitHash: c26c2197f5e8e6b35d001e1ab6692b68c164f6dd
-  deployed: "1732645325"
+  commitHash: 6165c4a9cf8d2bf3cc62a79e722848fbf865627f
+  deployed: "1732016860"
   env: common
