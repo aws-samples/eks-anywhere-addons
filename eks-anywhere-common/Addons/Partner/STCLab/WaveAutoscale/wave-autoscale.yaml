@@ -36,12 +36,12 @@ spec:
       webConsole:
         resources:
           requests:
-            cpu: 300m
+            cpu: 250m
             memory: 300Mi
       autopilot:
         resources:
           requests:
-            cpu: 500m
+            cpu: 250m
             memory: 300Mi
   valuesFrom:
     - kind: Secret
