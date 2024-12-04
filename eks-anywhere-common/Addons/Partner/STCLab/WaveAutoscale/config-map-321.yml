@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: wave-autoscale
   prNumber: "321"
-  commitHash: 9f22fd7758036e7538b1382fb95644a6edd20df2
-  deployed: "1733185038"
+  commitHash: 7fd8487080f3729da67792d9aad1f74998ee8393
+  deployed: "1733274929"
   env: common
