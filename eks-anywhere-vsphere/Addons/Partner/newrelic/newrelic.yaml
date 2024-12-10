@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: newrelic-charts
         namespace: flux-system
-      version: 5.0.101
+      version: 5.0.104
   interval: 1m0s
   targetNamespace: newrelic
   values:
