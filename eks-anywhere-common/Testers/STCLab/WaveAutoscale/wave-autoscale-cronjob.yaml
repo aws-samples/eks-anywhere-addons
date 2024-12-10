@@ -1,0 +1,103 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: wave-autoscale-healthcheck
+  namespace: wave-autoscale
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: wave-autoscale-sa
+          containers:
+            - name: wave-autoscale-healthcheck
+              image: alpine/k8s:1.26.9
+              command:
+                - /bin/sh
+              args:
+                - -c
+                - |
+                  #
+                  # Health check for Wave Autoscale
+                  #
+                  echo "Start a health check for Wave Autoscale";
+
+                  # Core health check
+                  response=$(curl -s http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3024/)
+                  name=$(echo "$response" | jq -r '.name')
+                  if [ "$name" = "wa-api-server" ]; then
+                    echo "Wave Autoscale Core working Successful.";
+                  else
+                    echo "Failed to fetch Wave Autoscale Core. Response was $response";
+                    exit 1;
+                  fi
+
+                  # License check
+                  response=$(curl -s http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3024/api/info)
+                  license=$(echo "$response" | jq -r '.license')
+                  if [ "$license" = "{}" ]; then
+                    echo "Wave Autoscale License is invalid: empty map detected.";
+                    exit 1;
+                  else
+                    echo "Wave Autoscale License is valid.";
+                  fi
+
+                  # Core - self statefulset check
+                  response=$(curl -s http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3024/api/k8s/statefulsets/wave-autoscale/wave-autoscale)
+                  statefulset_name=$(echo "$response" | jq -r '.k8s_definition.name')
+                  if [ "$statefulset_name" = "wave-autoscale" ]; then
+                    echo "Wave Autoscale Statefulset working Successful.";
+                  else
+                    echo "Failed to fetch Wave Autoscale Statefulset. Response was $response";
+                    exit 1;
+                  fi
+
+                  # Web Console health check
+                  response=$(curl -s http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3025/);
+                  redirect_path=$(echo "$response")
+                  if [ "$redirect_path" = "/app/k8s" ]; then
+                    echo "Wave Autoscale Web Console working Successful.";
+                  else
+                    echo "Failed to fetch Wave Autoscale Web Console. Response was $response";
+                    exit 1;
+                  fi
+
+                  # Autopilot health check
+                  response=$(curl -s http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3026/)
+                  name=$(echo "$response" | jq -r '.name')
+                  if [ "$name" = "wa-autopilot" ]; then
+                    echo "Wave Autoscale Autopilot working Successful.";
+                  else
+                    echo "Failed to fetch Wave Autoscale Autopilot. Response was $response";
+                    exit 1;
+                  fi
+
+                  #
+                  # Autopilot behavior check
+                  #
+                  echo "Start checking Autopilot behavior";
+
+                  # 1. Agent Running Check
+                  AGENT_POD_LIST=$(kubectl get pods -n wave-autoscale -l app.kubernetes.io/name=wave-autoscale-agent -o jsonpath='{.items[*].metadata.name}')
+                  AGENT_ALL_RUNNING=true
+                  for POD in $AGENT_POD_LIST; do
+                    STATUS=$(kubectl get pod "$POD" -n wave-autoscale -o jsonpath='{.status.phase}')
+                    if [ "$STATUS" != "Running" ]; then
+                      echo "Agent Pod $POD is not running (current status: $STATUS)"
+                      AGENT_ALL_RUNNING=false
+                    else
+                      echo "Agent Pod $POD is running.."
+                    fi
+                  done
+                  if [ "$AGENT_ALL_RUNNING" = true ]; then
+                    echo "All Agent Pods in DaemonSet '$DAEMONSET_NAME' are running."
+                  else
+                    echo "Some Agent Pods in DaemonSet '$DAEMONSET_NAME' are not running."
+                    exit 1
+                  fi
+
+
+                  exit 0;
+          restartPolicy: Never
+      backoffLimit: 1
