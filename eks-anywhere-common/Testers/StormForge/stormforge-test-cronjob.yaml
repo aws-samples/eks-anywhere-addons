@@ -4,7 +4,7 @@ metadata:
   name: stormforge-test-cronjob
   namespace: stormforge
 spec:
-  schedule: "* 8 * * *" # Daily @ 8:00am
+  schedule: "0 8 * * *" # Daily @ 8:00am
   jobTemplate:
     spec:
       backoffLimit: 4
