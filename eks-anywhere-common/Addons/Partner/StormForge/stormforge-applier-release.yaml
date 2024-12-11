@@ -1,0 +1,19 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: stormforge-applier-release
+  namespace: stormforge
+spec:
+  releaseName: stormforge-applier
+  chart:
+    spec:
+      chart: stormforge-applier
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: stormforge-charts
+        namespace: flux-system
+      version: 2.6.0
+  interval: 5m0s
+  targetNamespace: stormforge
