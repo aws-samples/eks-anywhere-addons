@@ -138,7 +138,7 @@ metadata:
 spec:
   provider:
     aws:  # set secretStore provider to AWS.
-      service: ParameterStore # Configure service to be Parameter Store
+      service: SecretsManager # Configure service to be Secrets Manager
       region: us-west-2  # Region where the secret is.
       auth:
         secretRef:
@@ -209,9 +209,9 @@ kubectl get services -n $NAMESPACE
 🚀 Add Kustomization for testing your test job :
 
 ```bash
-flux create kustomization addons-snow-partner \
+flux create kustomization addons-snow-partner-testers \
     --source=addons \
-    --path="./eks-anywhere-snow/testers/Partner" \
+    --path="./eks-anywhere-snow/Testers/Partner" \
     --prune=true \
     --interval=5m 
 ```
