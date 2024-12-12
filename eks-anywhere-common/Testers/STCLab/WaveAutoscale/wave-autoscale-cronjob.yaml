@@ -1,0 +1,277 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: wave-autoscale-healthcheck
+  namespace: wave-autoscale
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: wave-autoscale-sa
+          containers:
+            - name: wave-autoscale-healthcheck
+              image: alpine/k8s:1.26.9
+              command:
+                - /bin/sh
+              args:
+                - -c
+                - |
+                  API_SERVER="wave-autoscale-svc.wave-autoscale.svc.cluster.local:3024"
+                  WEB_SERVER="wave-autoscale-svc.wave-autoscale.svc.cluster.local:3025"
+                  ML_SERVER="wave-autoscale-svc.wave-autoscale.svc.cluster.local:3026"
+
+                  #
+                  # Health check for Wave Autoscale
+                  #
+                  echo " ## Start a health check for Wave Autoscale";
+
+                  # Core health check
+                  response=$(curl -s http://$API_SERVER/)
+                  name=$(echo "$response" | jq -r '.name')
+                  if [ "$name" = "wa-api-server" ]; then
+                    echo "Wave Autoscale Core working Successful.";
+                  else
+                    echo "[ERROR] Failed to fetch Wave Autoscale Core. Response was $response";
+                    exit 1;
+                  fi
+
+                  # License check
+                  response=$(curl -s http://$API_SERVER/api/info)
+                  license=$(echo "$response" | jq -r '.license')
+                  if [ "$license" = "{}" ]; then
+                    echo "[ERROR] Wave Autoscale License is invalid: empty map detected.";
+                    exit 1;
+                  else
+                    echo "Wave Autoscale License is valid.";
+                  fi
+
+                  # Core - self statefulset check
+                  response=$(curl -s http://$API_SERVER/api/k8s/statefulsets/wave-autoscale/wave-autoscale)
+                  statefulset_name=$(echo "$response" | jq -r '.k8s_definition.name')
+                  if [ "$statefulset_name" = "wave-autoscale" ]; then
+                    echo "Wave Autoscale Statefulset working Successful.";
+                  else
+                    echo "[ERROR] Failed to fetch Wave Autoscale Statefulset. Response was $response";
+                    exit 1;
+                  fi
+
+                  # Web Console health check
+                  response=$(curl -s http://$WEB_SERVER/);
+                  redirect_path=$(echo "$response")
+                  if [ "$redirect_path" = "/app/k8s" ]; then
+                    echo "Wave Autoscale Web Console working Successful.";
+                  else
+                    echo "[ERROR] Failed to fetch Wave Autoscale Web Console. Response was $response";
+                    exit 1;
+                  fi
+
+                  # Autopilot health check
+                  response=$(curl -s http://$ML_SERVER/)
+                  name=$(echo "$response" | jq -r '.name')
+                  if [ "$name" = "wa-autopilot" ]; then
+                    echo "Wave Autoscale Autopilot working Successful.";
+                  else
+                    echo "[ERROR] Failed to fetch Wave Autoscale Autopilot. Response was $response";
+                    exit 1;
+                  fi
+
+                  #
+                  # Autopilot scaleout check
+                  #
+                  echo " ## Start checking scaleout";
+
+                  # 1. Agent Running Check
+                  AGENT_POD_LIST=$(kubectl get pods -n wave-autoscale -l app.kubernetes.io/name=wave-autoscale-agent -o jsonpath='{.items[*].metadata.name}')
+                  AGENT_ALL_RUNNING=true
+                  for POD in $AGENT_POD_LIST; do
+                    STATUS=$(kubectl get pod "$POD" -n wave-autoscale -o jsonpath='{.status.phase}')
+                    if [ "$STATUS" != "Running" ]; then
+                      echo "Agent Pod $POD is not running (current status: $STATUS)"
+                      AGENT_ALL_RUNNING=false
+                    else
+                      echo "Agent Pod $POD is running.."
+                    fi
+                  done
+                  if [ "$AGENT_ALL_RUNNING" = true ]; then
+                    echo "All Agent Pods in DaemonSet are running."
+                  else
+                    echo "[ERROR] Some Agent Pods in DaemonSet are not running."
+                    exit 1;
+                  fi
+
+                  # 2. K8s agent setting save
+                  response=$(curl -s -X POST -H "Content-Type: application/json" -d \
+                  '{
+                    "metrics_source": {
+                      "kind": "wave-agent",
+                      "wave_agent": {
+                          "interval_seconds": 10
+                      }
+                    }
+                  }' http://$API_SERVER/api/k8s/config)
+                  kind=$(echo "$response" | jq -r '.metrics_source.kind')
+                  if [ "$kind" = "wave-agent" ]; then
+                    echo "K8s agent setting save successful."
+                  else
+                    echo "[ERROR] Failed to save K8s agent setting. Response was $response";
+                    exit 1;
+                  fi
+
+                  # 3. test deployment autopilot on
+                  # 3.1. check the current setting before saving
+                  response=$(curl -s http://$API_SERVER/api/k8s/deployments/wave-autoscale/wa-test-dp)
+                  deployment_data=$(echo "$response" | jq -r '.k8s_deployment')
+                  if [ "$deployment_data" = "null" ]; then
+                    response=$(curl -s -X POST -H "Content-Type: application/json" -d \
+                    '{
+                      "k8s_deployment": {
+                        "enabled":true,
+                        "autopilot_enabled":true
+                      },
+                      "k8s_deployment_config": {
+                        "config_type":"default",
+                        "strategy":"performance",
+                        "application_type":"cpu_intensive",
+                        "load":"network_in",
+                        "forecast_horizon":1,
+                        "min_replicas":1,
+                        "max_replicas":3,
+                        "fallback_cpu_utilization":50,
+                        "threshold":{},
+                        "stabilization_window_seconds":60
+                      }
+                    }' http://$API_SERVER/api/k8s/deployments/wave-autoscale/wa-test-dp/default)
+                    if [ "$response" = "{}" ]; then
+                      echo "Test deployment autopilot on successful.";
+                    else
+                      echo "[ERROR] Failed to turn on test deployment autopilot. Response was $response";
+                      exit 1;
+                    fi
+                  fi
+
+                  # 3. check test K8s Deployment replicas 1 (min replicas)
+                  DEPLOYMENT_REPLICAS=$(kubectl get deployment wa-test-dp -n wave-autoscale -o jsonpath='{.status.availableReplicas}')
+                  if [ "$DEPLOYMENT_REPLICAS" -eq 1 ]; then
+                    echo "Test deployment replicas is $DEPLOYMENT_REPLICAS";
+                  else
+                    echo "[ERROR] The test deployment replica must be the minimum replica. Current replicas: $DEPLOYMENT_REPLICAS";
+                    exit 1;
+                  fi
+
+                  # 4. load test for test deployment
+                  echo "Triggering K6 load test" > /shared/trigger;
+                  echo "Waiting for 40 seconds...";
+                  sleep 40
+
+                  # 5. check test K8s Deployment replicas
+                  DEPLOYMENT_REPLICAS=$(kubectl get deployment wa-test-dp -n wave-autoscale -o jsonpath='{.status.availableReplicas}')
+                  if [ "$DEPLOYMENT_REPLICAS" -gt 1 ]; then
+                    echo "Test deployment replicas are scaled up. Current replicas: $DEPLOYMENT_REPLICAS";
+                  else
+                    echo "[ERROR] Failed to scale up test deployment replicas. Current replicas: $DEPLOYMENT_REPLICAS";
+                    exit 1;
+                  fi
+
+
+                  exit 0;
+              volumeMounts:
+                - name: shared-volume
+                  mountPath: /shared
+            - name: k6-container
+              image: grafana/k6:0.55.0
+              ports:
+                - containerPort: 3030
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "Starting K6 container";
+                  while true; do
+                    if [ -f /shared/trigger ]; then
+                      echo "Load test triggered!";
+                      rm /shared/trigger;
+
+                      k6 run - < <(echo "
+                      import http from 'k6/http';
+                      export let options = {
+                        vus: 10,
+                        duration: '30s',
+                      };
+                      const payload = JSON.stringify(
+                        [
+                          {
+                            'id': 1,
+                            'cpu-bound': 12
+                          }
+                        ]
+                      );
+                      const params = {
+                        headers: {
+                          'Content-Type': 'application/json',
+                        }
+                      };
+                      export default function () {
+                        http.post('http://wa-test-svc.wave-autoscale.svc.cluster.local:3100/process', payload, params);
+                      }")
+                      break;
+                    fi
+                    sleep 1;
+                  done
+                  exit 0;
+              volumeMounts:
+                - name: shared-volume
+                  mountPath: /shared
+          restartPolicy: Never
+          volumes:
+            - name: shared-volume
+              emptyDir: {}
+      backoffLimit: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: wave-autoscale
+  name: wa-test-dp
+  labels:
+    app: wa-test-dp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wa-test-dp
+  template:
+    metadata:
+      labels:
+        app: wa-test-dp
+    spec:
+      containers:
+        - name: wa-test-dp
+          image: public.ecr.aws/wave-autoscale/wa-simulation-app:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "3100"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+          ports:
+            - containerPort: 3100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: wave-autoscale
+  name: wa-test-svc
+  labels:
+    app: wa-test-dp
+spec:
+  selector:
+    app: wa-test-dp
+  ports:
+    - protocol: "TCP"
+      port: 3100
+      targetPort: 3100
+      name: wa-test-dp

@@ -1,0 +1,50 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: wave-autoscale
+  namespace: wave-autoscale
+spec:
+  chart:
+    spec:
+      chart: wave-autoscale-helm
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: wave-autoscale-helm
+        namespace: flux-system
+      version: 1.10.2
+  interval: 1m0s
+  targetNamespace: wave-autoscale
+  values:
+    ghcr:
+      enabled: true
+    spec:
+      core:
+        resources:
+          requests:
+            cpu: 250m
+            memory: 300Mi
+        env:
+          - name: WA_LICENSE
+            valueFrom:
+              secretKeyRef:
+                name: wa-secret
+                key: WA_LICENSE
+          - name: WA_API_SERVER_HOST
+            value: "0.0.0.0"
+      webConsole:
+        resources:
+          requests:
+            cpu: 250m
+            memory: 300Mi
+      autopilot:
+        resources:
+          requests:
+            cpu: 250m
+            memory: 300Mi
+  valuesFrom:
+    - kind: Secret
+      name: wa-secret
+      valuesKey: GHRC_TOKEN
+      targetPath: ghcr.dockerconfigjson
