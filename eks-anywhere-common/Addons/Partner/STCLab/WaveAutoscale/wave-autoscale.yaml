@@ -23,13 +23,14 @@ spec:
       core:
         env:
           - name: WA_LICENSE
-            valueFrom:
-              secretKeyRef:
-                name: wa-secret
-                key: WA_LICENSE
+            value: ""
           - name: WA_API_SERVER_HOST
             value: "0.0.0.0"
   valuesFrom:
+    - kind: Secret
+      name: wa-secret
+      valuesKey: WA_LICENSE
+      targetPath: core.env.0.value
     - kind: Secret
       name: wa-secret
       valuesKey: GHRC_TOKEN
