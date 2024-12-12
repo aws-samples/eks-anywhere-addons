@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: wave-autoscale-helm
         namespace: flux-system
-      version: 1.10.0
+      version: 1.10.2
   interval: 1m0s
   targetNamespace: wave-autoscale
   values:
