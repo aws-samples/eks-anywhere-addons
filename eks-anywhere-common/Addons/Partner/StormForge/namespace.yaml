@@ -1,9 +1,0 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: stormforge
-  labels:
-    aws.conformance.vendor: stormforge
-    aws.conformance.vendor-solution: optimize-live
-    aws.conformance.vendor-solution-version: 2.16.1
