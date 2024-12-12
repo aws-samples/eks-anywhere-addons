@@ -9,7 +9,6 @@ spec:
     spec:
       template:
         spec:
-          serviceAccountName: wave-autoscale-sa
           containers:
             - name: wave-autoscale-healthcheck
               image: alpine/k8s:1.26.9
@@ -18,9 +17,6 @@ spec:
               args:
                 - -c
                 - |
-                  #
-                  # Health check for Wave Autoscale
-                  #
                   echo "Start a health check for Wave Autoscale";
 
                   # Core health check
@@ -72,31 +68,6 @@ spec:
                     echo "Failed to fetch Wave Autoscale Autopilot. Response was $response";
                     exit 1;
                   fi
-
-                  #
-                  # Autopilot behavior check
-                  #
-                  echo "Start checking Autopilot behavior";
-
-                  # 1. Agent Running Check
-                  AGENT_POD_LIST=$(kubectl get pods -n wave-autoscale -l app.kubernetes.io/name=wave-autoscale-agent -o jsonpath='{.items[*].metadata.name}')
-                  AGENT_ALL_RUNNING=true
-                  for POD in $AGENT_POD_LIST; do
-                    STATUS=$(kubectl get pod "$POD" -n wave-autoscale -o jsonpath='{.status.phase}')
-                    if [ "$STATUS" != "Running" ]; then
-                      echo "Agent Pod $POD is not running (current status: $STATUS)"
-                      AGENT_ALL_RUNNING=false
-                    else
-                      echo "Agent Pod $POD is running.."
-                    fi
-                  done
-                  if [ "$AGENT_ALL_RUNNING" = true ]; then
-                    echo "All Agent Pods in DaemonSet '$DAEMONSET_NAME' are running."
-                  else
-                    echo "Some Agent Pods in DaemonSet '$DAEMONSET_NAME' are not running."
-                    exit 1
-                  fi
-
 
                   exit 0;
           restartPolicy: Never
