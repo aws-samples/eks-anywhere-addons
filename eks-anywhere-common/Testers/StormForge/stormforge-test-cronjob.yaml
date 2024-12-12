@@ -4,7 +4,7 @@ metadata:
   name: stormforge-test-cronjob
   namespace: stormforge
 spec:
-  schedule: "* 8 * * *" # Daily @ 8:00am
+  schedule: "30 */6 * * *" # Every six hours, at half-past.
   jobTemplate:
     spec:
       backoffLimit: 4
@@ -23,10 +23,6 @@ spec:
                 name: stormforge-agent-auth
             - secretRef:
                 name: stormforge-agent-env
-            resources:
-              requests:
-                cpu: 10m
-                memory: 224Mi
             command:
             - '/bin/sh'
             - '-c'

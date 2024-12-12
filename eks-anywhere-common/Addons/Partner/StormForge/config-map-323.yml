@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: stormforge
   prNumber: "323"
-  commitHash: cf862f988fc55dc9f157236a49759eeec76c1f5e
-  deployed: "1733946306"
+  commitHash: 2c7e6dbec2791132f07c9239453b1f7adf03d6ef
+  deployed: "1733945298"
   env: common
