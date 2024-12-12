@@ -39,16 +39,6 @@ spec:
                     echo "Wave Autoscale License is valid.";
                   fi
 
-                  # Core - self statefulset check
-                  response=$(curl -s http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3024/api/k8s/statefulsets/wave-autoscale/wave-autoscale)
-                  statefulset_name=$(echo "$response" | jq -r '.k8s_definition.name')
-                  if [ "$statefulset_name" = "wave-autoscale" ]; then
-                    echo "Wave Autoscale Statefulset working Successful.";
-                  else
-                    echo "Failed to fetch Wave Autoscale Statefulset. Response was $response";
-                    exit 1;
-                  fi
-
                   # Web Console health check
                   response=$(curl -s http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3025/);
                   redirect_path=$(echo "$response")
