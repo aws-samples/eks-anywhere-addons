@@ -4,7 +4,7 @@ metadata:
   name: wave-autoscale-healthcheck
   namespace: wave-autoscale
 spec:
-  schedule: "*/10 * * * *"
+  schedule: "*/1 * * * *"
   jobTemplate:
     spec:
       template:
@@ -16,51 +16,49 @@ spec:
                 - /bin/sh
               args:
                 - -c
-                - |
-                  echo "Start a health check for Wave Autoscale";
-
-                  # Core health check
-                  response=$(curl -s -w "\n200" http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3024/)
-                  status_code=$(echo "$response" | tail -n1);
-                  if [ "$status_code" -ne 200 ]; then
-                    echo "Failed to fetch Wave Autoscale Core. Response was $response";
-                    exit 1;
+                - >-
+                  echo Start a health check for Wave Autoscale;
+                  response=$(curl -sL http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3024/);
+                  code=$(echo ${response} | jq .code);
+                  if [ "$code" -eq 200 ]; then
+                    echo "Wave Autoscale Core working Successful."
+                    exit 0
+                  else 
+                    echo "Failed to fetch Wave Autoscale Core. Response was $response"
+                    exit 1
                   fi
-                  echo "Wave Autoscale Core working Successful.";
-
-                  # License check
-                  response=$(curl -s -w "\n200" http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3024/api/info);
-                  status_code=$(echo "$response" | tail -n1);
-                  body=$(echo "$response" | head -n-1);
-                  if [ "$status_code" -ne 200 ]; then
-                    echo "Wave Autoscale License is invalid. Response was $response";
-                    exit 1;
+                  response=$(curl -sL http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3024/api/info);
+                  code=$(echo ${response} | jq .code);
+                  if [ "$code" -eq 200 ]; then
+                    license=$(echo "$response" | jq -r '.license')
+                    if [ "$license" == "{}" ]; then
+                      echo "Wave Autoscale License is invalid: empty map detected."
+                      exit 1
+                    else
+                      echo "Wave Autoscale License is valid."
+                      exit 0
+                    fi
+                  else 
+                    echo "Wave Autoscale License is is invalid."
+                    exit 1
                   fi
-                  license=$(echo "$body" | jq -r '.license');
-                  if [ "$license" = "{}" ]; then
-                    echo "Wave Autoscale License is invalid: empty map detected.";
-                    exit 1;
+                  response=$(curl -sL http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3025/);
+                  code=$(echo ${response} | jq .code);
+                  if [ "$code" -eq 200 ]; then
+                    echo "Wave Autoscale Web Console working Successful."
+                    exit 0
+                  else 
+                    echo "Failed to fetch Wave Autoscale Web Console. Response was $response"
+                    exit 1
                   fi
-                  echo "Wave Autoscale License is valid.";
-
-                  # Web Console health check
-                  response=$(curl -s -w "\n200" http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3025/);
-                  status_code=$(echo "$response" | tail -n1);
-                  if [ "$status_code" -ne 200 ]; then
-                    echo "Failed to fetch Wave Autoscale Web Console. Response was $response";
-                    exit 1;
+                  response=$(curl -sL http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3026/);
+                  code=$(echo ${response} | jq .code);
+                  if [ "$code" -eq 200 ]; then
+                    echo "Wave Autoscale Autopilot working Successful."
+                    exit 0
+                  else 
+                    echo "Failed to fetch Wave Autoscale Autopilot. Response was $response"
+                    exit 1
                   fi
-                  echo "Wave Autoscale Web Console working Successful.";
-
-                  # Autopilot health check
-                  response=$(curl -s -w "\n200" http://wave-autoscale-svc.wave-autoscale.svc.cluster.local:3026/);
-                  status_code=$(echo "$response" | tail -n1);
-                  if [ "$status_code" -ne 200 ]; then
-                    echo "Failed to fetch Wave Autoscale Autopilot. Response was $response";
-                    exit 1;
-                  fi
-                  echo "Wave Autoscale Autopilot working Successful.";
-
-                  exit 0;
           restartPolicy: Never
       backoffLimit: 1
