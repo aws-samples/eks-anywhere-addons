@@ -4,7 +4,7 @@ metadata:
   name: wave-autoscale-healthcheck
   namespace: wave-autoscale
 spec:
-  schedule: "*/1 * * * *"
+  schedule: "*/10 * * * *"
   jobTemplate:
     spec:
       template:
@@ -31,7 +31,7 @@ spec:
                   code=$(echo ${response} | jq .code);
                   if [ "$code" -eq 200 ]; then
                     license=$(echo "$response" | jq -r '.license')
-                    if [ "$license" == "{}" ]; then
+                    if [[ "$license" == "{}" ]]; then
                       echo "Wave Autoscale License is invalid: empty map detected."
                       exit 1
                     else
