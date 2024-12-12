@@ -21,10 +21,6 @@ spec:
       enabled: true
     spec:
       core:
-        resources:
-          requests:
-            cpu: 250m
-            memory: 300Mi
         env:
           - name: WA_LICENSE
             valueFrom:
@@ -33,16 +29,6 @@ spec:
                 key: WA_LICENSE
           - name: WA_API_SERVER_HOST
             value: "0.0.0.0"
-      webConsole:
-        resources:
-          requests:
-            cpu: 300m
-            memory: 300Mi
-      autopilot:
-        resources:
-          requests:
-            cpu: 500m
-            memory: 300Mi
   valuesFrom:
     - kind: Secret
       name: wa-secret
