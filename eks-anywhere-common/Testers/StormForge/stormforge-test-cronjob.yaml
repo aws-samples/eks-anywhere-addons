@@ -1,0 +1,71 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: stormforge-test-cronjob
+  namespace: stormforge
+spec:
+  schedule: "0 8 * * *" # Daily @ 8:00am
+  jobTemplate:
+    spec:
+      backoffLimit: 4
+      template:
+        spec:
+          activeDeadlineSeconds: 1800
+          restartPolicy: Never
+          containers:
+          - name: stormforge-test-job
+            image: badouralix/curl-jq:alpine
+            env:
+            - name: CLI_VERSION
+              value: "5.1.9"
+            envFrom:
+            - secretRef:
+                name: stormforge-agent-auth
+            - secretRef:
+                name: stormforge-agent-env
+            resources:
+              requests:
+                cpu: 10m
+                memory: 224Mi
+            command:
+            - '/bin/sh'
+            - '-c'
+            - |
+              # Setup: Fetch the StormForge CLI tool
+              while :; do
+                [ "$(uname -sm)" = "Linux aarch64" ] && arch=arm64 || arch=amd64
+                curl -L "https://downloads.stormforge.io/stormforge-cli/v${CLI_VERSION}/stormforge_${CLI_VERSION}_linux_${arch}.tar.gz" | tar -xz
+                if [ $? = 0 ]; then
+                  chmod a+x ./stormforge
+                  mv ./stormforge /usr/local/bin
+                  break
+                fi
+                sleep 5
+              done
+
+              # Tidy: delete any old and inactive eksa test clusters that may still be registered
+              stormforge get clusters --state Inactive -o json \
+                | jq -r '.items[].name | select(. | test("^eksa-test-"))' \
+                | xargs --no-run-if-empty stormforge delete clusters
+
+              # Validate: when the cluster name has been registered, is not Inactive, and
+              # shows both products connected, then Optimize Live is working.
+              while :; do
+                echo "checking for stormforge-agent, stormforge-applier registration on $STORMFORGE_CLUSTER_NAME"
+                if stormforge get cluster "$STORMFORGE_CLUSTER_NAME" -o json \
+                     | jq -e 'all(.items[];
+                                  (.status.phase == "Created")
+                                and
+                                  all(.stormforge.products | map(.name);
+                                      any(index("stormforge-agent"))
+                                    and
+                                      any(index("stormforge-applier")) ))'
+                then
+                  echo "successfully connected ${STORMFORGE_CLUSTER_NAME} to StormForge backend"
+                  break
+                fi
+                sleep 5
+              done
+
+              # Success! (failure is handled by spec.activeDeadlineSeconds)
+              exit 0
