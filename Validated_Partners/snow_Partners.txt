@@ -1,5 +1,5 @@
 Kubernetes Version :  1.29 
-Date of Conformance Test : 2024-12-18
+Date of Conformance Test : 2024-12-17
  
 Following ISV Partners have Validated their Conformance : 
  
@@ -11,7 +11,7 @@ accuknox         kubearmor                    v1.3.2
 kubecost         cost-analyzer                2.4.3
 nirmata          enterprise-kyverno           1.6.10
 lacework         polygraph                    6.11.0
-newrelic         nri-bundle                   5.0.104
+newrelic         nri-bundle                   5.0.101
 perfectscale     perfectscale                 v0.0.38
 pulumi           pulumi-kubernetes-operator   0.3.0
 solo.io          solo-istiod                  1.18.3-eks-a
