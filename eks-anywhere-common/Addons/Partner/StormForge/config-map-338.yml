@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stormforge-configmap
+  namespace: stormforge
+  labels:
+    bot: conformitron
+data:
+  Namespace: stormforge
+  prNumber: "338"
+  commitHash: ebdc4de2a5f064840e857a63ccd528489423bbcd
+  deployed: "1738259076"
+  env: common

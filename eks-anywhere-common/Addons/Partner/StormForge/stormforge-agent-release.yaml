@@ -14,7 +14,7 @@ spec:
         kind: HelmRepository
         name: stormforge-charts
         namespace: flux-system
-      version: 2.16.1
+      version: 2.19.1
   interval: 5m0s
   targetNamespace: stormforge
   valuesFrom:
