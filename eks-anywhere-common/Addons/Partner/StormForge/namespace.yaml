@@ -6,4 +6,4 @@ metadata:
   labels:
     aws.conformance.vendor: stormforge
     aws.conformance.vendor-solution: optimize-live
-    aws.conformance.vendor-solution-version: 2.19.1
+    aws.conformance.vendor-solution-version: 2.16.1
