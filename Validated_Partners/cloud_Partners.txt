@@ -1,5 +1,21 @@
-Kubernetes Version :  
+Kubernetes Version :  1.28 
 Date of Conformance Test : 2025-02-11
  
 Following ISV Partners have Validated their Conformance : 
  
+VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE          VENDOR_PRODUCT_VERSION
+aqua             aqua-enforcer                2022.4.20
+dynatrace        dynatrace                    1.3.0
+kong             kong-enterprise              2.27.0
+accuknox         kubearmor                    v1.3.2
+kubecost         cost-analyzer                2.4.3
+nirmata          enterprise-kyverno           1.6.10
+lacework         polygraph                    6.11.0
+newrelic         nri-bundle                   5.0.111
+perfectscale     perfectscale                 v0.0.38
+pulumi           pulumi-kubernetes-operator   0.3.0
+solo.io          solo-istiod                  1.18.3-eks-a
+stormforge       optimize-live                2.19.1
+tetrate.io       tetrate-istio-distribution   1.18.1
+hashicorp        vault                        0.25.0
+STCLab           wave-autoscale               1.10.0
