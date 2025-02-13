@@ -1,5 +1,5 @@
-Kubernetes Version :  1.31 
-Date of Conformance Test : 2024-12-17
+Kubernetes Version :  1.30 
+Date of Conformance Test : 2025-02-13
  
 Following ISV Partners have Validated their Conformance : 
  
@@ -14,7 +14,7 @@ lacework         polygraph                    6.11.0
 perfectscale     perfectscale                 v0.0.38
 pulumi           pulumi-kubernetes-operator   0.3.0
 solo.io          solo-istiod                  1.18.3-eks-a
-stormforge       optimize-live                2.16.1
+stormforge       optimize-live                2.19.1
 tetrate.io       tetrate-istio-distribution   1.18.1
 hashicorp        vault                        0.25.0
 STCLab           wave-autoscale               1.10.0
