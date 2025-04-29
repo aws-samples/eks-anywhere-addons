@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: centos
+        image: busybox
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh"]
         args: ["-c", "while true; do echo $(date -u) >> /data/out.txt; sleep 5; done"]
