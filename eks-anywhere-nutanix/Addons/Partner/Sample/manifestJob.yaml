@@ -18,3 +18,5 @@ spec:
                 - -c
                 - date; echo sleeping....; sleep 5s; exit 0;
           restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
