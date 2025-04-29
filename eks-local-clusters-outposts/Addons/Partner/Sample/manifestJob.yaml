@@ -1,17 +1,22 @@
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
   name: sample-rover-manifestjob
   namespace: default
 spec:
-  backoffLimit: 1
-  template:
+  schedule: "12 12 * * *"
+  jobTemplate:
     spec:
-      containers:
-        - name: job
-          image: busybox
-          args:
-            - /bin/sh
-            - -c
-            - date; echo sleeping....; sleep 5s; exit 1;
-      restartPolicy: Never
+      activeDeadlineSeconds: 600
+      template:
+        spec:
+          containers:
+            - name: job
+              image: busybox
+              args:
+                - /bin/sh
+                - -c
+                - date; echo sleeping....; sleep 5s; exit 0;
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
