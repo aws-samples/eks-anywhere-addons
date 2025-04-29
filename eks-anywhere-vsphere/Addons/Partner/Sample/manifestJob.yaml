@@ -13,5 +13,5 @@ spec:
           args:
             - /bin/sh
             - -c
-            - date; echo sleeping....; sleep 5s; exit 1;
+            - date; echo sleeping....; sleep 5s; exit 0;
       restartPolicy: Never
