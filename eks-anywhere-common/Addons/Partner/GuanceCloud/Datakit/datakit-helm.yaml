@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: datakit-charts
         namespace: flux-system
-      version: 1.74.0
+      version: 1.73.0
   interval: 1m
   targetNamespace: datakit
   valuesFrom:
