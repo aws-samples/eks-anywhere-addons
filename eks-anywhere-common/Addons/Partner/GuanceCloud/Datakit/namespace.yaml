@@ -6,4 +6,4 @@ metadata:
   labels:
       aws.conformance.vendor: guancecloud
       aws.conformance.vendor-solution: datakit
-      aws.conformance.vendor-solution-version: 1.74.1
+      aws.conformance.vendor-solution-version: 1.70.0
