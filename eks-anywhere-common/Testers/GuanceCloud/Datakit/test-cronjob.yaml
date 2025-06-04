@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: datakit-test-cronjob
+  namespace: default
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: datakit-test-cronjob
+              image: busybox:1.36
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  HTTP_CODE=$(wget -qO- --server-response --timeout=10 "http://datakit-service.datakit.svc.cluster.local:9527/metrics" 2>&1 | awk '/^  HTTP/{print $2}' | tail -1)
+                  if [ "$HTTP_CODE" = "200" ]; then
+                    echo "Datakit metrics endpoint is healthy (HTTP $HTTP_CODE)"
+                    exit 0
+                  else
+                    echo "Datakit metrics endpoint returned HTTP $HTTP_CODE (expected 200)"
+                    exit 1
+                  fi
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
