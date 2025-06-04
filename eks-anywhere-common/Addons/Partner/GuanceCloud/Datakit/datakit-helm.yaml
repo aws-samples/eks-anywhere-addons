@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: datakit-charts
         namespace: flux-system
-      version: 1.70.0
+      version: 1.74.1
   interval: 1m
   targetNamespace: datakit
   valuesFrom:
@@ -21,8 +21,8 @@ spec:
     name: datakit-secret
     valuesKey: dataway_url
     targetPath: datakit.dataway_url
-  #- kind: Secret
-  #  name: datakit-secret
-  #  valuesKey: cluster_name_k8s
-  #  targetPath: datakit.cluster_name_k8s
+  - kind: Secret
+    name: datakit-secret
+    valuesKey: cluster_name_k8s
+    targetPath: datakit.cluster_name_k8s
     
