@@ -15,12 +15,14 @@ spec:
               command: ["/bin/sh", "-c"]
               args:
                 - |
-                  HTTP_CODE=$(wget -qO- --server-response --timeout=10 "http://datakit-service.datakit.svc.cluster.local:9527/metrics" 2>&1 | awk '/^  HTTP/{print $2}' | tail -1)
+                  RESPONSE=$(wget -qO- --server-response --timeout=10 "http://datakit-service.datakit.svc.cluster.local:9529/v1/ping" 2>&1)
+                  HTTP_CODE=$(echo "$RESPONSE" | awk '/^  HTTP/{print $2}' | tail -1)
+                  BODY="{${RESPONSE##*{}"
                   if [ "$HTTP_CODE" = "200" ]; then
-                    echo "Datakit metrics endpoint is healthy (HTTP $HTTP_CODE)"
+                    echo "Datakit is available, info: ${BODY}"
                     exit 0
                   else
-                    echo "Datakit metrics endpoint returned HTTP $HTTP_CODE (expected 200)"
+                    echo "Datakit is unavailable, v1/ping endpoint http response code: ${HTTP_CODE}, please check the pod status and security policies"
                     exit 1
                   fi
           restartPolicy: Never
