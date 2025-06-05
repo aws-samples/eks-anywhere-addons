@@ -1,0 +1,28 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: datakit
+  namespace: datakit
+spec:
+  chart:
+    spec:
+      chart: datakit
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: datakit-charts
+        namespace: flux-system
+      version: 1.74.1
+  interval: 1m
+  targetNamespace: datakit
+  valuesFrom:
+  - kind: Secret
+    name: datakit-secret
+    valuesKey: dataway_url
+    targetPath: datakit.dataway_url
+  - kind: Secret
+    name: datakit-secret
+    valuesKey: cluster_name_k8s
+    targetPath: datakit.cluster_name_k8s
+    
