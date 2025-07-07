@@ -1,9 +1,0 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: datakit
-  labels:
-      aws.conformance.vendor: guancecloud
-      aws.conformance.vendor-solution: datakit
-      aws.conformance.vendor-solution-version: 1.74.1
