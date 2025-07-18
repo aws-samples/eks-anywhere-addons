@@ -2,9 +2,9 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: datakit-test-cronjob
-  namespace: default
+  namespace: datakit
 spec:
-  schedule: "*/10 * * * *"
+  schedule: "*/3 * * * *"
   jobTemplate:
     spec:
       template:
