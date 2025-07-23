@@ -15,6 +15,10 @@ chmod +x ./install.sh
 ./install.sh
 rm -rf ./install.sh
 
+export PATH=$HOME/.fluxcd/bin:$PATH
+
+echo "Flux has been installed and PATH is updated for this session."
+
 # Step 3 Setup Minikube
 minikube start
 
