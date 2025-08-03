@@ -4,7 +4,7 @@ metadata:
   name: datakit-test-cronjob
   namespace: datakit
 spec:
-  schedule: "*/3 * * * *"
+  schedule: "* * * * *"
   jobTemplate:
     spec:
       template:
@@ -15,15 +15,18 @@ spec:
               command: ["/bin/sh", "-c"]
               args:
                 - |
-                  RESPONSE=$(wget -qO- --server-response --timeout=10 "http://datakit-service.datakit.svc.cluster.local:9529/v1/ping" 2>&1)
-                  HTTP_CODE=$(echo "$RESPONSE" | awk '/^  HTTP/{print $2}' | tail -1)
-                  BODY="{${RESPONSE##*{}"
-                  if [ "$HTTP_CODE" = "200" ]; then
-                    echo "Datakit is available, info: ${BODY}"
-                    exit 0
+                  response=$(curl -s -w "%{http_code}" -X POST \
+                    -H "Content-Type: application/json" \
+                    -d '[{"measurement":"test_log","tags":{"foo":"bar"},"fields":{"message":"This log from aws service ready tester."}}]' \
+                    http://localhost:9529/v1/write/logging)
+
+                  http_code=${response: -3}
+
+                  if [ $http_code -ge 200 ] && [ $http_code -lt 300 ]; then
+                      echo "Write log success."
                   else
-                    echo "Datakit is unavailable, v1/ping endpoint http response code: ${HTTP_CODE}, please check the pod status and security policies"
-                    exit 1
+                      echo "Write log failed."
+                      exit 1
                   fi
           restartPolicy: Never
   successfulJobsHistoryLimit: 3
