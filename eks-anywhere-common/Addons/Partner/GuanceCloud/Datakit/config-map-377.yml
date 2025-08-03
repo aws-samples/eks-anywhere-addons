@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: datakit-configmap
+  namespace: datakit
+  labels:
+    bot: conformitron
+data:
+  Namespace: datakit
+  prNumber: "377"
+  commitHash: afa8f3da605f645179fe25915b67fcfe6db7968a
+  deployed: "1754239623"
+  env: common
