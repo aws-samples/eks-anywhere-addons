@@ -18,7 +18,7 @@ spec:
                   response=$(curl -s -w "%{http_code}" -X POST \
                     -H "Content-Type: application/json" \
                     -d '[{"measurement":"test_log","tags":{"foo":"bar"},"fields":{"message":"This log from aws service ready tester."}}]' \
-                    http://localhost:9529/v1/write/logging)
+                    http://datakit-service.datakit.svc.cluster.local:9529/v1/write/logging)
 
                   http_code=${response: -3}
 
