@@ -115,6 +115,10 @@ spec:
       type: ClusterIP
       ports:
         api: 9000
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/minio
+      tag: "2025.7.23-debian-12-r0"
 ---
 apiVersion: batch/v1
 kind: Job
@@ -128,7 +132,7 @@ spec:
       restartPolicy: OnFailure
       containers:
       - name: minio-client
-        image: docker.io/bitnami/minio:2025.7.23-debian-12-r0
+        image: docker.io/bitnamilegacy/minio:2025.7.23-debian-12-r0
         command: ["/bin/sh", "-c"]
         args:
           - |
