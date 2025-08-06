@@ -102,6 +102,9 @@ spec:
         name: bitnami-charts
         namespace: automq
   values:
+    global:
+      security:
+        allowInsecureImages: true
     auth:
       rootUser: minioadmin
       rootPassword: minioadmin
