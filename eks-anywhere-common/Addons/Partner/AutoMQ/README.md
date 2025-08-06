@@ -4,6 +4,13 @@ AutoMQ is an innovative Apache Kafka alternative that features a pioneering deco
 
 In this case, I chose to deploy MinIO as the object storage solution to avoid the complexity associated with sharing external secrets.
 
+### Links:
+AWS Marketplace link: https://aws.amazon.com/marketplace/pp/prodview-suwr5pyxwakrk
+
+Deploy on k8s overview: https://www.automq.com/docs/automq-cloud/deploy-automq-on-kubernetes/overview
+
+Deploy to AWS EKS guide: https://www.automq.com/docs/automq-cloud/deploy-automq-on-kubernetes/deploy-to-aws-eks
+
 ### Testing
 This is how I run the testjob locally.
 
