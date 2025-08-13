@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: datakit
   prNumber: "377"
-  commitHash: 41fd93fec2c5d96006fbfe01f27b562074cf455b
-  deployed: "1754837771"
+  commitHash: 1f249f762769508f6968ffcd9d59fd98c6ead385
+  deployed: "1755126456"
   env: common
