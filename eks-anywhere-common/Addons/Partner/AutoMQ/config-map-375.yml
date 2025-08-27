@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: automq-configmap
+  namespace: automq
+  labels:
+    bot: conformitron
+data:
+  Namespace: automq
+  prNumber: "375"
+  commitHash: f966ae66a411d9d9ad157035a8be72d9f0ea1b8f
+  deployed: "1754029801"
+  env: common
