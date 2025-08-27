@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: automq
-  labels:
-    aws.conformance.vendor: automq
-    aws.conformance.vendor-solution: automq-for-kafka
-    aws.conformance.vendor-solution-version: 1.5.0
