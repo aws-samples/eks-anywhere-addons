@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: automq
   prNumber: "375"
-  commitHash: 9e0c3b9db8510af2285f81fc689f7ceec0c28458
-  deployed: "1754472748"
+  commitHash: d9d780ff1ed1d1f88001f519def8b49442c830fc
+  deployed: "1754376084"
   env: common
