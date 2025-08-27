@@ -128,8 +128,6 @@ kind: Job
 metadata:
   name: minio-bucket-creator
   namespace: automq
-  annotations:
-    kustomize.toolkit.fluxcd.io/reconcile: disabled
 spec:
   backoffLimit: 1
   template:
