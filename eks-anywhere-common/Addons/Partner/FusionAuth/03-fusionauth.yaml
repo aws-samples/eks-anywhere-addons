@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fusionauth-values
+  namespace: fusionauth
+data:
+  fusionauth.yaml: |
+    # Minimal, production-leaning values for FusionAuth Helm chart
+
+    service:
+      type: ClusterIP
+      port: 9011
+
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: fusionauth.example.com        # <-- replace with your DNS name
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - fusionauth.example.com          # <-- replace with your DNS name
+          secretName: fusionauth-tls
+
+    # Database configuration
+    database:
+      protocol: postgresql
+      host: "fa-database-1.cnu0gsuo6xq0.us-west-2.rds.amazonaws.com"                       # e.g., mydb.abc123.us-west-2.rds.amazonaws.com
+      port: 5432
+      tls: false
+      tlsMode: require
+      name: "fusionauth"
+
+      # Use External Secrets -> k8s Secret for passwords
+      existingSecret: "fusionauth-db-creds"   # must contain keys: password, rootpassword
+
+      # Non-secret usernames are plain values
+      user: "fauser"
+      root:
+        user: "postgres"
+
+    # Recommended runtime settings
+    env:
+      - name: FUSIONAUTH_APP_RUNTIME_MODE
+        value: "production"
+      - name: FUSIONAUTH_APP_MEMORY
+        value: "512M"
+
+    # Optional resources (uncomment/tune for prod)
+    # resources:
+    #   requests:
+    #     cpu: "250m"
+    #     memory: "512Mi"
+    #   limits:
+    #     cpu: "1000m"
+    #     memory: "2Gi"
+
