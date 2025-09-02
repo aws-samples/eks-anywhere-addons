@@ -6,6 +6,7 @@ Following ISV Partners have Validated their Conformance :
 VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE          VENDOR_PRODUCT_VERSION
 aqua             aqua-enforcer                2022.4.20
 automq           automq-for-kafka             1.5.0
+guancecloud      datakit                      1.80.0
 kong             kong-enterprise              2.27.0
 accuknox         kubearmor                    v1.3.2
 kubecost         cost-analyzer                2.4.3
