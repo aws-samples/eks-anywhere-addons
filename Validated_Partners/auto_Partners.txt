@@ -1,5 +1,23 @@
-Kubernetes Version :  
+Kubernetes Version :  1.32 
 Date of Conformance Test : 2025-09-02
  
 Following ISV Partners have Validated their Conformance : 
  
+VENDOR_PRODUCT   VENDOR_PRODUCT_TYPE          VENDOR_PRODUCT_VERSION
+aqua             aqua-enforcer                2022.4.20
+automq           automq-for-kafka             1.5.0
+guancecloud      datakit                      1.80.0
+dynatrace        dynatrace                    1.3.0
+veeam            kasten                       7.5.10
+kong             kong-enterprise              2.27.0
+accuknox         kubearmor                    v1.3.2
+kubecost         cost-analyzer                2.4.3
+nirmata          enterprise-kyverno           1.6.10
+lacework         polygraph                    6.11.0
+perfectscale     perfectscale                 v0.0.38
+pulumi           pulumi-kubernetes-operator   0.3.0
+solo.io          solo-istiod                  1.18.3-eks-a
+stormforge       optimize-live                2.19.1
+tetrate.io       tetrate-istio-distribution   1.18.1
+hashicorp        vault                        0.25.0
+STCLab           wave-autoscale               1.10.0
