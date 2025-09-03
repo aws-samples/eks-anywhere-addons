@@ -71,7 +71,7 @@ jobs:
           echo $filename
           
 
-          if [ "$status" != removed ] && [[ $filename != *README.md ]]; then
+          if [ "$status" != removed ] && [[ $filename != *README.md ]] && [[ $filename != **.github** ]]; then
             # Parse namespace data
             subdirectory=$(dirname $filename)
             namespace_file_subdirectory=$(dirname $filename)
