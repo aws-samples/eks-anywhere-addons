@@ -69,6 +69,10 @@ jobs:
           status=$(echo "$item" | jq -r '.status')
           filename=$(echo "$item" | jq -r '.filename')
           echo $filename
+
+          if [[ $filename == *.github/* ]]; then
+            continue
+          fi
           
 
           if [ "$status" != removed ] && [[ $filename != *README.md ]]; then
