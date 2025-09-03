@@ -86,6 +86,8 @@ jobs:
               if [ $(basename $namespace_file_subdirectory) == "Testers" ]; then
                 namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
                 namespace_file_subdirectory=$namespace_file_subdirectory/Addons/Partner/$partner_name
+              elif [ $(basename $namespace_file_subdirectory) == "Patches" ]; then
+                namespace_file_subdirectory=eks-anywhere-common/Addons/Partner/$partner_name
               elif [ $(basename $namespace_file_subdirectory) == "Partner" ] || [ $(basename $namespace_file_subdirectory) == "Core" ]; then
                 echo "No Namespace File Found in Partner Directory"
                 exit 200
