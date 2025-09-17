@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fusionauth-configmap
+  namespace: fusionauth
+  labels:
+    bot: conformitron
+data:
+  Namespace: fusionauth
+  prNumber: "400"
+  commitHash: df0d4ec42b9bee0a277cf7b18a196ba3fe141110
+  deployed: "1758152234"
+  env: common
