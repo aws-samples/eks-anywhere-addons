@@ -1,59 +1,56 @@
-apiVersion: v1
-kind: ConfigMap
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
 metadata:
-  name: fusionauth-values
+  name: fusionauth
   namespace: fusionauth
-data:
-  fusionauth.yaml: |
-    # Minimal, production-leaning values for FusionAuth Helm chart
+spec:
+  interval: 10m
+  timeout: 15m0s
+  install:
+    timeout: 15m0s
+    remediation:
+      retries: 3
+  upgrade:
+    timeout: 15m0s
+    remediation:
+      retries: 3
 
-    service:
-      type: ClusterIP
-      port: 9011
+  # Make FA wait on Postgres
+  dependsOn:
+    - name: postgres
+      namespace: fusionauth
 
-    ingress:
-      enabled: true
-      className: nginx
-      hosts:
-        - host: fusionauth.example.com        # <-- replace with your DNS name
-          paths:
-            - path: /
-              pathType: Prefix
-      tls:
-        - hosts:
-            - fusionauth.example.com          # <-- replace with your DNS name
-          secretName: fusionauth-tls
+  chart:
+    spec:
+      chart: fusionauth
+      # version: 1.59.1  # optional pin
+      sourceRef:
+        kind: HelmRepository
+        name: fusionauth
+        namespace: flux-system
 
-    # Database configuration
+  values:
+    # --- Database settings ---
     database:
       protocol: postgresql
-      host: "fa-database-1.cnu0gsuo6xq0.us-west-2.rds.amazonaws.com"                       # e.g., mydb.abc123.us-west-2.rds.amazonaws.com
+      host: postgres-postgresql.fusionauth.svc.cluster.local
       port: 5432
-      tls: false
-      tlsMode: require
-      name: "fusionauth"
+      name: fusionauth
+      # Application user (least-priv)
+      user: postgres
+      password: changeMeSuperSecret
 
-      # Use External Secrets -> k8s Secret for passwords
-      existingSecret: "fusionauth-db-creds"   # must contain keys: password, rootpassword
-
-      # Non-secret usernames are plain values
-      user: "fauser"
-      root:
-        user: "postgres"
-
-    # Recommended runtime settings
-    env:
-      - name: FUSIONAUTH_APP_RUNTIME_MODE
-        value: "production"
-      - name: FUSIONAUTH_APP_MEMORY
-        value: "512M"
-
-    # Optional resources (uncomment/tune for prod)
-    # resources:
-    #   requests:
-    #     cpu: "250m"
-    #     memory: "512Mi"
-    #   limits:
-    #     cpu: "1000m"
-    #     memory: "2Gi"
-
+    # Use database search (no Elasticsearch)
+    search:
+      engine: database
+    
+    app:
+      runtimeMode: development
+        
+    # Simple exposure for EKS-A Docker
+    service:
+      type: NodePort
+    ingress:
+      enabled: false
+      
+  

@@ -2,8 +2,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: fusionauth
-  namespace: flux-system
+  namespace: fusionauth
 spec:
-  interval: 1h
-  url: https://fusionauth.github.io/charts
-
+  interval: 5m
+  url: https://github.com/FusionAuth/charts
