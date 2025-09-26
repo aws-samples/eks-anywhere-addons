@@ -1,0 +1,24 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: thinkingengine
+  namespace: thinkingengine
+spec:
+  chart:
+    spec:
+      chart: thinkingengine
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: thinkingengine
+        namespace: flux-system
+      version: "5.0.0"
+  interval: 1m0s
+  releaseName: thinkingengine
+  targetNamespace: thinkingengine
+  valuesFrom:
+  - kind: Secret
+    name: thinkingdata-secret
+    valuesKey: thinkingdata-license-key
+    targetPath: thinkingdataLicenseKey
