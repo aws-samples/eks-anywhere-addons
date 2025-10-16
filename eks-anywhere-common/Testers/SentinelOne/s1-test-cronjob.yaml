@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sentinelone-test
+  namespace: sentinelone
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: eicar-test
+            image: alpine:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              trap 'echo "SentinelOne Test: SUCCEEDED - Pod was killed by agent"' TERM
+              echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > /tmp/eicar.txt
+              sleep 60
+              echo "SentinelOne Test: FAILED - Pod completed without being killed"
+              exit 1
