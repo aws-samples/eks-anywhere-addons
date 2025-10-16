@@ -137,7 +137,7 @@ jobs:
             
             if [ -f $namespace_file ]; then
               namespace_file_subdirectory=$(dirname $namespace_file)
-              namespace_name=$(grep -E "^\s*metadata:\s*$|^\s*name:\s*" "$namespace_file" | awk -F":" "{gsub(/ /, \"\", \$2); print \$2}")
+              namespace_name=$(grep -E '^\s*metadata:\s*$|^\s*name:\s*' "$namespace_file" | awk -F':' '{gsub(/ /, "", $2); print $2}')
             else
               echo "No Namespace file found"
               exit 200
