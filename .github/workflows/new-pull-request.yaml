@@ -69,7 +69,7 @@ jobs:
       id: find-namespace-yaml
       run: |
         # Pull file information down into a JSON array
-        readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr.outputs.number }}/files" | jq -c ".[]]")
+        readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr.outputs.number }}/files" | jq -c ".[]")
         
         # Move updated files over to dev branch
         git fetch --all
