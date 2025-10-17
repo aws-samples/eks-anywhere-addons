@@ -1,0 +1,41 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: s1-agent
+  namespace: sentinelone
+spec:
+  chart:
+    spec:
+      chart: s1-agent
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: sentinelone
+        namespace: flux-system
+      version: "25.3.1"
+  interval: 1m0s
+  releaseName: s1-agent
+  targetNamespace: sentinelone
+  values:
+    configuration:
+      env:
+        helper:
+          inventory_enabled: true
+          communicator_enabled: true
+      inventory_only: false
+      repositories:
+        agent: containers.sentinelone.net/cws-agent/s1agent
+        helper: containers.sentinelone.net/cws-agent/s1helper
+      tag:
+        agent: 25.3.1-ea
+        helper: 25.3.1-ea
+      cluster:
+        name: "{{ .Values.clusterName | default \"eks-anywhere-cluster\" }}"
+    secrets:
+      imagePullSecret: s1-docker-registry-secret
+  valuesFrom:
+  - kind: Secret
+    name: s1-site-key
+    valuesKey: site_key
+    targetPath: secrets.site_key.value
