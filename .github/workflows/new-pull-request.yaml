@@ -120,7 +120,7 @@ jobs:
             partner_name=""
             
             # get namespace from dev branch partner directory. If in Testers directory, re-align to Addons/Partner/{partner}
-            while [ -z "$(find $namespace_file_subdirectory -name "*namespace*")" ] && [[ -z $namespace_name ]]; do
+            while [ -z "$(find $namespace_file_subdirectory -name '*namespace*')" ] && [[ -z $namespace_name ]]; do
               partner_name=$(basename $namespace_file_subdirectory)
               namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
               if [ $(basename $namespace_file_subdirectory) == "Testers" ]; then
