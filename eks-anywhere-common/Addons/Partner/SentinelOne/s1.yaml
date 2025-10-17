@@ -31,7 +31,7 @@ spec:
         agent: 25.3.1-ea
         helper: 25.3.1-ea
       cluster:
-        name: "{{ .Values.clusterName | default \"eks-anywhere-cluster\" }}"
+        name: eks-anywhere-testing-cluster
     secrets:
       imagePullSecret: s1-docker-registry-secret
   valuesFrom:
