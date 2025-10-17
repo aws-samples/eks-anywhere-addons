@@ -15,7 +15,7 @@ on:
 jobs:
   checkPermissions:
     runs-on: ubuntu-latest
-    if: github.event.issue.pull_request && contains(github.event.comment.body, "/test-e2e")
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/test-e2e')
     steps:
     - id: checkUserPermissions
       uses: actions-cool/check-user-permission@main
@@ -27,12 +27,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == "pull_request_target" && contains(github.event.pull_request.labels.*.name, "auto-e2e-enabled")) ||
-      (github.event_name == "issue_comment" && needs.checkPermissions.outputs.run_test == "true")
+      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'auto-e2e-enabled')) ||
+      (github.event_name == 'issue_comment' && needs.checkPermissions.outputs.run_test == 'true')
     needs: [checkPermissions]
     steps:
     - name: Add auto-e2e label on first manual run
-      if: github.event_name == "issue_comment"
+      if: github.event_name == 'issue_comment'
       uses: actions/github-script@v7
       with:
         script: |
@@ -40,7 +40,7 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: ${{ github.event.issue.number }},
-            labels: ["auto-e2e-enabled"]
+            labels: ['auto-e2e-enabled']
           });
 
     - name: Get PR info
@@ -61,7 +61,7 @@ jobs:
     - name: Checkout PR Code
       run: git fetch origin pull/${{ steps.pr.outputs.number }}/head:pr
 
-    - if: ${{github.event.action == "synchronize" }}
+    - if: ${{github.event.action == 'synchronize' }}
       name: Sync Pause
       run: sleep 60
 
