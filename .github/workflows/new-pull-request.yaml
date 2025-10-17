@@ -104,7 +104,7 @@ jobs:
         done
         
         
-        # Create ConfigMap for each files partner folder
+        # Create ConfigMap for each file's partner folder
         for item in "${files[@]}"; do
           status=$(echo "$item" | jq -r ".status")
           filename=$(echo "$item" | jq -r ".filename")
@@ -158,7 +158,7 @@ jobs:
               echo "  prNumber: \"${{ steps.pr.outputs.number }}\"" >> $config_map_file
               echo "  commitHash: ${{ steps.pr.outputs.sha }}" >> $config_map_file
               echo "  deployed: \"$(date +%s)\"" >> $config_map_file
-              echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  \"{print \$NF}\" )"  >> $config_map_file
+              echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  '{print \$NF}' )"  >> $config_map_file
               mkdir -p ./$namespace_file_subdirectory/
               mv "$config_map_file" ./$namespace_file_subdirectory/
               git add ./$namespace_file_subdirectory/
