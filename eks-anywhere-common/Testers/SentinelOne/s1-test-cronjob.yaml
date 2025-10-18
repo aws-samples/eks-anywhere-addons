@@ -9,6 +9,7 @@ spec:
     spec:
       template:
         spec:
+          backoffLimit: 0
           restartPolicy: Never
           containers:
           - name: eicar-test
