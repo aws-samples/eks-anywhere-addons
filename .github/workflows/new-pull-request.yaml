@@ -27,9 +27,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'auto-e2e-enabled')) ||
-      (github.event_name == 'issue_comment' && needs.checkPermissions.outputs.run_test == 'true')
-    needs: [checkPermissions]
+      always() && (
+        (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'auto-e2e-enabled')) ||
+        (github.event_name == 'issue_comment' && needs.checkPermissions.outputs.run_test == 'true')
+      )
+    needs: ${{ github.event_name == 'issue_comment' && fromJSON('["checkPermissions"]') || fromJSON('[]') }}
     steps:
     - name: Add auto-e2e label on first manual run
       if: github.event_name == 'issue_comment'
