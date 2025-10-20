@@ -5,6 +5,11 @@ metadata:
   name: thinkingengine
   namespace: thinkingengine
 spec:
+  interval: 5m
+  releaseName: thinkingengine
+  targetNamespace: thinkingengine
+  install:
+    createNamespace: true
   chart:
     spec:
       chart: thinkingengine
@@ -14,11 +19,3 @@ spec:
         name: thinkingengine
         namespace: flux-system
       version: "5.0.0"
-  interval: 1m0s
-  releaseName: thinkingengine
-  targetNamespace: thinkingengine
-  valuesFrom:
-  - kind: Secret
-    name: thinkingdata-secret
-    valuesKey: thinkingdata-license-key
-    targetPath: thinkingdataLicenseKey
