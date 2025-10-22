@@ -4,6 +4,9 @@ on:
     branches: [main]
     types: [closed]
      
+permissions:
+  contents: write
+
 jobs:
 
   # All Closed branches reverse commits made by the open/reopen/sync GH Action
