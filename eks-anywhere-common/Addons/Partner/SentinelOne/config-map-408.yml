@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: sentinelone
   prNumber: "408"
-  commitHash: 51307b457c7cd2b021553c6ff58b66788df5558d
-  deployed: "1760743906"
+  commitHash: 2ea6b421084eb6ac2a26872a37c6c80b7f8905af
+  deployed: "1760743140"
   env: common
