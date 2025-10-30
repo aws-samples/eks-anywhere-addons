@@ -4,7 +4,7 @@ metadata:
   name: risingwave-tester
   namespace: risingwave
 spec:
-  schedule: "*/10 * * * *" # Run every 5 minutes
+  schedule: "0 */12 * * *" # Run every 12 hours
   jobTemplate:
     spec:
       template:
