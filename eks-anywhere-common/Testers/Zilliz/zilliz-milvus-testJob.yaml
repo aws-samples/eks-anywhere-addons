@@ -1,0 +1,83 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: milvus-health-test
+  namespace: zilliz-milvus
+spec:
+  schedule: "0 */12 * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: milvus-tester
+              image: curlimages/curl:8.4.0
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+              args:
+                - |
+                  TOKEN="root:Milvus"
+                  ENDPOINT="http://milvus-standalone.zilliz-milvus.svc.cluster.local:19530"
+                  
+                  echo "Creating test collection..."
+                  curl -s --request POST \
+                    --url "${ENDPOINT}/v2/vectordb/collections/create" \
+                    --header "Authorization: Bearer ${TOKEN}" \
+                    --header "Content-Type: application/json" \
+                    -d '{
+                      "collectionName": "health_test",
+                      "dimension": 128
+                    }' > /dev/null
+                  
+                  echo "Inserting test vectors..."
+                  # Insert vectors with full 128 dimensions
+                  VECTOR_128=$(printf '%.1f,' $(seq -s' ' -f'%.1f' 0.01 0.01 1.27) | sed 's/,$//')
+                  curl -s --request POST \
+                    --url "${ENDPOINT}/v2/vectordb/entities/insert" \
+                    --header "Authorization: Bearer ${TOKEN}" \
+                    --header "Content-Type: application/json" \
+                    -d "{
+                      \"collectionName\": \"health_test\",
+                      \"data\": [
+                        {\"id\": 1, \"vector\": [${VECTOR_128}]},
+                        {\"id\": 2, \"vector\": [$(echo ${VECTOR_128} | sed 's/0\./0.2/g')]}
+                      ]
+                    }" > /dev/null
+                  
+                  echo "Searching vectors..."
+                  SEARCH_RESULT=$(curl -s --request POST \
+                    --url "${ENDPOINT}/v2/vectordb/entities/search" \
+                    --header "Authorization: Bearer ${TOKEN}" \
+                    --header "Content-Type: application/json" \
+                    -d '{
+                      "collectionName": "health_test",
+                      "data": [['${VECTOR_128}']],
+                      "annsField": "vector",
+                      "limit": 2
+                    }')
+                  
+                  # Check for success code and verify results
+                  if echo "${SEARCH_RESULT}" | grep -q '"code":0' && \
+                     echo "${SEARCH_RESULT}" | grep -q '"id":1' && \
+                     echo "${SEARCH_RESULT}" | grep -q '"distance"'; then
+                    echo "✓ Vector search successful with valid results"
+                  else
+                    echo "❌ Vector search failed or returned invalid results"
+                    echo "Response: ${SEARCH_RESULT}"
+                    exit 1
+                  fi
+                  
+                  echo "Cleaning up..."
+                  curl -s --request POST \
+                    --url "${ENDPOINT}/v2/vectordb/collections/drop" \
+                    --header "Authorization: Bearer ${TOKEN}" \
+                    --header "Content-Type: application/json" \
+                    -d '{"collectionName": "health_test"}' > /dev/null
+                  
+                  echo "🎉 Test completed successfully!"
+          restartPolicy: OnFailure
+      backoffLimit: 1
