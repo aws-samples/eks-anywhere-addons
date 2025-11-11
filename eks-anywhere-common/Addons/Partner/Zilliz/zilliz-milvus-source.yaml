@@ -1,0 +1,8 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: zilliz-milvus-charts
+  namespace: flux-system
+spec:
+  interval: 30s
+  url: https://zilliztech.github.io/milvus-helm/
