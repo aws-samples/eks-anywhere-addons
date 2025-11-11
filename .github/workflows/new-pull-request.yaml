@@ -5,21 +5,67 @@ on:
     branches: [main]
     types: [opened, reopened, synchronize]
     paths-ignore: 
-     - 'Validated_Partners/**'
-     - '.github/**'
-     - 'docs/**'
-     - '.git/**'
+     - "Validated_Partners/**"
+     - ".github/**"
+     - "docs/**"
+     - ".git/**"
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: |
+        (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'auto-e2e-enabled')) ||
+        (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/test-e2e'))
     steps:
+    - name: Check permissions for comments
+      id: check-perms
+      if: github.event_name == 'issue_comment'
+      uses: actions-cool/check-user-permission@main
+      with:
+        require: "write"
+      continue-on-error: false
+
+    - name: Verify permissions
+      if: github.event_name == 'issue_comment' && steps.check-perms.outputs.require-result != 'true'
+      run: |
+        echo "Permission check failed"
+        exit 1
+
+    - name: Add auto-e2e label on first manual run
+      if: github.event_name == 'issue_comment'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.addLabels({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ github.event.issue.number }},
+            labels: ['auto-e2e-enabled']
+          });
+
+    - name: Get PR info
+      id: pr
+      run: |
+        if [ "${{ github.event_name }}" == "issue_comment" ]; then
+          echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          SHA=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}" | jq -r ".head.sha")
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+        else
+          echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+        fi
+
     - name: Checkout Base
       uses: actions/checkout@v4
 
     - name: Checkout PR Code
-      run:
-        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
+      run: git fetch origin pull/${{ steps.pr.outputs.number }}/head:pr
 
     - if: ${{github.event.action == 'synchronize' }}
       name: Sync Pause
@@ -29,7 +75,7 @@ jobs:
       id: find-namespace-yaml
       run: |
         # Pull file information down into a JSON array
-        readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -c '.[]')
+        readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr.outputs.number }}/files" | jq -c ".[]")
         
         # Move updated files over to dev branch
         git fetch --all
@@ -41,14 +87,14 @@ jobs:
         
         # Remove Deleted Files, copy over added or modified files
         for item in "${files[@]}"; do
-          status=$(echo "$item" | jq -r '.status')
-          filename=$(echo "$item" | jq -r '.filename')
+          status=$(echo "$item" | jq -r ".status")
+          filename=$(echo "$item" | jq -r ".filename")
           
           if [ "$status" == renamed ]; then
             git checkout pr -- $filename
             git add $filename
-            if [ -f $(echo "$item" | jq -r '.previous_filename') ]; then
-              git rm $(echo "$item" | jq -r '.previous_filename')
+            if [ -f $(echo "$item" | jq -r ".previous_filename") ]; then
+              git rm $(echo "$item" | jq -r ".previous_filename")
             fi
             echo "Renaming $filename"
           elif [ "$status" != removed ]; then
@@ -66,8 +112,8 @@ jobs:
         
         # Create ConfigMap for each file's partner folder
         for item in "${files[@]}"; do
-          status=$(echo "$item" | jq -r '.status')
-          filename=$(echo "$item" | jq -r '.filename')
+          status=$(echo "$item" | jq -r ".status")
+          filename=$(echo "$item" | jq -r ".filename")
           echo $filename
           
 
@@ -86,6 +132,8 @@ jobs:
               if [ $(basename $namespace_file_subdirectory) == "Testers" ]; then
                 namespace_file_subdirectory=$(dirname $namespace_file_subdirectory)
                 namespace_file_subdirectory=$namespace_file_subdirectory/Addons/Partner/$partner_name
+              elif [ $(basename $namespace_file_subdirectory) == "Patches" ]; then
+                namespace_file_subdirectory=eks-anywhere-common/Addons/Partner/$partner_name
               elif [ $(basename $namespace_file_subdirectory) == "Partner" ] || [ $(basename $namespace_file_subdirectory) == "Core" ]; then
                 echo "No Namespace File Found in Partner Directory"
                 exit 200
@@ -103,7 +151,7 @@ jobs:
             
             if [[ -n $namespace_name ]]; then
               namespace=$(echo $namespace_name | xargs echo -n)
-              config_map_file="config-map-${{ github.event.pull_request.number }}.yml"
+              config_map_file="config-map-${{ steps.pr.outputs.number }}.yml"
               echo "apiVersion: v1" >> $config_map_file
               echo "kind: ConfigMap" >> $config_map_file
               echo "metadata:" >> $config_map_file
@@ -113,8 +161,8 @@ jobs:
               echo "    bot: conformitron" >> $config_map_file
               echo "data:" >> $config_map_file
               echo "  Namespace: ${namespace}" >> $config_map_file
-              echo "  prNumber: \"${{ github.event.pull_request.number }}\"" >> $config_map_file
-              echo "  commitHash: ${{ github.event.pull_request.head.sha }}" >> $config_map_file
+              echo "  prNumber: \"${{ steps.pr.outputs.number }}\"" >> $config_map_file
+              echo "  commitHash: ${{ steps.pr.outputs.sha }}" >> $config_map_file
               echo "  deployed: \"$(date +%s)\"" >> $config_map_file
               echo "  env: $(echo $subdirectory | cut -f1 -d/ | awk -F-  '{print $NF}' )"  >> $config_map_file
               mkdir -p ./$namespace_file_subdirectory/
@@ -128,5 +176,5 @@ jobs:
           fi        
         done
         
-        git commit -m "Adding new and changed files for testing of PR_${{ github.event.pull_request.number }}"
+        git commit -m "Adding new and changed files for testing of PR_${{ steps.pr.outputs.number }}"
         git push
