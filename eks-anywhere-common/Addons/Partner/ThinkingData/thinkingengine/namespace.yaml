@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: thinkingengine
+  labels:
+    aws.conformance.vendor: thinkingdata
+    aws.conformance.vendor-solution: thinkingengine
+    aws.conformance.vendor-solution-version: 5.0.0
