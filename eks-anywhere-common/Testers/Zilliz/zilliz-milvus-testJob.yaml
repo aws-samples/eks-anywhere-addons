@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: milvus-health-test
+  namespace: zilliz-milvus
+spec:
+  schedule: "0 */12 * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: milvus-tester
+              image: curlimages/curl:8.4.0
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  echo "Starting Milvus RESTful API health check..."
+
+                  # The Milvus service RESTful API endpoint within the cluster
+                  # The default REST port is 9091
+                  URI="http://milvus-standalone.zilliz-milvus.svc.cluster.local:9091/healthz"
+
+                  echo "Pinging health endpoint at ${URI}..."
+
+                  # Use curl to check the health endpoint.
+                  # -s: silent mode
+                  # -f: fail silently (exit with 22) on server errors (4xx, 5xx)
+                  # The output is piped to grep to check for the expected "ok" status.
+                  # Grep will exit with 0 if it finds the match, and 1 otherwise.
+                  if curl -sf "${URI}" | grep -q "OK"; then
+                    echo "Success: Milvus instance is healthy and responsive."
+                    exit 0
+                  else
+                    echo "Error: Failed to get a healthy status from the Milvus health endpoint."
+                    exit 1
+                  fi
+          restartPolicy: OnFailure
+      backoffLimit: 1
