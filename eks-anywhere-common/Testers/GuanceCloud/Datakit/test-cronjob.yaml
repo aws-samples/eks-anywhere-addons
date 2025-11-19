@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: datakit-test-cronjob
+  namespace: datakit
+spec:
+  schedule: "0 */12 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: datakit-test-cronjob
+              image: busybox:1.36
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  URL="http://datakit-service.datakit.svc.cluster.local:9529/v1/write/logging"
+                  DATA='[{"measurement":"test_log","tags":{"foo":"bar"},"fields":{"message":"This log from aws service ready tester."}}]'
+
+                  response=$(wget -O /dev/null --server-response --post-data "$DATA" \
+                    --header "Content-Type: application/json" "$URL" 2>&1)
+
+                  http_code=$(echo "$response" | awk '/^  HTTP/{print $2}' | head -n 1)
+
+                  if [ $? -eq 0 ] && [ -n "$http_code" ] && [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+                      echo "Write log success."
+                  else
+                      echo "Write log failed."
+                      echo "$response"
+                      exit 1
+                  fi
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
