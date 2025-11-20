@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: zilliz-milvus
+  labels:
+    aws.conformance.vendor: Zilliz
+    aws.conformance.vendor-solution: zilliz-milvus
+    aws.conformance.vendor-solution-version: 2.6.4
