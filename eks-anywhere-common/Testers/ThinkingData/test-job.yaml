@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: thinkingengine-health-test
+  name: thinkingengine-tester
   namespace: thinkingengine
 spec:
   schedule: "10 10 * * *"
@@ -11,21 +11,69 @@ spec:
         spec:
           containers:
             - name: tester
-              image: alpine/k8s:1.26.2
+              image: thinkingdata/trino:476
               command: ["/bin/bash", "-c"]
               args:
                 - |-
-                  echo "Starting ThinkingEngine health test..."
-                 
-                  response=$(curl --silent -i http://thinkingengine-trino.thinkingengine:8080/v1/info)
-                  response_status=$(echo $response | awk '/^HTTP/{print $2}')
+                  # Trino 服务地址
+                  TRINO_URL="http://thinkingengine-trino:8080"
+                  TRINO_USER="admin"
+                  CATALOG="hive"
+                  SCHEMA="te"
 
-                  if [[ $response_status == "200" && $response == *"nodeVersion"* ]]; then 
-                    echo -e "Success: ThinkingEngine is running, health test passed."
-                    exit 0
+                  TIMESTAMP=$(date +%Y%m%d%H%M)
+                  TABLE="test_${TIMESTAMP}"
+                  # =========================================
+
+                  # 检查 trino cli 是否安装
+                  if ! command -v trino &> /dev/null; then
+                      echo "❌ Error: 'trino' CLI tool is not found in PATH."
+                      exit 1
+                  fi
+
+                  echo "🚀 Connecting to Trino at $TRINO_URL..."
+
+                  SQL_COMMANDS=$(cat <<EOF
+                  -- 1. 创建 Schema (幂等: 如果存在则忽略)
+                  CREATE SCHEMA IF NOT EXISTS ${CATALOG}.${SCHEMA};
+
+                  -- 2. 切换当前会话的 Catalog 和 Schema
+                  USE ${CATALOG}.${SCHEMA};
+
+                  -- 3. 重建表 (幂等: 如果存在则删除，确保状态重置)
+                  DROP TABLE IF EXISTS ${TABLE};
+
+                  CREATE TABLE ${TABLE}(
+                      c1 bigint,
+                      c2 varchar
+                  );
+
+                  -- 4. 插入测试数据
+                  INSERT INTO ${TABLE} VALUES
+                      (1,'a'),
+                      (2,'b'),
+                      (3,'c'),
+                      (4,'d'),
+                      (5,'e');
+
+                  -- 5. 验证结果
+                  SHOW TABLES;
+                  SELECT * FROM ${TABLE};
+                  EOF
+                  )
+
+                  # 执行命令
+                  # --output-format ALIGNED 让输出在终端更好看
+                  trino --server "$TRINO_URL" \
+                        --user "$TRINO_USER" \
+                        --output-format ALIGNED \
+                        --execute "$SQL_COMMANDS"
+
+                  if [ $? -eq 0 ]; then
+                      echo "✅ SQL execution completed successfully!"
                   else
-                    echo -e "Error: ThinkingEngine is running, health test failed."
-                    exit 1
+                      echo "❌ SQL execution failed."
+                      exit 1
                   fi
           restartPolicy: Never
   successfulJobsHistoryLimit: 3

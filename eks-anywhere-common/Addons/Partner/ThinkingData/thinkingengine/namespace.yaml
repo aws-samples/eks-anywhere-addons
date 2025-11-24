@@ -5,4 +5,4 @@ metadata:
   labels:
     aws.conformance.vendor: thinkingdata
     aws.conformance.vendor-solution: thinkingengine
-    aws.conformance.vendor-solution-version: 5.0.0
+    aws.conformance.vendor-solution-version: 5.0.1
