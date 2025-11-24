@@ -18,4 +18,4 @@ spec:
         kind: HelmRepository
         name: thinkingengine
         namespace: flux-system
-      version: "5.0.0"
+      version: "5.0.1"
