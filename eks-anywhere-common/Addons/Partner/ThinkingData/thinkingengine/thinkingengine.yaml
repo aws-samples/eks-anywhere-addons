@@ -1,0 +1,21 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: thinkingengine
+  namespace: thinkingengine
+spec:
+  interval: 5m
+  releaseName: thinkingengine
+  targetNamespace: thinkingengine
+  install:
+    createNamespace: true
+  chart:
+    spec:
+      chart: thinkingengine
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: thinkingengine
+        namespace: flux-system
+      version: "5.0.1"
