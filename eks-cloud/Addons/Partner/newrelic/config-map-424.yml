@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: newrelic-configmap
+  namespace: newrelic
+  labels:
+    bot: conformitron
+data:
+  Namespace: newrelic
+  prNumber: "424"
+  commitHash: ce05ff1af058d872f7d720e5852c87688b7d7a2f
+  deployed: "1764112865"
+  env: cloud
