@@ -16,6 +16,9 @@ spec:
       version: 1.85.0
   interval: 1m
   targetNamespace: datakit
+  values:
+    datakit:
+      cache: /var/datakit_cache
   valuesFrom:
   - kind: Secret
     name: datakit-secret
