@@ -1,0 +1,80 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: thinkingengine-tester
+  namespace: thinkingengine
+spec:
+  schedule: "10 10 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: tester
+              image: thinkingdata/trino:476
+              command: ["/bin/bash", "-c"]
+              args:
+                - |-
+                  # Trino 服务地址
+                  TRINO_URL="http://thinkingengine-trino:8080"
+                  TRINO_USER="admin"
+                  CATALOG="hive"
+                  SCHEMA="te"
+
+                  TIMESTAMP=$(date +%Y%m%d%H%M)
+                  TABLE="test_${TIMESTAMP}"
+                  # =========================================
+
+                  # 检查 trino cli 是否安装
+                  if ! command -v trino &> /dev/null; then
+                      echo "❌ Error: 'trino' CLI tool is not found in PATH."
+                      exit 1
+                  fi
+
+                  echo "🚀 Connecting to Trino at $TRINO_URL..."
+
+                  SQL_COMMANDS=$(cat <<EOF
+                  -- 1. 创建 Schema (幂等: 如果存在则忽略)
+                  CREATE SCHEMA IF NOT EXISTS ${CATALOG}.${SCHEMA};
+
+                  -- 2. 切换当前会话的 Catalog 和 Schema
+                  USE ${CATALOG}.${SCHEMA};
+
+                  -- 3. 重建表 (幂等: 如果存在则删除，确保状态重置)
+                  DROP TABLE IF EXISTS ${TABLE};
+
+                  CREATE TABLE ${TABLE}(
+                      c1 bigint,
+                      c2 varchar
+                  );
+
+                  -- 4. 插入测试数据
+                  INSERT INTO ${TABLE} VALUES
+                      (1,'a'),
+                      (2,'b'),
+                      (3,'c'),
+                      (4,'d'),
+                      (5,'e');
+
+                  -- 5. 验证结果
+                  SHOW TABLES;
+                  SELECT * FROM ${TABLE};
+                  EOF
+                  )
+
+                  # 执行命令
+                  # --output-format ALIGNED 让输出在终端更好看
+                  trino --server "$TRINO_URL" \
+                        --user "$TRINO_USER" \
+                        --output-format ALIGNED \
+                        --execute "$SQL_COMMANDS"
+
+                  if [ $? -eq 0 ]; then
+                      echo "✅ SQL execution completed successfully!"
+                  else
+                      echo "❌ SQL execution failed."
+                      exit 1
+                  fi
+          restartPolicy: Never
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
