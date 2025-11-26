@@ -18,8 +18,7 @@ spec:
   targetNamespace: datakit
   values:
     datakit:
-      cache: 
-        mountPath: /var/datakit_cache
+      cache: /var/datakit_cache
   valuesFrom:
   - kind: Secret
     name: datakit-secret
