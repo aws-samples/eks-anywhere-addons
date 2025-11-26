@@ -23,7 +23,7 @@ spec:
 
                   http_code=$(echo "$response" | awk '/^  HTTP/{print $2}' | head -n 1)
 
-                  if [ $? -eq 0 ] && [ -n "$http_code" ] && [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+                  if [ $? -ne 0 ] && [ -n "$http_code" ] && [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
                       echo "Write log success."
                   else
                       echo "Write log failed."
