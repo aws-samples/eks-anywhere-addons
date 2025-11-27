@@ -31,7 +31,7 @@ spec:
               echo "--- Starting RisingWave Credit Card Transaction Test ---"
 
               echo "[SETUP] Creating table for credit card transactions..."
-              $PSQL -c "
+              psql -c "
               CREATE TABLE credit_card_transactions (
                   card_number VARCHAR,
                   card_holder VARCHAR,
@@ -40,7 +40,7 @@ spec:
               );"
 
               echo "[SETUP] Creating materialized view for suspicious transactions (amount > 1000)..."
-              $PSQL -c "
+              psql -c "
               CREATE MATERIALIZED VIEW suspicious_transactions AS
               SELECT card_holder, transaction_amount
               FROM credit_card_transactions
@@ -51,18 +51,18 @@ spec:
 
 
               echo "[TEST] Inserting a batch of transactions..."
-              $PSQL -c "
+              psql -c "
               INSERT INTO credit_card_transactions VALUES
                   ('1234-5678-9012-3456', 'John Doe', 500, NOW()),
                   ('9876-5432-1098-7654', 'Jane Smith', 1500, NOW()),
                   ('5555-8888-2222-7777', 'Sam Brown', 200, NOW());"
 
               echo "[TEST] Flushing data to ensure visibility in the materialized view..."
-              $PSQL -c "FLUSH;"
+              psql -c "FLUSH;"
 
               echo "[VERIFY] Checking the content of 'suspicious_transactions'..."
 
-              output=$( $PSQL -t -A -c "SELECT * FROM suspicious_transactions;" )
+              output=$( psql -t -A -c "SELECT * FROM suspicious_transactions;" )
               expected_output="Jane Smith|1500"
 
               if [ "$output" == "$expected_output" ]; then
@@ -74,9 +74,9 @@ spec:
                 echo "   - Got: '$output'"
                 echo "--- Debugging Info ---"
                 echo "Full content of 'credit_card_transactions':"
-                $PSQL -c "SELECT * FROM credit_card_transactions;"
+                psql -c "SELECT * FROM credit_card_transactions;"
                 echo "Full content of 'suspicious_transactions':"
-                $PSQL -c "SELECT * FROM suspicious_transactions;"
+                psql -c "SELECT * FROM suspicious_transactions;"
                 echo "----------------------"
                 exit 1
               fi
@@ -84,8 +84,8 @@ spec:
 
 
               echo "[CLEANUP] Dropping materialized view and table..."
-              $PSQL -c "DROP MATERIALIZED VIEW suspicious_transactions;"
-              $PSQL -c "DROP TABLE credit_card_transactions;"
+              psql -c "DROP MATERIALIZED VIEW suspicious_transactions;"
+              psql -c "DROP TABLE credit_card_transactions;"
               echo "[CLEANUP] Cleanup complete."
 
               echo ""
