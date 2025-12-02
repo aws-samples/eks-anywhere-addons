@@ -1,0 +1,95 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: risingwave-tester
+  namespace: risingwave
+spec:
+  schedule: "0 */12 * * *" # Run every 12 hours
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: risingwave-tester
+            image: postgres:15
+            env:
+            - name: PGHOST
+              value: "risingwave-standalone.risingwave.svc.cluster.local"
+            - name: PGPORT
+              value: "4567"
+            - name: PGDATABASE
+              value: "dev"
+            - name: PGUSER
+              value: "root"
+            - name: PGPASSWORD
+              value: ""
+            command: ["/bin/sh", "-c"]
+            args:
+            - |
+              set -e
+
+              echo "--- Starting RisingWave Credit Card Transaction Test ---"
+
+              echo "[SETUP] Creating table for credit card transactions..."
+              psql -c "
+              CREATE TABLE credit_card_transactions (
+                  card_number VARCHAR,
+                  card_holder VARCHAR,
+                  transaction_amount INT,
+                  transaction_time TIMESTAMPTZ
+              );"
+
+              echo "[SETUP] Creating materialized view for suspicious transactions (amount > 1000)..."
+              psql -c "
+              CREATE MATERIALIZED VIEW suspicious_transactions AS
+              SELECT card_holder, transaction_amount
+              FROM credit_card_transactions
+              WHERE transaction_amount > 1000;"
+
+              echo "[SETUP] Setup complete."
+              echo "-------------------------------------------"
+
+
+              echo "[TEST] Inserting a batch of transactions..."
+              psql -c "
+              INSERT INTO credit_card_transactions VALUES
+                  ('1234-5678-9012-3456', 'John Doe', 500, NOW()),
+                  ('9876-5432-1098-7654', 'Jane Smith', 1500, NOW()),
+                  ('5555-8888-2222-7777', 'Sam Brown', 200, NOW());"
+
+              echo "[TEST] Flushing data to ensure visibility in the materialized view..."
+              psql -c "FLUSH;"
+
+              echo "[VERIFY] Checking the content of 'suspicious_transactions'..."
+
+              output=$( psql -t -A -c "SELECT * FROM suspicious_transactions;" )
+              expected_output="Jane Smith|1500"
+
+              if [ "$output" = "$expected_output" ]; then
+                echo "SUCCESS: The materialized view correctly identified the suspicious transaction."
+                echo "   - Got: '$output'"
+              else
+                echo "FAILURE: The materialized view content is incorrect!"
+                echo "   - Expected: '$expected_output'"
+                echo "   - Got: '$output'"
+                echo "--- Debugging Info ---"
+                echo "Full content of 'credit_card_transactions':"
+                psql -c "SELECT * FROM credit_card_transactions;"
+                echo "Full content of 'suspicious_transactions':"
+                psql -c "SELECT * FROM suspicious_transactions;"
+                echo "----------------------"
+                exit 1
+              fi
+              echo "-------------------------------------------"
+
+
+              echo "[CLEANUP] Dropping materialized view and table..."
+              psql -c "DROP MATERIALIZED VIEW suspicious_transactions;"
+              psql -c "DROP TABLE credit_card_transactions;"
+              echo "[CLEANUP] Cleanup complete."
+
+              echo ""
+              echo "--- All Tests Passed Successfully! ---"
+
+              exit 0
+          restartPolicy: Never
