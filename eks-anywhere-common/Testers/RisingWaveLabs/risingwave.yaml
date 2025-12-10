@@ -65,7 +65,7 @@ spec:
               output=$( psql -t -A -c "SELECT * FROM suspicious_transactions;" )
               expected_output="Jane Smith|1500"
 
-              if [ "$output" = "$expected_output" ]; then
+              if [ "$output" == "$expected_output" ]; then
                 echo "SUCCESS: The materialized view correctly identified the suspicious transaction."
                 echo "   - Got: '$output'"
               else
