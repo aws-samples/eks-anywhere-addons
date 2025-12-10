@@ -14,7 +14,7 @@ spec:
             image: postgres:15
             env:
             - name: PGHOST
-              value: "risingwave-standalone.risingwave.svc.cluster.local"
+              value: "risingwave.risingwave.svc.cluster.local"
             - name: PGPORT
               value: "4567"
             - name: PGDATABASE
