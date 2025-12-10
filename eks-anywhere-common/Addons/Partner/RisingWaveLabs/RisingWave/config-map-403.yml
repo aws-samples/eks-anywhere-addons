@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: risingwave
   prNumber: "403"
-  commitHash: 15d4dd0ca857de1038942b083bf90645538babdd
-  deployed: "1761869559"
+  commitHash: 624f18e1b5b828203f01d9d3788ded91590fca39
+  deployed: "1758720624"
   env: common

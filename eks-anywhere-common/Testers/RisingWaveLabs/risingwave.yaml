@@ -4,7 +4,7 @@ metadata:
   name: risingwave-tester
   namespace: risingwave
 spec:
-  schedule: "0 */12 * * *" # Run every 12 hours
+  schedule: "*/10 * * * *" # Run every 5 minutes
   jobTemplate:
     spec:
       template:
@@ -14,9 +14,9 @@ spec:
             image: postgres:15
             env:
             - name: PGHOST
-              value: "risingwave.risingwave.svc.cluster.local"
+              value: "risingwave-frontend.risingwave.svc.cluster.local"
             - name: PGPORT
-              value: "4567"
+              value: "4566"
             - name: PGDATABASE
               value: "dev"
             - name: PGUSER
