@@ -18,7 +18,6 @@ spec:
               imagePullPolicy: IfNotPresent
               command: ["/bin/sh", "-c"]
               args:
-              args:
                 - |
                   TOKEN="root:Milvus"
                   ENDPOINT="http://milvus-standalone.zilliz-milvus.svc.cluster.local:19530"
