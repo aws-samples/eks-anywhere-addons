@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: milvus-release
+  namespace: zilliz-milvus
+spec:
+  interval: 5m
+  releaseName: milvus-standalone
+  targetNamespace: zilliz-milvus
+  install:
+    createNamespace: true
+  chart:
+    spec:
+      chart: milvus
+      version: "5.0.6"
+      sourceRef:
+        kind: HelmRepository
+        name: zilliz-milvus-charts
+        namespace: flux-system
+  values:
+    # Using standalone mode for simplicity
+    cluster:
+      enabled: false
+    standalone:
+      enabled: true
+    # Using default persistence for local testing
+    persistence:
+      enabled: false
