@@ -34,8 +34,7 @@ spec:
                   
                   echo "Inserting test vectors..."
                   # Insert vectors with full 128 dimensions
-                  VECTOR_128=$(awk 'BEGIN{for(i=1;i<=128;i++) printf "%.2f%s", i*0.01, (i<128?",":"");}')
-                  VECTOR_128_ALT=$(awk 'BEGIN{for(i=1;i<=128;i++) printf "%.2f%s", i*0.02, (i<128?",":"");}')
+                  VECTOR_128=$(printf '%.1f,' $(seq -s' ' -f'%.1f' 0.01 0.01 1.27) | sed 's/,$//')
                   curl -s --request POST \
                     --url "${ENDPOINT}/v2/vectordb/entities/insert" \
                     --header "Authorization: Bearer ${TOKEN}" \
@@ -44,7 +43,7 @@ spec:
                       \"collectionName\": \"health_test\",
                       \"data\": [
                         {\"id\": 1, \"vector\": [${VECTOR_128}]},
-                        {\"id\": 2, \"vector\": [${VECTOR_128_ALT}]}
+                        {\"id\": 2, \"vector\": [$(echo ${VECTOR_128} | sed 's/0\./0.2/g')]}
                       ]
                     }" > /dev/null
                   
@@ -65,7 +64,6 @@ spec:
                      echo "${SEARCH_RESULT}" | grep -q '"id":1' && \
                      echo "${SEARCH_RESULT}" | grep -q '"distance"'; then
                     echo "✓ Vector search successful with valid results"
-                    echo "Response: ${SEARCH_RESULT}"
                   else
                     echo "❌ Vector search failed or returned invalid results"
                     echo "Response: ${SEARCH_RESULT}"

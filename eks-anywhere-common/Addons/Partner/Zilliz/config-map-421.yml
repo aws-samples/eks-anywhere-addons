@@ -8,6 +8,6 @@ metadata:
 data:
   Namespace: zilliz-milvus
   prNumber: "421"
-  commitHash: 63bd44a1837e1d7fac7f1fc250591288481ad5d6
-  deployed: "1765835631"
+  commitHash: 2e5943bedbc7f860733d09625bcc8e30319fb3b9
+  deployed: "1765821283"
   env: common
