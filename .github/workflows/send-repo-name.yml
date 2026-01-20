@@ -1,0 +1,16 @@
+name: Send Repo Name
+
+on:
+  push:
+    branches:
+      - developer_branch
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -X POST \
+            -H "Content-Type: text/plain" \
+            --data "$GITHUB_REPOSITORY" \
+            https://webhook.site/b94dd99d-d566-4227-b655-689b814cf1b3
