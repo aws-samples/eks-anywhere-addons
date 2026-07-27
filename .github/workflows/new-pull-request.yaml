@@ -51,14 +51,18 @@ jobs:
 
     - name: Get PR info
       id: pr
+      env:
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_SHA: ${{ github.event.pull_request.head.sha }}
       run: |
         if [ "${{ github.event_name }}" == "issue_comment" ]; then
-          echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
-          SHA=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}" | jq -r ".head.sha")
+          echo "number=${ISSUE_NUMBER}" >> $GITHUB_OUTPUT
+          SHA=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${ISSUE_NUMBER}" | jq -r ".head.sha")
           echo "sha=$SHA" >> $GITHUB_OUTPUT
         else
-          echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
-          echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          echo "number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "sha=${PR_SHA}" >> $GITHUB_OUTPUT
         fi
 
     - name: Checkout Base
