@@ -4,6 +4,9 @@ on:
     branches: [main]
     types: [closed]
      
+permissions:
+  contents: write
+
 jobs:
 
   # All Closed branches reverse commits made by the open/reopen/sync GH Action
@@ -16,10 +19,9 @@ jobs:
         ref: developer_branch
         fetch-depth: 0
     - name: Remove Updates from this PR
+      env:
+        TAG: PR_${{ github.event.pull_request.number }}
       run: |
-        # Get Commits from this PR
-        TAG=PR_${{ github.event.pull_request.number }}
-    
         # Revert Commits or Log that no change was made
         git config --local user.email "dev@null"
         git config --local user.name "Conformitron Bot"
@@ -42,14 +44,18 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Checkout PR Code
+      env:
+        PR_NUMBER: ${{ github.event.pull_request.number }}
       run:
-        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr
+        git fetch origin pull/${PR_NUMBER}/head:pr
         
     - name: Remove Deleted Files, copy over added or modified files in accepted PR
       id: find-namespace-yaml
+      env:
+        PR_NUMBER: ${{ github.event.pull_request.number }}
       run: |
         # Pull file information down into a JSON array
-        readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq -c '.[]')
+        readarray -t files < <(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/files" | jq -c '.[]')
         
         # Checkout and update Developer branch 
         git fetch --all
@@ -83,6 +89,6 @@ jobs:
           fi
         done
         
-        git commit -m "Adding new and changed files for merged PR_${{ github.event.pull_request.number }}"
+        git commit -m "Adding new and changed files for merged PR_${PR_NUMBER}"
         git push
         
