@@ -1,27 +1,23 @@
 name: PR Opened - moving new ISV addon to developer_branch for E2E testing
 
 on:
-  pull_request_target:
-    branches: [main]
-    types: [opened, reopened, synchronize]
-    paths-ignore: 
-     - "Validated_Partners/**"
-     - ".github/**"
-     - "docs/**"
-     - ".git/**"
+  # Deploys are comment-only (see build.if): the ONLY way a revision reaches
+  # developer_branch is a fresh '/test-e2e' comment from a user with write
+  # access, evaluated against the PR's current head (see the permission check
+  # below). A reviewer therefore authorizes every deployed revision, closing
+  # the synchronize / reopened / push-while-closed swaps. Path scope is
+  # enforced directly in the copy loop below.
   issue_comment:
     types: [created]
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     if: |
-        (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'auto-e2e-enabled')) ||
-        (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/test-e2e'))
+        github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/test-e2e')
     steps:
     - name: Check permissions for comments
       id: check-perms
@@ -36,18 +32,6 @@ jobs:
       run: |
         echo "Permission check failed"
         exit 1
-
-    - name: Add auto-e2e label on first manual run
-      if: github.event_name == 'issue_comment'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          github.rest.issues.addLabels({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: ${{ github.event.issue.number }},
-            labels: ['auto-e2e-enabled']
-          });
 
     - name: Get PR info
       id: pr
@@ -71,10 +55,6 @@ jobs:
     - name: Checkout PR Code
       run: git fetch origin pull/${{ steps.pr.outputs.number }}/head:pr
 
-    - if: ${{github.event.action == 'synchronize' }}
-      name: Sync Pause
-      run: sleep 60
-
     - name: Parse Namespace data, Create ConfigMap
       id: find-namespace-yaml
       run: |
@@ -89,26 +69,54 @@ jobs:
         git checkout developer_branch
         git pull
         
+        # Enforce the same scope as the workflow trigger's paths-ignore.
+        # paths-ignore only decides whether the workflow starts; it does NOT
+        # limit which files this loop copies. Without this check a PR that
+        # touches one legitimate file could also modify or delete any other
+        # path (another partner's manifests, Validated_Partners/**, .github/**,
+        # docs/**). This guard is applied to every operation, deletions included.
+        is_in_scope() {
+          local f="$1"
+          # Reject empty, absolute, or path-traversing entries outright.
+          case "$f" in
+            ""|/*|*/../*|../*|*/..|..) return 1 ;;
+          esac
+          # Mirror paths-ignore: these prefixes are never writable via a PR.
+          case "$f" in
+            Validated_Partners|Validated_Partners/*) return 1 ;;
+            .github|.github/*) return 1 ;;
+            docs|docs/*) return 1 ;;
+            .git|.git/*) return 1 ;;
+          esac
+          return 0
+        }
+
         # Remove Deleted Files, copy over added or modified files
         for item in "${files[@]}"; do
           status=$(echo "$item" | jq -r ".status")
           filename=$(echo "$item" | jq -r ".filename")
-          
+
+          if ! is_in_scope "$filename"; then
+            echo "Skipping out-of-scope file: $filename"
+            continue
+          fi
+
           if [ "$status" == renamed ]; then
-            git checkout pr -- $filename
-            git add $filename
-            if [ -f $(echo "$item" | jq -r ".previous_filename") ]; then
-              git rm $(echo "$item" | jq -r ".previous_filename")
+            git checkout pr -- "$filename"
+            git add "$filename"
+            previous_filename=$(echo "$item" | jq -r ".previous_filename")
+            if is_in_scope "$previous_filename" && [ -f "$previous_filename" ]; then
+              git rm "$previous_filename"
             fi
             echo "Renaming $filename"
           elif [ "$status" != removed ]; then
-            git checkout pr -- $filename
-            git add $filename
+            git checkout pr -- "$filename"
+            git add "$filename"
             echo "Moving $filename"
           else
-            if [ -f $filename ]; then
+            if [ -f "$filename" ]; then
               echo "Deleting $filename"
-              git rm $filename
+              git rm "$filename"
             fi
           fi
         done
@@ -119,7 +127,11 @@ jobs:
           status=$(echo "$item" | jq -r ".status")
           filename=$(echo "$item" | jq -r ".filename")
           echo $filename
-          
+
+          if ! is_in_scope "$filename"; then
+            echo "Skipping out-of-scope file: $filename"
+            continue
+          fi
 
           if [ "$status" != removed ] && [[ $filename != *README.md ]]; then
             # Parse namespace data
@@ -180,5 +192,15 @@ jobs:
           fi        
         done
         
-        git commit -m "Adding new and changed files for testing of PR_${{ steps.pr.outputs.number }}"
-        git push
+        # Only commit/push when the loop actually staged in-scope changes. A PR
+        # whose files are all out of scope stages nothing; committing then would
+        # fail the step even though rejecting those files is the correct outcome.
+        # The trailer gives the close workflow an exact, machine-matchable marker
+        # to revert against (see close-pull-request.yaml), instead of a free-text
+        # grep that matches PR_4 against PR_40, PR_400, etc.
+        if git diff --cached --quiet; then
+          echo "No in-scope changes to deploy"
+        else
+          git commit -m "Adding new and changed files for testing of PR_${{ steps.pr.outputs.number }}" -m "Conformitron-Test-PR: ${{ steps.pr.outputs.number }}"
+          git push
+        fi
