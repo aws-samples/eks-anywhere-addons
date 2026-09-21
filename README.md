@@ -1,3 +1,8 @@
+> [!WARNING]
+> **⚠️ DEPRECATED — This repository is no longer maintained.**
+>
+> This project has reached end of life and is no longer actively developed or supported. No further updates, bug fixes, or pull request reviews should be expected. The repository is retained for historical reference only. Do not rely on this framework for new deployments or validation work.
+
 ## Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework
 
 💥 Welcome to Amazon EKS Anywhere (EKS-A) Conformance and Validation Framework 💥
